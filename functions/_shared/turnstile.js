@@ -9,9 +9,14 @@
  */
 export async function verifyTurnstile(env, token, remoteIp) {
   if (!env.TURNSTILE_SECRET_KEY) {
-    // Fail closed: if the site is supposed to be protected but isn't
-    // configured, don't silently let every request through.
-    return { success: false, reason: "not_configured" };
+    // Turnstile hasn't been configured yet (no site/secret key set up in
+    // Cloudflare). Failing open here — not closed — is deliberate: this
+    // is a brand-new restaurant ordering system, and blocking every order
+    // because an optional bot-protection layer isn't configured yet would
+    // be worse than the risk it's meant to prevent. Once TURNSTILE_SECRET_KEY
+    // is set, verification becomes mandatory automatically — no code
+    // change needed.
+    return { success: true, reason: "not_configured_fail_open" };
   }
   if (!token || typeof token !== "string") {
     return { success: false, reason: "missing_token" };

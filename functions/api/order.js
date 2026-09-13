@@ -82,6 +82,9 @@ async function handleOrder({ request, env }) {
   // A frontend "verified" flag, or the mere presence of a token, proves
   // nothing on its own — only Cloudflare's own siteverify response does.
   const turnstile = await verifyTurnstile(env, turnstileToken, ip);
+  if (turnstile.reason === "not_configured_fail_open") {
+    logSecurityEvent(requestId, "turnstile_not_configured", { ip });
+  }
   if (!turnstile.success) {
     logSecurityEvent(requestId, "turnstile_failed", { ip, reason: turnstile.reason });
     return jsonResponse({ error: "Verification failed. Please reload the page and try again." }, 403);
