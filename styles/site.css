@@ -653,6 +653,9 @@ body { padding-block-start: var(--header-h); }
 
 /* ------------------------------------------------------------ why kkr */
 
+.promo-banner { line-height: 0; }
+.promo-banner img { width: 100%; height: auto; display: block; }
+
 .whykkr {
   background: #FFFFFF;
   padding-block: var(--rhythm);
