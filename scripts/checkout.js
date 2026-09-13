@@ -160,6 +160,51 @@
   };
 
   /* -------------------------------------------------------- place order */
+  // One key per page load, reused across retries of the SAME attempt —
+  // this is what lets the backend recognize a double-click or a retried
+  // request as the same order instead of creating a duplicate. A fresh
+  // key is only generated on a full page reload (a genuinely new attempt).
+  const idempotencyKey = crypto.randomUUID();
+
+  /* ------------------------------------------------------- Turnstile
+     The widget itself is just a UX gate — the backend independently
+     re-verifies whatever token it produces before creating any order. A
+     customer who disables JavaScript or fakes a token client-side gains
+     nothing, since functions/api/order.js checks with Cloudflare directly. */
+  let turnstileWidgetId = null;
+
+  const renderTurnstile = async () => {
+    const container = $("[data-turnstile-widget]");
+    if (!container) return;
+    try {
+      const res = await fetch("/api/public-config");
+      const config = await res.json();
+      if (!config.turnstileSiteKey) {
+        // No site key configured yet — hide the widget rather than show a
+        // broken box. Orders will still be rejected server-side once
+        // Turnstile is actually configured; until then this degrades to
+        // "not yet protected" rather than "broken for every customer".
+        container.hidden = true;
+        return;
+      }
+      const waitForTurnstile = () =>
+        new Promise((resolve) => {
+          if (window.turnstile) return resolve();
+          const check = setInterval(() => {
+            if (window.turnstile) {
+              clearInterval(check);
+              resolve();
+            }
+          }, 100);
+        });
+      await waitForTurnstile();
+      turnstileWidgetId = window.turnstile.render(container, { sitekey: config.turnstileSiteKey });
+    } catch {
+      // Same reasoning as above — fail toward "hidden", not "broken".
+      container.hidden = true;
+    }
+  };
+
   const placeOrder = async () => {
     setError("[data-order-error]", "");
 
@@ -197,6 +242,8 @@
       quantity: it.qty,
     }));
 
+    const turnstileToken = turnstileWidgetId !== null ? window.turnstile?.getResponse(turnstileWidgetId) : undefined;
+
     const sendBtn = $("[data-cart-send]");
     if (sendBtn) {
       sendBtn.disabled = true;
@@ -217,6 +264,8 @@
           deliveryLat: addressLat || undefined,
           deliveryLng: addressLng || undefined,
           accessToken: session?.access_token,
+          turnstileToken,
+          idempotencyKey,
         }),
       });
       const data = await res.json();
@@ -230,6 +279,9 @@
       $("[data-checkout-sent]").hidden = false;
     } catch (err) {
       setError("[data-order-error]", err.message || "Could not place order. Please try again.");
+      // Turnstile tokens are single-use — a failed attempt needs a fresh
+      // one before the customer can successfully retry.
+      if (turnstileWidgetId !== null) window.turnstile?.reset(turnstileWidgetId);
     } finally {
       if (sendBtn) {
         sendBtn.disabled = false;
@@ -307,5 +359,6 @@
     renderPaymentPanel();
     renderOrderTypePanel();
     fetchSettings();
+    renderTurnstile();
   });
 })();
