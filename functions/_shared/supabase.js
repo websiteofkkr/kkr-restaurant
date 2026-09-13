@@ -118,10 +118,7 @@ export function withErrorHandling(handler, requiredEnvVars = ["SUPABASE_URL", "S
       return await handler(context);
     } catch (err) {
       console.error("Unhandled error:", err);
-      // TODO(KKR): revert to a generic message once the live order-creation
-      // issue is diagnosed — this temporarily exposes the real error so we
-      // can see what's actually failing instead of guessing.
-      return jsonResponse({ error: "Something went wrong: " + (err?.message || String(err)) }, 500);
+      return jsonResponse({ error: "Something went wrong. Please try again." }, 500);
     }
   };
 }

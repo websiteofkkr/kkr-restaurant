@@ -165,7 +165,7 @@ async function handleOrder({ request, env }) {
     );
   } catch (err) {
     console.error(err);
-    return jsonResponse({ error: "Could not create order: " + (err?.message || String(err)) }, 500);
+    return jsonResponse({ error: "Could not create order. Please try again." }, 500);
   }
 
   try {
@@ -183,7 +183,7 @@ async function handleOrder({ request, env }) {
     // Order row exists but line items failed — surface this distinctly so
     // it can be manually reconciled rather than silently losing items.
     return jsonResponse(
-      { error: "Order was created but items failed to save (" + (err?.message || String(err)) + "). Order number " + order.order_number },
+      { error: "Order was created but items failed to save. Please contact the restaurant with order number " + order.order_number },
       500
     );
   }
