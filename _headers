@@ -15,11 +15,19 @@
 # Both the exact index page and everything under it need this rule —
 # Cloudflare's /admin/* pattern does not reliably match the bare /admin/
 # URL itself, which is exactly the page Decap CMS loads at.
+#
+# IMPORTANT: Cloudflare Pages does NOT let a more specific rule override a
+# header set by a less specific one — it joins both values together with a
+# comma, producing a broken, unparseable policy. The "! Header-Name" syntax
+# below detaches the site-wide CSP first, so only this page's own policy
+# applies here.
 /admin
+  ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://unpkg.com; img-src 'self' data: blob: https://avatars.githubusercontent.com; connect-src 'self' https://api.github.com https://unpkg.com; frame-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
   X-Robots-Tag: noindex, nofollow
 
 /admin/
+  ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com https://unpkg.com; img-src 'self' data: blob: https://avatars.githubusercontent.com; connect-src 'self' https://api.github.com https://unpkg.com; frame-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
   X-Robots-Tag: noindex, nofollow
 
@@ -27,6 +35,7 @@
   Cache-Control: public, max-age=31536000, immutable
 
 /callback
+  ! Content-Security-Policy
   Content-Security-Policy: script-src 'unsafe-inline'; object-src 'none'; frame-ancestors 'none'
 
 /styles/*
