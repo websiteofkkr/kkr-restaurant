@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Checkout — KKR Khalid Khan Restaurant</title>
+<title>My Orders — KKR Khalid Khan Restaurant</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="../../assets/img/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="../../assets/img/favicon.png">
@@ -11,9 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Marcellus&family=Karla:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap">
 <link rel="stylesheet" href="../../styles/site.css?v=eb54d886a6">
-<link rel="stylesheet" href="../../styles/menu-tabs.css?v=eb54d886a6">
-<link rel="stylesheet" href="../../assets/vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="../../styles/checkout.css?v=1">
+<link rel="stylesheet" href="../../styles/my-orders.css?v=1">
 </head>
 <body class="lang-en page-checkout">
 <a class="skip" href="#main">Skip to content</a>
@@ -52,168 +51,25 @@
 
 <main id="main" class="checkoutpage">
   <div class="checkout__head">
-    <h1>Checkout</h1>
+    <h1>My Orders</h1>
     <a class="checkout__backlink" href="../../en/menu/index.html">&larr; Back to menu</a>
   </div>
 
-  <div data-checkout-empty class="checkout__empty" hidden>
-    <p class="checkout__empty-title">Your cart is empty.</p>
-    <p>Add something from the menu before checking out.</p>
+  <div data-mo-logged-out class="checkout__empty" hidden>
+    <p class="checkout__empty-title">Log in to see your orders.</p>
+    <p>Once you're logged in, every order you've placed while signed in will show up here with its current status.</p>
+    <button type="button" class="btn btn--reserve" data-account-toggle>Log in / Register</button>
+  </div>
+
+  <div data-mo-empty class="checkout__empty" hidden>
+    <p class="checkout__empty-title">No orders yet.</p>
+    <p>Orders you place while logged in will show up here.</p>
     <a class="btn btn--reserve" href="../../en/menu/index.html">Browse the menu</a>
   </div>
 
-  <div class="checkout__layout" data-checkout-layout>
-    <section class="checkout__form">
-
-      <div class="checkout__block">
-        <h2 class="checkout__block-title">1. Delivery or pickup?</h2>
-        <div class="cart-checkout__methods" role="radiogroup" aria-label="Order type">
-          <label class="cart-checkout__method">
-            <input type="radio" name="kkr-order-type" value="delivery" checked data-order-type-input>
-            <span>Delivery</span>
-          </label>
-          <label class="cart-checkout__method">
-            <input type="radio" name="kkr-order-type" value="pickup" data-order-type-input>
-            <span>Pickup</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="checkout__block">
-        <h2 class="checkout__block-title">2. How would you like to continue?</h2>
-
-        <div data-auth-panel="choice">
-          <div class="cart-checkout__authbtns cart-checkout__authbtns--row">
-            <button type="button" class="btn btn--ghost" data-auth-show="login">Log in / Register</button>
-            <button type="button" class="btn btn--reserve" data-auth-show="guest">Continue as guest</button>
-          </div>
-        </div>
-
-        <div data-auth-panel="login" hidden class="checkout__narrow">
-          <input type="email" class="cart-input" placeholder="Email" data-login-email autocomplete="email">
-          <input type="password" class="cart-input" placeholder="Password" data-login-password autocomplete="current-password">
-          <p class="cart-checkout__error" data-login-error hidden></p>
-          <button type="button" class="btn btn--reserve cart-checkout__wide" data-login-submit>Log in</button>
-          <button type="button" class="cart-drawer__back" data-auth-show="register">New here? Register instead</button>
-          <button type="button" class="cart-drawer__back" data-auth-show="choice">&larr; Back</button>
-        </div>
-
-        <div data-auth-panel="register" hidden class="checkout__narrow">
-          <input type="text" class="cart-input" placeholder="Full name" data-register-name autocomplete="name">
-          <input type="tel" class="cart-input" placeholder="Phone number" data-register-phone autocomplete="tel">
-          <input type="email" class="cart-input" placeholder="Email" data-register-email autocomplete="email">
-          <input type="password" class="cart-input" placeholder="Password (min. 6 characters)" data-register-password autocomplete="new-password">
-          <p class="cart-checkout__error" data-register-error hidden></p>
-          <button type="button" class="btn btn--reserve cart-checkout__wide" data-register-submit>Register</button>
-          <button type="button" class="cart-drawer__back" data-auth-show="login">&larr; Back to log in</button>
-        </div>
-
-        <div data-auth-panel="session" hidden>
-          <p class="cart-checkout__note">Logged in as <strong data-session-name></strong> (<span data-session-points>0</span> reward points). <button type="button" class="cart-drawer__back" data-logout-inline">Log out</button></p>
-          <p class="cart-checkout__note" data-reward-estimate hidden></p>
-        </div>
-      </div>
-
-      <div class="checkout__block" data-customer-panel hidden>
-        <h2 class="checkout__block-title">3. Your details</h2>
-        <div class="checkout__grid2">
-          <input type="text" class="cart-input" placeholder="Full name" data-cf-name autocomplete="name">
-          <input type="tel" class="cart-input" placeholder="Phone number" data-cf-phone autocomplete="tel">
-          <input type="email" class="cart-input" placeholder="Email (optional)" data-cf-email autocomplete="email">
-          <div class="checkout__address-field">
-            <input type="text" class="cart-input" placeholder="Delivery address" data-cf-address autocomplete="street-address" data-address-field>
-            <button type="button" class="checkout__map-btn" data-open-map-picker aria-label="Pick address on map">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
-              <span>Pick on map</span>
-            </button>
-            <input type="hidden" data-cf-address-lat>
-            <input type="hidden" data-cf-address-lng>
-          </div>
-        </div>
-        <textarea class="cart-input" placeholder="Notes for the restaurant (optional)" data-cf-notes rows="2"></textarea>
-
-        <h2 class="checkout__block-title">4. Payment method</h2>
-        <div class="cart-checkout__methods cart-checkout__methods--row" role="radiogroup" aria-label="Payment method">
-          <label class="cart-checkout__method">
-            <input type="radio" name="kkr-payment" value="cash" checked data-payment-input>
-            <span>Cash</span>
-          </label>
-          <label class="cart-checkout__method">
-            <input type="radio" name="kkr-payment" value="easypaisa" data-payment-input>
-            <span>Easypaisa</span>
-          </label>
-        </div>
-
-        <p class="cart-checkout__note" data-cash-note>For cash orders, our restaurant team will call you to confirm your order before preparation.</p>
-
-        <div data-easypaisa-panel hidden class="checkout__narrow">
-          <p class="cart-checkout__note">Send the exact total, <strong data-easypaisa-amount>Rs. 0</strong>, to Easypaisa account <strong data-easypaisa-number>[Easypaisa number to be provided]</strong>, then enter your transaction number below.</p>
-          <input type="text" class="cart-input" placeholder="Easypaisa transaction / reference number" data-cf-payment-ref>
-          <label class="cart-checkout__confirm">
-            <input type="checkbox" data-cf-payment-confirm>
-            <span>I have sent the payment and entered the correct transaction/reference number.</span>
-          </label>
-        </div>
-
-        <p class="cart-checkout__error" data-order-error hidden></p>
-        <button type="button" class="btn btn--reserve cart-drawer__send" data-cart-send>Place order</button>
-      </div>
-    </section>
-
-    <aside class="checkout__summary">
-      <h2 class="checkout__block-title">Order summary</h2>
-      <ul class="checkout__summary-items" data-summary-items></ul>
-      <div class="cart-drawer__row">
-        <span>Subtotal</span>
-        <span data-cart-subtotal>0</span>
-      </div>
-      <div class="cart-drawer__row">
-        <span data-tax-label>Tax</span>
-        <span data-cart-tax>0</span>
-      </div>
-      <div class="cart-drawer__row">
-        <span>Delivery</span>
-        <span data-cart-delivery>0</span>
-      </div>
-      <div class="cart-drawer__row cart-drawer__row--total">
-        <span>Total</span>
-        <span data-cart-total>0</span>
-      </div>
-      <p class="cart-drawer__delivery-note" data-delivery-note>Free delivery on orders over Rs. 1,000 — otherwise a flat Rs. 200.</p>
-    </aside>
-  </div>
-
-  <div class="checkout__sent" data-checkout-sent hidden>
-    <p class="cart-sent__title">Order placed!</p>
-    <p class="cart-sent__note">Order number <strong data-sent-order-number>—</strong>. Total: <strong data-sent-total>—</strong>. We&#39;ll be in touch to confirm it.</p>
-    <a class="btn btn--reserve" href="../../en/menu/index.html">Back to menu</a>
-  </div>
+  <div data-mo-list class="mo-list" hidden></div>
 </main>
 
-<div class="map-picker" data-map-picker hidden>
-  <div class="map-picker__panel">
-    <div class="map-picker__head">
-      <h2>Pick your delivery address</h2>
-      <button type="button" class="cart-drawer__close" data-map-close aria-label="Close map">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="map-picker__search">
-      <input type="text" class="cart-input" placeholder="Search for an area, road, or landmark in Peshawar" data-map-search>
-      <ul class="map-picker__results" data-map-search-results></ul>
-    </div>
-    <div class="map-picker__map-wrap">
-      <div id="map-picker-map"></div>
-      <div class="map-picker__pin" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="var(--color-red)" stroke="#fff" stroke-width="1"><path d="M12 22s7-6.9 7-12.5A7 7 0 0 0 5 9.5C5 15.1 12 22 12 22Z"/><circle cx="12" cy="9.3" r="2.6" fill="#fff"/></svg>
-      </div>
-    </div>
-    <div class="map-picker__foot">
-      <p class="cart-checkout__note" data-map-address-preview>Move the map so the pin points at your address.</p>
-      <button type="button" class="btn btn--reserve cart-checkout__wide" data-map-confirm>Use this location</button>
-    </div>
-  </div>
-</div>
 <div class="cart-drawer" data-account-modal hidden>
   <div class="cart-drawer__scrim" data-account-close></div>
   <aside class="cart-drawer__panel" role="dialog" aria-modal="true" aria-label="Your account">
@@ -245,7 +101,6 @@
       <div data-account-panel="session" hidden>
         <p class="cart-checkout__label">Welcome back, <span data-acc-name>you</span></p>
         <p class="cart-checkout__note"><strong data-acc-points>0</strong> KKR Reward Points</p>
-        <a class="cart-drawer__back" href="../my-orders/index.html">View my orders</a>
         <button type="button" class="cart-drawer__back" data-acc-logout>Log out</button>
       </div>
     </div>
@@ -280,10 +135,7 @@
 <script src="../../scripts/supabase-config.js" defer></script>
 <script src="../../scripts/auth.js" defer></script>
 <script src="../../scripts/account-modal.js" defer></script>
-<script src="../../scripts/cart.js?v=eb54d886a6" defer></script>
-<script src="../../assets/vendor/leaflet/leaflet.js"></script>
-<script src="../../scripts/map-picker.js" defer></script>
-<script src="../../scripts/checkout.js" defer></script>
+<script src="../../scripts/my-orders.js" defer></script>
 <script src="../../scripts/site.js?v=eb54d886a6" defer></script>
 </body>
 </html>
