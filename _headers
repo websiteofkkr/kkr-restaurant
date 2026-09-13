@@ -19,6 +19,9 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
+/callback
+  Content-Security-Policy: script-src 'unsafe-inline'; object-src 'none'; frame-ancestors 'none'
+
 /styles/*
   Cache-Control: public, max-age=604800
 
