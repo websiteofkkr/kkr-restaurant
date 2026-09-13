@@ -104,7 +104,7 @@ collections:
           - { label: "Button link", name: "ctaLink", widget: "string", required: false, hint: "e.g. /en/menu/ or a WhatsApp link" }
           - { label: "Start showing on", name: "startDate", widget: "datetime", required: false, hint: "Leave blank to start showing as soon as it's turned on." }
           - { label: "Stop showing on", name: "endDate", widget: "datetime", required: false, hint: "Leave blank to keep showing until you turn it off manually." }
-          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
+          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", required: false, default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
 
       - name: "home"
         label: "Homepage"
@@ -434,7 +434,7 @@ collections:
           - { label: "Button link", name: "ctaLink", widget: "string", required: false, hint: "e.g. /ur/menu/ or a WhatsApp link" }
           - { label: "Start showing on", name: "startDate", widget: "datetime", required: false, hint: "Leave blank to start showing as soon as it's turned on." }
           - { label: "Stop showing on", name: "endDate", widget: "datetime", required: false, hint: "Leave blank to keep showing until you turn it off manually." }
-          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
+          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", required: false, default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
 
       - name: "home"
         label: "Homepage"
@@ -757,7 +757,7 @@ collections:
           - { label: "Button link", name: "ctaLink", widget: "string", required: false, hint: "e.g. /ps/menu/ or a WhatsApp link" }
           - { label: "Start showing on", name: "startDate", widget: "datetime", required: false, hint: "Leave blank to start showing as soon as it's turned on." }
           - { label: "Stop showing on", name: "endDate", widget: "datetime", required: false, hint: "Leave blank to keep showing until you turn it off manually." }
-          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
+          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", required: false, default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
 
       - name: "home"
         label: "Homepage"
