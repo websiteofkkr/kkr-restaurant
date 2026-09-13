@@ -34,6 +34,7 @@
     <button type="button" class="oa-tab is-active" data-oa-tab="orders">Orders</button>
     <button type="button" class="oa-tab" data-oa-tab="rewards">Reward points</button>
     <button type="button" class="oa-tab" data-oa-tab="features">Site features</button>
+    <button type="button" class="oa-tab" data-oa-tab="discounts">Menu discounts</button>
     <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
   </nav>
 
@@ -127,8 +128,59 @@
         <span class="oa-toggle"><input type="checkbox" data-oa-feature="reservations_enabled"><span class="oa-toggle__track"></span></span>
       </label>
 
+      <h3 style="margin-top:2rem;">Top promo banner</h3>
+      <p class="oa-muted">A dismissible strip across the top of every page, like an ad banner — for short-lived announcements or promotions.</p>
+      <label class="oa-toggle-row">
+        <span><strong>Show promo banner</strong></span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="promo_banner_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+      <label class="oa-field">
+        <span>Banner text</span>
+        <input type="text" class="cart-input" placeholder="e.g. 15% off all Karahi this weekend only!" data-oa-setting-text="promo_banner_text">
+      </label>
+      <label class="oa-field">
+        <span>Banner link (optional)</span>
+        <input type="text" class="cart-input" placeholder="e.g. ../menu/index.html" data-oa-setting-text="promo_banner_link">
+      </label>
+      <button type="button" class="btn btn--reserve" data-oa-promo-save>Save banner text</button>
+
       <p class="cart-checkout__error" data-oa-features-error hidden></p>
       <p class="cart-checkout__note" data-oa-features-success hidden></p>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- discounts -->
+  <section class="oa-panel" data-oa-panel="discounts" hidden>
+    <div class="oa-block oa-block--narrow">
+      <h2>Apply a discount to a menu item</h2>
+      <p class="oa-muted">Applies to the full item price (variant items like Single/Family aren't supported yet). The discounted price is what customers actually pay — it's enforced when the order is placed, not just shown as a display trick.</p>
+
+      <label class="oa-field">
+        <span>Search for an item</span>
+        <input type="text" class="cart-input" placeholder="Start typing a dish name…" data-oa-discount-search>
+      </label>
+      <div data-oa-discount-results style="margin-block-end:1rem;"></div>
+
+      <div data-oa-discount-form hidden>
+        <p class="cart-checkout__label">Editing: <strong data-oa-discount-item-name></strong> <span data-oa-discount-item-original></span></p>
+        <label class="oa-field">
+          <span>Discounted price (Rs.)</span>
+          <input type="number" min="1" step="1" class="cart-input" data-oa-discount-price>
+        </label>
+        <label class="oa-field">
+          <span>Badge text (optional)</span>
+          <input type="text" class="cart-input" placeholder="e.g. 15% off" data-oa-discount-badge>
+        </label>
+        <p class="cart-checkout__error" data-oa-discount-error hidden></p>
+        <p class="cart-checkout__note" data-oa-discount-success hidden></p>
+        <button type="button" class="btn btn--reserve" data-oa-discount-save>Apply discount</button>
+        <button type="button" class="cart-drawer__back" data-oa-discount-remove hidden>Remove discount</button>
+      </div>
+    </div>
+
+    <div class="oa-block oa-block--narrow">
+      <h2>Currently active discounts</h2>
+      <div data-oa-discount-list></div>
     </div>
   </section>
 
@@ -153,6 +205,10 @@
       <label class="oa-field">
         <span>Reward points earned per Rs. 100 spent on food</span>
         <input type="number" step="0.1" min="0" class="cart-input" data-oa-setting="reward_rate">
+      </label>
+      <label class="oa-field">
+        <span>Easypaisa account number</span>
+        <input type="text" class="cart-input" placeholder="e.g. 0300 1234567" data-oa-setting-text="easypaisa_number">
       </label>
 
       <p class="cart-checkout__error" data-oa-settings-error hidden></p>

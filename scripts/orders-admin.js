@@ -64,6 +64,7 @@
       btn.classList.add("is-active");
       const name = btn.dataset.oaTab;
       $$("[data-oa-panel]").forEach((p) => (p.hidden = p.dataset.oaPanel !== name));
+      if (name === "discounts") renderDiscountList();
     });
   });
 
@@ -258,7 +259,12 @@
           return;
         }
         const toggleInput = $(`[data-oa-feature="${s.key}"]`);
-        if (toggleInput) toggleInput.checked = s.value === true || s.value === "true";
+        if (toggleInput) {
+          toggleInput.checked = s.value === true || s.value === "true";
+          return;
+        }
+        const textInput = $(`[data-oa-setting-text="${s.key}"]`);
+        if (textInput) textInput.value = s.value ?? "";
       });
     } catch (err) {
       console.error(err);
@@ -291,6 +297,7 @@
     errEl.hidden = true;
     okEl.hidden = true;
     const keys = ["tax_rate", "delivery_fee", "free_delivery_threshold", "reward_rate"];
+    const textKeys = ["easypaisa_number"];
     try {
       for (const key of keys) {
         const input = $(`[data-oa-setting="${key}"]`);
@@ -298,11 +305,189 @@
         const value = key === "tax_rate" || key === "reward_rate" ? raw / 100 : raw;
         await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key, value }) });
       }
+      for (const key of textKeys) {
+        const input = $(`[data-oa-setting-text="${key}"]`);
+        if (!input) continue;
+        await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key, value: input.value.trim() }) });
+      }
       okEl.hidden = false;
       okEl.textContent = "Settings saved.";
     } catch (err) {
       errEl.hidden = false;
       errEl.textContent = err.message;
+    }
+  });
+
+  $("[data-oa-promo-save]")?.addEventListener("click", async () => {
+    const errEl = $("[data-oa-features-error]");
+    const okEl = $("[data-oa-features-success]");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    try {
+      for (const key of ["promo_banner_text", "promo_banner_link"]) {
+        const input = $(`[data-oa-setting-text="${key}"]`);
+        if (!input) continue;
+        await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key, value: input.value.trim() }) });
+      }
+      okEl.hidden = false;
+      okEl.textContent = "Banner text saved.";
+    } catch (err) {
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
+
+  /* --------------------------------------------------------- discounts */
+  let MENU_ITEMS_FLAT = [];
+  let selectedDiscountItemId = null;
+
+  const loadMenuItemsFlat = async () => {
+    if (MENU_ITEMS_FLAT.length) return MENU_ITEMS_FLAT;
+    try {
+      const res = await fetch("/menu.json");
+      const menu = await res.json();
+      MENU_ITEMS_FLAT = (menu.categories || []).flatMap((cat) =>
+        (cat.items || [])
+          .filter((it) => !Array.isArray(it.variants) || it.variants.length === 0)
+          .map((it) => ({ id: it.id, name: it.name, price: it.price, category: cat.name }))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+    return MENU_ITEMS_FLAT;
+  };
+
+  const renderDiscountSearchResults = async (query) => {
+    const resultsEl = $("[data-oa-discount-results]");
+    if (!query.trim()) {
+      resultsEl.innerHTML = "";
+      return;
+    }
+    const items = await loadMenuItemsFlat();
+    const q = query.trim().toLowerCase();
+    const matches = items.filter((it) => it.name.toLowerCase().includes(q)).slice(0, 8);
+    resultsEl.innerHTML = matches
+      .map(
+        (it) =>
+          `<div class="oa-customer-result" data-oa-discount-pick="${esc(it.id)}" style="cursor:pointer;padding:.6rem .8rem;border:1px solid rgba(128,97,38,.18);border-radius:8px;margin-block-end:.4rem;">
+            <strong>${esc(it.name)}</strong> — Rs. ${it.price} <span class="oa-muted">(${esc(it.category)})</span>
+          </div>`
+      )
+      .join("");
+  };
+
+  const selectDiscountItem = async (itemId) => {
+    const items = await loadMenuItemsFlat();
+    const item = items.find((it) => it.id === itemId);
+    if (!item) return;
+    selectedDiscountItemId = itemId;
+    $("[data-oa-discount-form]").hidden = false;
+    $("[data-oa-discount-item-name]").textContent = item.name;
+    $("[data-oa-discount-item-original]").textContent = `(current price: Rs. ${item.price})`;
+    $("[data-oa-discount-price]").value = "";
+    $("[data-oa-discount-badge]").value = "";
+    $("[data-oa-discount-remove]").hidden = true;
+    $("[data-oa-discount-error]").hidden = true;
+    $("[data-oa-discount-success]").hidden = true;
+
+    try {
+      const data = await authedFetch("/api/admin/menu-discounts");
+      const existing = (data.discounts || []).find((d) => d.item_id === itemId);
+      if (existing) {
+        $("[data-oa-discount-price]").value = existing.discounted_price;
+        $("[data-oa-discount-badge]").value = existing.badge_label || "";
+        $("[data-oa-discount-remove]").hidden = false;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const renderDiscountList = async () => {
+    const listEl = $("[data-oa-discount-list]");
+    try {
+      const data = await authedFetch("/api/admin/menu-discounts");
+      const active = (data.discounts || []).filter((d) => d.active);
+      if (active.length === 0) {
+        listEl.innerHTML = `<p class="oa-muted">No active discounts.</p>`;
+        return;
+      }
+      const items = await loadMenuItemsFlat();
+      listEl.innerHTML = active
+        .map((d) => {
+          const item = items.find((it) => it.id === d.item_id);
+          return `<div class="oa-toggle-row">
+            <span>
+              <strong>${esc(item?.name || d.item_id)}</strong>
+              <small>Rs. ${item?.price ?? "?"} &rarr; Rs. ${d.discounted_price}${d.badge_label ? " · " + esc(d.badge_label) : ""}</small>
+            </span>
+            <button type="button" class="cart-drawer__back" data-oa-discount-quick-remove="${esc(d.item_id)}">Remove</button>
+          </div>`;
+        })
+        .join("");
+    } catch (err) {
+      listEl.innerHTML = `<p class="oa-muted">Could not load discounts.</p>`;
+    }
+  };
+
+  $("[data-oa-discount-search]")?.addEventListener("input", (e) => renderDiscountSearchResults(e.target.value));
+
+  document.addEventListener("click", async (e) => {
+    const pick = e.target.closest("[data-oa-discount-pick]");
+    if (pick) {
+      selectDiscountItem(pick.dataset.oaDiscountPick);
+      $("[data-oa-discount-results]").innerHTML = "";
+      $("[data-oa-discount-search]").value = "";
+      return;
+    }
+    const quickRemove = e.target.closest("[data-oa-discount-quick-remove]");
+    if (quickRemove) {
+      const itemId = quickRemove.dataset.oaDiscountQuickRemove;
+      try {
+        await authedFetch(`/api/admin/menu-discounts?itemId=${encodeURIComponent(itemId)}`, { method: "DELETE" });
+        renderDiscountList();
+      } catch (err) {
+        console.error(err);
+      }
+      return;
+    }
+  });
+
+  $("[data-oa-discount-save]")?.addEventListener("click", async () => {
+    const errEl = $("[data-oa-discount-error]");
+    const okEl = $("[data-oa-discount-success]");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    const price = Number($("[data-oa-discount-price]").value);
+    const badge = $("[data-oa-discount-badge]").value.trim();
+    if (!price || price <= 0) {
+      errEl.hidden = false;
+      errEl.textContent = "Enter a valid discounted price.";
+      return;
+    }
+    try {
+      await authedFetch("/api/admin/menu-discounts", {
+        method: "POST",
+        body: JSON.stringify({ itemId: selectedDiscountItemId, discountedPrice: price, badgeLabel: badge || null, active: true }),
+      });
+      okEl.hidden = false;
+      okEl.textContent = "Discount applied — live immediately.";
+      $("[data-oa-discount-remove]").hidden = false;
+      renderDiscountList();
+    } catch (err) {
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
+
+  $("[data-oa-discount-remove]")?.addEventListener("click", async () => {
+    if (!selectedDiscountItemId) return;
+    try {
+      await authedFetch(`/api/admin/menu-discounts?itemId=${encodeURIComponent(selectedDiscountItemId)}`, { method: "DELETE" });
+      $("[data-oa-discount-form]").hidden = true;
+      renderDiscountList();
+    } catch (err) {
+      console.error(err);
     }
   });
 

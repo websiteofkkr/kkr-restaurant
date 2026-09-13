@@ -38,6 +38,7 @@
       if (raw.delivery_fee != null) STANDARD_DELIVERY = Number(raw.delivery_fee);
       if (raw.free_delivery_threshold != null) FREE_DELIVERY_THRESHOLD = Number(raw.free_delivery_threshold);
       if (raw.reward_rate != null) REWARD_RATE = Number(raw.reward_rate);
+      if (raw.easypaisa_number) setText("[data-easypaisa-number]", raw.easypaisa_number);
       for (const key of Object.keys(FEATURES)) {
         if (raw[key] != null) FEATURES[key] = raw[key] === true || raw[key] === "true";
       }

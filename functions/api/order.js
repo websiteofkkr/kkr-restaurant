@@ -174,6 +174,18 @@ async function handleOrder({ request, env }) {
   // request body includes price/subtotal/total fields, they are read
   // nowhere in this function — only item_id, variantId, and quantity ever
   // feed into pricing.
+  //
+  // Active per-item discounts (admin-managed, see
+  // functions/api/admin/menu-discounts.js) override the menu.json price
+  // for items without variants. This is the actual source of truth for
+  // discounted pricing — the menu page display is just a preview of this.
+  const discountRows = await dbSelect(
+    env,
+    "menu_item_discounts",
+    "select=item_id,discounted_price&variant_id=eq.&active=eq.true"
+  );
+  const discountByItemId = new Map(discountRows.map((d) => [d.item_id, Number(d.discounted_price)]));
+
   const lineItems = [];
   let subtotal = 0;
 
@@ -203,7 +215,7 @@ async function handleOrder({ request, env }) {
       variantId = variant.id;
       variantName = variant.name;
     } else {
-      unitPrice = menuItem.price;
+      unitPrice = discountByItemId.has(menuItem.id) ? discountByItemId.get(menuItem.id) : menuItem.price;
     }
 
     const itemTotal = Math.round(unitPrice * quantity * 100) / 100;

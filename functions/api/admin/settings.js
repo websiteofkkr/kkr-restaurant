@@ -9,7 +9,9 @@ const BOOLEAN_KEYS = [
   "cash_enabled",
   "easypaisa_enabled",
   "reservations_enabled",
+  "promo_banner_enabled",
 ];
+const STRING_KEYS = ["easypaisa_number", "promo_banner_text", "promo_banner_link"];
 
 export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
@@ -49,6 +51,11 @@ export const onRequestPatch = withErrorHandling(async ({ request, env }) => {
   } else if (BOOLEAN_KEYS.includes(key)) {
     if (typeof value !== "boolean") {
       return jsonResponse({ error: "Value must be true or false." }, 400);
+    }
+    storedValue = value;
+  } else if (STRING_KEYS.includes(key)) {
+    if (typeof value !== "string" || value.length > 500) {
+      return jsonResponse({ error: "Value must be text under 500 characters." }, 400);
     }
     storedValue = value;
   } else {

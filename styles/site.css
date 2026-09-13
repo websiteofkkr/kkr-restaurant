@@ -265,19 +265,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* Locked to the top of every page; the whole site scrolls beneath it. */
 .masthead {
-  position: fixed; inset-inline: 0; inset-block-start: 0; z-index: 100;
+  position: fixed; inset-inline: 0; inset-block-start: var(--promo-banner-h, 0px); z-index: 100;
   background: var(--color-white);
   border-block-end: 1px solid rgba(11,9,7,.10);
   color: var(--color-dark);
   box-shadow: 0 1px 0 rgba(11,9,7,.04);
   transition: background-color .35s var(--ease), border-color .35s var(--ease),
-              padding .35s var(--ease);
+              padding .35s var(--ease), inset-block-start .25s var(--ease);
 }
 /* The bar is opaque on every page, so it always reads and always sits above
    the content — nothing scrolls over it. */
 .masthead.is-stuck { box-shadow: 0 6px 24px rgba(11,9,7,.10); }
 /* Inner pages have no hero behind the bar, so they need the space back. */
-body { padding-block-start: var(--header-h); }
+body { padding-block-start: calc(var(--header-h) + var(--promo-banner-h, 0px)); }
 
 .masthead.is-stuck .masthead__inner { padding-block: .65rem; }
 .masthead__inner {
@@ -425,7 +425,7 @@ body { padding-block-start: var(--header-h); }
 
 .hero {
   position: relative; background: var(--color-dark); color: var(--color-ivory);
-  min-height: calc(100svh - var(--header-h)); display: grid; place-items: end start;
+  min-height: calc(100svh - var(--header-h) - var(--promo-banner-h, 0px)); display: grid; place-items: end start;
   padding: clamp(3rem, 7vw, 5rem) var(--gutter) clamp(4.5rem, 9vw, 7rem);
   overflow: hidden; text-align: center;
 }
@@ -564,7 +564,7 @@ body { padding-block-start: var(--header-h); }
 .hero__scroll:hover { color: var(--color-gold-light); }
 
 @media (max-width: 48rem) {
-  .hero { min-height: calc(92svh - var(--header-h)); place-items: end start; }
+  .hero { min-height: calc(92svh - var(--header-h) - var(--promo-banner-h, 0px)); place-items: end start; }
   .hero__media { filter: brightness(.75); }
   .hero__media img, .hero__video { object-position: 50% 50%; }
   .hero__title { font-size: clamp(1.85rem, 8vw, 2.5rem); }
@@ -652,6 +652,24 @@ body { padding-block-start: var(--header-h); }
 }
 
 /* ------------------------------------------------------------ why kkr */
+
+.promo-topbar {
+  display: flex; align-items: center; justify-content: center; gap: .75rem;
+  position: fixed; inset-inline: 0; inset-block-start: 0; z-index: 101;
+  text-align: center; text-decoration: none;
+  background: linear-gradient(90deg, #c0392b, #e0544a); color: #fff;
+  font-weight: 700; font-size: .85rem; letter-spacing: .01em;
+  padding: .65rem 2.5rem;
+}
+.promo-topbar:hover { filter: brightness(1.05); }
+.promo-topbar__text { max-width: 60rem; }
+.promo-topbar__close {
+  position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
+  width: 1.6rem; height: 1.6rem; display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; color: #fff; opacity: .8; cursor: pointer; padding: 0;
+}
+.promo-topbar__close:hover { opacity: 1; }
+.promo-topbar__close svg { width: 1rem; height: 1rem; }
 
 .promo-banner { line-height: 0; }
 .promo-banner img { width: 100%; height: auto; display: block; }
@@ -2161,6 +2179,12 @@ body { padding-block-start: var(--header-h); }
 .mitem__head h3 { font-size: var(--step-1); margin: 0; }
 .mitem__dots { flex: 1 1 2rem; min-width: 1.5rem; border-block-end: 1px dotted var(--muted-dark); opacity: .4; transform: translateY(-.25em); }
 .mitem__price { font-weight: 600; color: var(--color-gold-deep); text-align: end; }
+.mitem__price s { color: var(--muted-dark); font-weight: 400; text-decoration-color: currentColor; margin-inline-end: .3em; }
+.mitem__badge {
+  display: inline-block; margin-inline-start: .4em; padding: .1em .5em; border-radius: 99px;
+  background: #c0392b; color: #fff; font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  vertical-align: middle;
+}
 .mitem__price s { color: var(--muted-dark); font-weight: 400; margin-inline-end: .3em; }
 .mitem__offer {
   display: inline-block; margin-inline-start: .5rem; padding: .1rem .5rem;
