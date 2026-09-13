@@ -33,6 +33,7 @@
   <nav class="oa-tabs">
     <button type="button" class="oa-tab is-active" data-oa-tab="orders">Orders</button>
     <button type="button" class="oa-tab" data-oa-tab="rewards">Reward points</button>
+    <button type="button" class="oa-tab" data-oa-tab="features">Site features</button>
     <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
   </nav>
 
@@ -69,6 +70,65 @@
         <p class="cart-checkout__note" data-oa-reward-success hidden></p>
         <button type="button" class="btn btn--reserve" data-oa-reward-submit>Award points</button>
       </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- site features -->
+  <section class="oa-panel" data-oa-panel="features" hidden>
+    <div class="oa-block oa-block--narrow">
+      <h2>Site features</h2>
+      <p class="oa-muted">Turn a feature off to hide it from customers immediately — for example, disable delivery during a staffing shortage, or reservations on a fully-booked day. Everything defaults to on.</p>
+
+      <label class="oa-toggle-row">
+        <span>
+          <strong>Online ordering</strong>
+          <small>Master switch — turning this off disables checkout entirely, site-wide.</small>
+        </span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="ordering_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+
+      <label class="oa-toggle-row">
+        <span>
+          <strong>Delivery</strong>
+          <small>If off, customers can only choose pickup at checkout.</small>
+        </span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="delivery_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+
+      <label class="oa-toggle-row">
+        <span>
+          <strong>Pickup</strong>
+          <small>If off, customers can only choose delivery at checkout.</small>
+        </span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="pickup_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+
+      <label class="oa-toggle-row">
+        <span>
+          <strong>Cash payment</strong>
+          <small>If off, customers can only pay via Easypaisa.</small>
+        </span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="cash_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+
+      <label class="oa-toggle-row">
+        <span>
+          <strong>Easypaisa payment</strong>
+          <small>If off, customers can only pay with cash.</small>
+        </span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="easypaisa_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+
+      <label class="oa-toggle-row">
+        <span>
+          <strong>Table reservations</strong>
+          <small>If off, the reservation form is replaced with a "fully booked" message.</small>
+        </span>
+        <span class="oa-toggle"><input type="checkbox" data-oa-feature="reservations_enabled"><span class="oa-toggle__track"></span></span>
+      </label>
+
+      <p class="cart-checkout__error" data-oa-features-error hidden></p>
+      <p class="cart-checkout__note" data-oa-features-success hidden></p>
     </div>
   </section>
 

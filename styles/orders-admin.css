@@ -60,6 +60,28 @@
 }
 .oa-status-btn:hover { background: var(--color-gold-deep); color: #fff; border-color: var(--color-gold-deep); }
 
+.oa-toggle-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  padding: .9rem 0; border-bottom: 1px solid rgba(128,97,38,.12); cursor: pointer;
+}
+.oa-toggle-row:last-of-type { border-bottom: none; }
+.oa-toggle-row strong { display: block; font-size: .9rem; }
+.oa-toggle-row small { display: block; color: var(--muted-dark); font-size: .78rem; margin-block-start: .15rem; }
+
+.oa-toggle { position: relative; flex: none; width: 2.75rem; height: 1.6rem; }
+.oa-toggle input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.oa-toggle__track {
+  position: absolute; inset: 0; background: #d8d2c4; border-radius: 999px;
+  transition: background-color .2s ease;
+}
+.oa-toggle__track::before {
+  content: ""; position: absolute; top: .15rem; left: .15rem;
+  width: 1.3rem; height: 1.3rem; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s ease;
+}
+.oa-toggle input:checked + .oa-toggle__track { background: var(--color-gold-deep, #8a6d1f); }
+.oa-toggle input:checked + .oa-toggle__track::before { transform: translateX(1.15rem); }
+
 .oa-block { max-width: 40rem; }
 .oa-block--narrow { max-width: 24rem; }
 .oa-block h2 { font-size: 1.1rem; margin: 0 0 .3rem; }

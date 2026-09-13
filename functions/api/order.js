@@ -9,11 +9,17 @@ import { newRequestId, logSecurityEvent } from "../_shared/log.js";
  *  defaults only if a row is somehow missing. */
 async function getSettings(env) {
   const rows = await dbSelect(env, "settings", "select=key,value");
-  const map = Object.fromEntries(rows.map((r) => [r.key, Number(r.value)]));
+  const raw = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+  const bool = (key, fallback = true) => (raw[key] != null ? raw[key] === true || raw[key] === "true" : fallback);
   return {
-    taxRate: map.tax_rate ?? 0,
-    deliveryFee: map.delivery_fee ?? 200,
-    freeDeliveryThreshold: map.free_delivery_threshold ?? 1000,
+    taxRate: Number(raw.tax_rate ?? 0),
+    deliveryFee: Number(raw.delivery_fee ?? 200),
+    freeDeliveryThreshold: Number(raw.free_delivery_threshold ?? 1000),
+    orderingEnabled: bool("ordering_enabled"),
+    deliveryEnabled: bool("delivery_enabled"),
+    pickupEnabled: bool("pickup_enabled"),
+    cashEnabled: bool("cash_enabled"),
+    easypaisaEnabled: bool("easypaisa_enabled"),
   };
 }
 
@@ -75,6 +81,27 @@ async function handleOrder({ request, env }) {
   }
   if (orderType === "delivery" && !String(customer.address || "").trim()) {
     return jsonResponse({ error: "Delivery address is required." }, 400);
+  }
+
+  // ----------------------------------------------------- feature toggles
+  // The frontend already hides disabled options, but that's UX only — a
+  // request crafted by hand (or a stale page left open before a toggle
+  // was flipped) must still be rejected here to actually enforce it.
+  const settings = await getSettings(env);
+  if (!settings.orderingEnabled) {
+    return jsonResponse({ error: "Online ordering is temporarily unavailable. Please call the restaurant directly." }, 403);
+  }
+  if (orderType === "delivery" && !settings.deliveryEnabled) {
+    return jsonResponse({ error: "Delivery is temporarily unavailable. Please choose pickup." }, 400);
+  }
+  if (orderType === "pickup" && !settings.pickupEnabled) {
+    return jsonResponse({ error: "Pickup is temporarily unavailable. Please choose delivery." }, 400);
+  }
+  if (paymentMethod === "cash" && !settings.cashEnabled) {
+    return jsonResponse({ error: "Cash payment is temporarily unavailable. Please choose Easypaisa." }, 400);
+  }
+  if (paymentMethod === "easypaisa" && !settings.easypaisaEnabled) {
+    return jsonResponse({ error: "Easypaisa payment is temporarily unavailable. Please choose cash." }, 400);
   }
 
   // -------------------------------------------------------- Turnstile
@@ -192,7 +219,6 @@ async function handleOrder({ request, env }) {
   }
   subtotal = Math.round(subtotal * 100) / 100;
 
-  const settings = await getSettings(env);
   const deliveryCharge = orderType === "delivery" ? (subtotal > settings.freeDeliveryThreshold ? 0 : settings.deliveryFee) : 0;
   const tax = Math.round(subtotal * settings.taxRate * 100) / 100;
   const total = Math.round((subtotal + deliveryCharge + tax) * 100) / 100;

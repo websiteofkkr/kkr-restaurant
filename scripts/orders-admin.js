@@ -250,16 +250,40 @@
     try {
       const data = await authedFetch("/api/admin/settings");
       (data.settings || []).forEach((s) => {
-        const input = $(`[data-oa-setting="${s.key}"]`);
-        if (!input) return;
-        if (s.key === "tax_rate") input.value = Number(s.value) * 100;
-        else if (s.key === "reward_rate") input.value = Number(s.value) * 100;
-        else input.value = s.value;
+        const numericInput = $(`[data-oa-setting="${s.key}"]`);
+        if (numericInput) {
+          if (s.key === "tax_rate") numericInput.value = Number(s.value) * 100;
+          else if (s.key === "reward_rate") numericInput.value = Number(s.value) * 100;
+          else numericInput.value = s.value;
+          return;
+        }
+        const toggleInput = $(`[data-oa-feature="${s.key}"]`);
+        if (toggleInput) toggleInput.checked = s.value === true || s.value === "true";
       });
     } catch (err) {
       console.error(err);
     }
   };
+
+  document.addEventListener("change", async (e) => {
+    const toggle = e.target.closest("[data-oa-feature]");
+    if (!toggle) return;
+    const errEl = $("[data-oa-features-error]");
+    const okEl = $("[data-oa-features-success]");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    const key = toggle.dataset.oaFeature;
+    const value = toggle.checked;
+    try {
+      await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key, value }) });
+      okEl.hidden = false;
+      okEl.textContent = "Saved — takes effect immediately for customers.";
+    } catch (err) {
+      toggle.checked = !value; // revert the visual toggle if the save failed
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
 
   $("[data-oa-settings-save]").addEventListener("click", async () => {
     const errEl = $("[data-oa-settings-error]");

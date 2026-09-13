@@ -18,6 +18,13 @@
   let STANDARD_DELIVERY = 200;
   let SALES_TAX_RATE = 0.05;
   let REWARD_RATE = 0.01;
+  let FEATURES = {
+    ordering_enabled: true,
+    delivery_enabled: true,
+    pickup_enabled: true,
+    cash_enabled: true,
+    easypaisa_enabled: true,
+  };
 
   const fetchSettings = async () => {
     try {
@@ -26,17 +33,61 @@
         headers: { apikey: anonKey },
       });
       const rows = await res.json();
-      const map = Object.fromEntries(rows.map((r) => [r.key, Number(r.value)]));
-      if (map.tax_rate != null) SALES_TAX_RATE = map.tax_rate;
-      if (map.delivery_fee != null) STANDARD_DELIVERY = map.delivery_fee;
-      if (map.free_delivery_threshold != null) FREE_DELIVERY_THRESHOLD = map.free_delivery_threshold;
-      if (map.reward_rate != null) REWARD_RATE = map.reward_rate;
+      const raw = Object.fromEntries(rows.map((r) => [r.key, r.value]));
+      if (raw.tax_rate != null) SALES_TAX_RATE = Number(raw.tax_rate);
+      if (raw.delivery_fee != null) STANDARD_DELIVERY = Number(raw.delivery_fee);
+      if (raw.free_delivery_threshold != null) FREE_DELIVERY_THRESHOLD = Number(raw.free_delivery_threshold);
+      if (raw.reward_rate != null) REWARD_RATE = Number(raw.reward_rate);
+      for (const key of Object.keys(FEATURES)) {
+        if (raw[key] != null) FEATURES[key] = raw[key] === true || raw[key] === "true";
+      }
+      applyFeatureToggles();
       renderSummary();
     } catch {
       // Settings fetch failing just means the estimate shown here uses the
       // defaults above until reload — the server (functions/api/order.js)
       // is the actual source of truth regardless, so nothing is at risk.
     }
+  };
+
+  /** Hides/disables order-type and payment options the restaurant has
+   *  turned off, and blocks checkout entirely if ordering itself is off —
+   *  see orders-admin's "Site features" tab. functions/api/order.js
+   *  enforces the same rules server-side, so this is UX, not the only
+   *  guard. */
+  const applyFeatureToggles = () => {
+    const disabledBanner = $("[data-ordering-disabled]");
+    const layout = $("[data-checkout-layout]");
+    if (!FEATURES.ordering_enabled) {
+      if (disabledBanner) disabledBanner.hidden = false;
+      if (layout) layout.hidden = true;
+      return;
+    }
+    if (disabledBanner) disabledBanner.hidden = true;
+
+    const deliveryOption = document.querySelector('input[name="kkr-order-type"][value="delivery"]');
+    const pickupOption = document.querySelector('input[name="kkr-order-type"][value="pickup"]');
+    if (deliveryOption) {
+      deliveryOption.closest(".cart-checkout__method").hidden = !FEATURES.delivery_enabled;
+      if (!FEATURES.delivery_enabled && deliveryOption.checked && pickupOption) pickupOption.checked = true;
+    }
+    if (pickupOption) {
+      pickupOption.closest(".cart-checkout__method").hidden = !FEATURES.pickup_enabled;
+      if (!FEATURES.pickup_enabled && pickupOption.checked && deliveryOption) deliveryOption.checked = true;
+    }
+
+    const cashOption = document.querySelector('input[name="kkr-payment"][value="cash"]');
+    const easypaisaOption = document.querySelector('input[name="kkr-payment"][value="easypaisa"]');
+    if (cashOption) {
+      cashOption.closest(".cart-checkout__method").hidden = !FEATURES.cash_enabled;
+      if (!FEATURES.cash_enabled && cashOption.checked && easypaisaOption) easypaisaOption.checked = true;
+    }
+    if (easypaisaOption) {
+      easypaisaOption.closest(".cart-checkout__method").hidden = !FEATURES.easypaisa_enabled;
+      if (!FEATURES.easypaisa_enabled && easypaisaOption.checked && cashOption) cashOption.checked = true;
+    }
+    renderOrderTypePanel();
+    renderPaymentPanel();
   };
 
   const computeTotals = () => {
@@ -78,8 +129,8 @@
     const hasItems = window.KKRCart.getCount() > 0;
     const sent = $("[data-checkout-sent]");
     const orderPlaced = sent && !sent.hidden;
-    if (empty) empty.hidden = hasItems || orderPlaced;
-    if (layout) layout.hidden = orderPlaced || !hasItems;
+    if (empty) empty.hidden = hasItems || orderPlaced || !FEATURES.ordering_enabled;
+    if (layout) layout.hidden = orderPlaced || !hasItems || !FEATURES.ordering_enabled;
   };
 
   const esc = (s) =>
