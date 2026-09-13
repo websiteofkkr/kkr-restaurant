@@ -1,4 +1,24 @@
+.mo-rewards-summary {
+  max-width: 48rem; margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: space-between;
+  background: var(--color-dark); color: var(--color-ivory); border-radius: var(--radius-card);
+  padding: 1rem 1.5rem; font-size: .95rem;
+}
+.mo-rewards-summary strong { color: var(--color-gold); font-size: 1.3rem; }
+
+.mo-card__reward {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .78rem; font-weight: 700; color: var(--color-gold-deep);
+  background: rgba(201,163,91,.12); border-radius: 99px; padding: .2rem .6rem;
+  margin-block-start: .5rem;
+}
+
 .mo-list { display: flex; flex-direction: column; gap: 1.25rem; max-width: 48rem; margin: 0 auto; }
+
+.mo-card--updated { border-color: var(--color-gold-deep); box-shadow: 0 0 0 2px rgba(201,163,91,.25); }
+.mo-card__updated-flag {
+  background: var(--color-gold-deep); color: #fff; font-size: .75rem; font-weight: 700;
+  padding: .3rem .7rem; border-radius: 6px; margin: -1.75rem -1.75rem 1rem; text-align: center;
+}
 
 .mo-card {
   background: #fff; border: 1px solid rgba(128,97,38,.18); border-radius: var(--radius-card);

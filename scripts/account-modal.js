@@ -64,6 +64,43 @@
 
   if (window.KKRAuth) window.KKRAuth.onChange(render);
 
+  /* ----------------------------------------------- order-update indicator
+     Lightweight, no extra backend: reuses the same "last seen status per
+     order" map the My Orders page writes to. This just compares against
+     it without updating it, so the dot stays on until the customer
+     actually opens My Orders and sees the change for themselves. */
+  const SEEN_KEY = "kkr-order-status-seen-v1";
+  const checkForUpdates = async () => {
+    const session = window.KKRAuth?.getSession();
+    if (!session) return;
+    try {
+      const res = await fetch("/api/my-orders", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      let seen = {};
+      try {
+        seen = JSON.parse(localStorage.getItem(SEEN_KEY) || "{}");
+      } catch {
+        /* ignore */
+      }
+      const hasUpdate = (data.orders || []).some((o) => {
+        const fp = `${o.payment_status}:${o.order_status}`;
+        const prev = seen[o.order_number];
+        return prev !== undefined && prev !== fp;
+      });
+      document.querySelectorAll("[data-account-toggle]").forEach((btn) => {
+        btn.classList.toggle("has-update", hasUpdate);
+      });
+    } catch {
+      /* silently skip — this is a nice-to-have, not critical */
+    }
+  };
+
+  window.addEventListener("DOMContentLoaded", checkForUpdates);
+  if (window.KKRAuth) window.KKRAuth.onChange(checkForUpdates);
+
   document.addEventListener("click", async (e) => {
     if (e.target.closest("[data-account-toggle]")) {
       openModal();

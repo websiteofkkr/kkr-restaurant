@@ -44,6 +44,15 @@
 .oa-badge--guest { background: #eee; color: #555; }
 .oa-badge--registered { background: #e6eefb; color: #1a4b8c; }
 
+.oa-pipeline { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; margin-block-end: .75rem; font-size: .78rem; }
+.oa-pipeline__step { padding: .2rem .55rem; border-radius: 6px; background: #eee; color: #888; font-weight: 600; }
+.oa-pipeline__step.is-done { background: rgba(201,163,91,.18); color: var(--color-gold-deep, #8a6d1f); }
+.oa-pipeline__step.is-current { background: var(--color-gold-deep, #8a6d1f); color: #fff; }
+.oa-pipeline__arrow { color: #ccc; }
+.oa-pipeline__cancelled { padding: .2rem .55rem; border-radius: 6px; background: #fbe3e1; color: #a3271e; font-weight: 700; font-size: .78rem; }
+
+.oa-status-btn--primary { border-color: var(--color-gold-deep, #8a6d1f); font-weight: 700; }
+
 .oa-status-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-block-start: .5rem; }
 .oa-status-btn {
   font-size: .75rem; font-weight: 600; padding: .35rem .7rem; border-radius: 6px;

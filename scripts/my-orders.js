@@ -22,7 +22,23 @@
       .join("")}</div>`;
   };
 
-  const renderOrder = (order) => {
+  const SEEN_KEY = "kkr-order-status-seen-v1";
+  const loadSeen = () => {
+    try {
+      return JSON.parse(localStorage.getItem(SEEN_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  };
+  const saveSeen = (map) => {
+    try {
+      localStorage.setItem(SEEN_KEY, JSON.stringify(map));
+    } catch {
+      /* non-fatal */
+    }
+  };
+
+  const renderOrder = (order, seenMap) => {
     const itemsHtml = (order.order_items || [])
       .map(
         (it) =>
@@ -30,8 +46,14 @@
       )
       .join("");
 
+    const statusFingerprint = `${order.payment_status}:${order.order_status}`;
+    const previouslySeen = seenMap[order.order_number];
+    const isNew = previouslySeen !== undefined && previouslySeen !== statusFingerprint;
+    seenMap[order.order_number] = statusFingerprint;
+
     return `
-      <article class="mo-card">
+      <article class="mo-card${isNew ? " mo-card--updated" : ""}">
+        ${isNew ? `<p class="mo-card__updated-flag">Status updated since your last visit</p>` : ""}
         <div class="mo-card__head">
           <div>
             <p class="mo-card__number">${esc(order.order_number)}</p>
@@ -49,6 +71,7 @@
           <span class="mo-card__total">Rs. ${fmt(order.total)}</span>
         </div>
         ${order.customer_notes ? `<p class="mo-card__meta"><strong>Notes:</strong> ${esc(order.customer_notes)}</p>` : ""}
+        ${order.reward_points_awarded > 0 ? `<span class="mo-card__reward">+${order.reward_points_awarded} reward points earned</span>` : ""}
       </article>`;
   };
 
@@ -62,9 +85,17 @@
       loggedOut.hidden = false;
       empty.hidden = true;
       list.hidden = true;
+      const summaryEl = $("[data-mo-rewards-summary]");
+      if (summaryEl) summaryEl.hidden = true;
       return;
     }
     loggedOut.hidden = true;
+
+    const summaryEl = $("[data-mo-rewards-summary]");
+    if (summaryEl) {
+      summaryEl.hidden = false;
+      $("[data-mo-total-points]").textContent = session.profile?.reward_points ?? 0;
+    }
 
     try {
       const res = await fetch("/api/my-orders", {
@@ -81,7 +112,9 @@
       }
       empty.hidden = true;
       list.hidden = false;
-      list.innerHTML = orders.map(renderOrder).join("");
+      const seenMap = loadSeen();
+      list.innerHTML = orders.map((o) => renderOrder(o, seenMap)).join("");
+      saveSeen(seenMap);
     } catch (err) {
       empty.hidden = false;
       empty.querySelector(".checkout__empty-title").textContent = "Could not load your orders.";

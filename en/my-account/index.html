@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Orders — KKR Khalid Khan Restaurant</title>
+<title>My Account — KKR Khalid Khan Restaurant</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="../../assets/img/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="../../assets/img/favicon.png">
@@ -51,28 +51,28 @@
 
 <main id="main" class="checkoutpage">
   <div class="checkout__head">
-    <h1>My Orders</h1>
+    <h1>My Account</h1>
     <a class="checkout__backlink" href="../../en/menu/index.html">&larr; Back to menu</a>
   </div>
 
-  <div data-mo-logged-out class="checkout__empty" hidden>
-    <p class="checkout__empty-title">Log in to see your orders.</p>
-    <p>Once you're logged in, every order you've placed while signed in will show up here with its current status.</p>
+  <div data-ma-logged-out class="checkout__empty" hidden>
+    <p class="checkout__empty-title">Log in to edit your profile.</p>
     <button type="button" class="btn btn--reserve" data-account-toggle>Log in / Register</button>
   </div>
 
-  <div data-mo-empty class="checkout__empty" hidden>
-    <p class="checkout__empty-title">No orders yet.</p>
-    <p>Orders you place while logged in will show up here.</p>
-    <a class="btn btn--reserve" href="../../en/menu/index.html">Browse the menu</a>
+  <div data-ma-form-wrap hidden style="max-width: 30rem; margin: 0 auto;">
+    <div class="checkout__block">
+      <h2 class="checkout__block-title">Your details</h2>
+      <input type="text" class="cart-input" placeholder="Full name" data-ma-name>
+      <input type="tel" class="cart-input" placeholder="Phone number" data-ma-phone>
+      <input type="email" class="cart-input" placeholder="Email" data-ma-email>
+      <input type="text" class="cart-input" placeholder="Default delivery address" data-ma-address>
+      <p class="cart-checkout__error" data-ma-error hidden></p>
+      <p class="cart-checkout__note" data-ma-success hidden></p>
+      <button type="button" class="btn btn--reserve" data-ma-save>Save changes</button>
+      <p class="checkout__backlink" style="margin-top:1rem;"><a href="../my-orders/index.html">View my orders &rarr;</a></p>
+    </div>
   </div>
-
-  <div data-mo-rewards-summary class="mo-rewards-summary" hidden>
-    <span>Your KKR Reward Points</span>
-    <strong data-mo-total-points>0</strong>
-  </div>
-
-  <div data-mo-list class="mo-list" hidden></div>
 </main>
 
 <div class="cart-drawer" data-account-modal hidden>
@@ -106,7 +106,8 @@
       <div data-account-panel="session" hidden>
         <p class="cart-checkout__label">Welcome back, <span data-acc-name>you</span></p>
         <p class="cart-checkout__note"><strong data-acc-points>0</strong> KKR Reward Points</p>
-        <a class="cart-drawer__back" href="../my-account/index.html">Edit my profile</a>
+        <a class="cart-drawer__back" href="../my-orders/index.html">View my orders</a>
+        <a class="cart-drawer__back" href="index.html">Edit my profile</a>
         <button type="button" class="cart-drawer__back" data-acc-logout>Log out</button>
       </div>
     </div>
@@ -141,7 +142,7 @@
 <script src="../../scripts/supabase-config.js" defer></script>
 <script src="../../scripts/auth.js" defer></script>
 <script src="../../scripts/account-modal.js" defer></script>
-<script src="../../scripts/my-orders.js" defer></script>
+<script src="../../scripts/my-account.js" defer></script>
 <script src="../../scripts/site.js?v=eb54d886a6" defer></script>
 </body>
 </html>

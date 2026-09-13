@@ -2498,6 +2498,11 @@ body { padding-block-start: var(--header-h); }
 }
 .cart-toggle__icon { width: 1.3rem; height: 1.3rem; }
 .cart-toggle__icon svg { width: 100%; height: 100%; }
+.cart-toggle.has-update::after {
+  content: ""; position: absolute; top: .35rem; right: .35rem;
+  width: .55rem; height: .55rem; border-radius: 50%;
+  background: var(--color-red, #b3261e); border: 1.5px solid #fff;
+}
 .cart-toggle__count {
   position: absolute; inset-block-start: -.3rem; inset-inline-end: -.3rem;
   min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem; border-radius: 999px;

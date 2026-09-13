@@ -70,18 +70,42 @@
   /* ------------------------------------------------------------ orders */
   let ordersCache = [];
 
+  const DELIVERY_STEPS = ["received", "confirmed", "preparing", "ready", "out_for_delivery", "delivered"];
+  const PICKUP_STEPS = ["received", "confirmed", "preparing", "ready", "picked_up"];
+  const STATUS_LABELS = {
+    received: "Received", confirmed: "Confirmed", preparing: "Preparing",
+    ready: "Ready", out_for_delivery: "Out for delivery", delivered: "Delivered",
+    picked_up: "Picked up", cancelled: "Cancelled",
+    pending: "Pending", verified: "Verified", rejected: "Rejected",
+  };
+  const label = (s) => STATUS_LABELS[s] || s;
+
+  const renderPipeline = (order) => {
+    if (order.order_status === "cancelled") {
+      return `<div class="oa-pipeline"><span class="oa-pipeline__cancelled">Cancelled</span></div>`;
+    }
+    const steps = order.order_type === "delivery" ? DELIVERY_STEPS : PICKUP_STEPS;
+    const currentIdx = steps.indexOf(order.order_status);
+    return `<div class="oa-pipeline">${steps
+      .map(
+        (s, i) =>
+          `<span class="oa-pipeline__step ${i <= currentIdx ? "is-done" : ""} ${i === currentIdx ? "is-current" : ""}">${label(s)}</span>`
+      )
+      .join('<span class="oa-pipeline__arrow">&rarr;</span>')}</div>`;
+  };
+
   const statusButtons = (order) => {
     const paymentOptions = PAYMENT_TRANSITIONS[order.payment_status] || [];
     const orderMap = order.order_type === "delivery" ? DELIVERY_TRANSITIONS : PICKUP_TRANSITIONS;
     const orderOptions = orderMap[order.order_status] || [];
 
     const paymentBtns = paymentOptions
-      .map((s) => `<button type="button" class="oa-status-btn" data-oa-set-payment="${s}">Mark payment: ${s}</button>`)
+      .map((s) => `<button type="button" class="oa-status-btn" data-oa-set-payment="${s}">Mark payment ${label(s)}</button>`)
       .join("");
     const orderBtns = orderOptions
-      .map((s) => `<button type="button" class="oa-status-btn" data-oa-set-order="${s}">Mark order: ${s}</button>`)
+      .map((s) => `<button type="button" class="oa-status-btn oa-status-btn--primary" data-oa-set-order="${s}">${s === "cancelled" ? "Cancel order" : "Move to: " + label(s)}</button>`)
       .join("");
-    return `<div class="oa-status-actions">${paymentBtns}${orderBtns}</div>`;
+    return `${renderPipeline(order)}<div class="oa-status-actions">${paymentBtns}${orderBtns}</div>`;
   };
 
   const renderOrders = () => {
@@ -99,8 +123,8 @@
             <br><span class="oa-badge ${o.customer_id ? "oa-badge--registered" : "oa-badge--guest"}">${o.customer_id ? "Registered" : "Guest"}</span>
           </td>
           <td>${o.order_type}</td>
-          <td>${esc(o.payment_method)}<br><span class="oa-badge oa-badge--${o.payment_status}">${o.payment_status}</span></td>
-          <td><span class="oa-badge oa-badge--${o.order_status}">${o.order_status}</span></td>
+          <td>${esc(o.payment_method)}<br><span class="oa-badge oa-badge--${o.payment_status}">${label(o.payment_status)}</span></td>
+          <td><span class="oa-badge oa-badge--${o.order_status}">${label(o.order_status)}</span></td>
           <td>Rs. ${fmt(o.total)}</td>
           <td>${new Date(o.created_at).toLocaleString()}</td>
         </tr>
