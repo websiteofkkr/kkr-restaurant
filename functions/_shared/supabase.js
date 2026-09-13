@@ -96,3 +96,29 @@ export function jsonResponse(body, status = 200) {
     headers: { "Content-Type": "application/json" },
   });
 }
+
+/**
+ * Wraps a Function handler so that (a) a missing/misconfigured environment
+ * variable and (b) any unexpected thrown error both come back as a clean
+ * JSON error response, instead of Cloudflare's generic HTML error page —
+ * which the browser can't parse as JSON, showing a confusing
+ * "Unexpected token '<'" instead of the real problem.
+ */
+export function withErrorHandling(handler, requiredEnvVars = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_ANON_KEY"]) {
+  return async (context) => {
+    const missing = requiredEnvVars.filter((k) => !context.env[k]);
+    if (missing.length) {
+      console.error("Missing environment variables:", missing.join(", "));
+      return jsonResponse(
+        { error: `Server is misconfigured (missing: ${missing.join(", ")}). Please contact the site owner.` },
+        500
+      );
+    }
+    try {
+      return await handler(context);
+    } catch (err) {
+      console.error("Unhandled error:", err);
+      return jsonResponse({ error: "Something went wrong. Please try again." }, 500);
+    }
+  };
+}

@@ -1,6 +1,6 @@
-import { dbSelect, getAuthUser, jsonResponse } from "../_shared/supabase.js";
+import { dbSelect, getAuthUser, jsonResponse, withErrorHandling } from "../_shared/supabase.js";
 
-export async function onRequestGet({ request, env }) {
+export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const auth = request.headers.get("Authorization") || "";
   const accessToken = auth.replace(/^Bearer\s+/i, "");
   const user = await getAuthUser(env, accessToken);
@@ -15,4 +15,4 @@ export async function onRequestGet({ request, env }) {
   );
 
   return jsonResponse({ orders });
-}
+});

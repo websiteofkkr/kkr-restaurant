@@ -1,4 +1,4 @@
-import { dbInsert, dbSelect, getAuthUser, jsonResponse } from "../_shared/supabase.js";
+import { dbInsert, dbSelect, getAuthUser, jsonResponse, withErrorHandling } from "../_shared/supabase.js";
 
 const REWARD_POINTS_ON_QUALIFYING_ORDER = 10;
 
@@ -16,7 +16,9 @@ async function getSettings(env) {
   };
 }
 
-export async function onRequestPost({ request, env }) {
+export const onRequestPost = withErrorHandling(handleOrder);
+
+async function handleOrder({ request, env }) {
   let body;
   try {
     body = await request.json();

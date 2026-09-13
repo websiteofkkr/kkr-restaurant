@@ -1,6 +1,6 @@
-import { dbSelect, jsonResponse } from "../_shared/supabase.js";
+import { dbSelect, jsonResponse, withErrorHandling } from "../_shared/supabase.js";
 
-export async function onRequestGet({ request, env }) {
+export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const url = new URL(request.url);
   const orderNumber = url.searchParams.get("order");
   const token = url.searchParams.get("token");
@@ -23,4 +23,4 @@ export async function onRequestGet({ request, env }) {
   }
 
   return jsonResponse({ order: rows[0] });
-}
+});

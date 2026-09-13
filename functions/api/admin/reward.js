@@ -1,9 +1,9 @@
-import { dbSelect, dbUpdate, dbInsert, jsonResponse } from "../../_shared/supabase.js";
+import { dbSelect, dbUpdate, dbInsert, jsonResponse, withErrorHandling } from "../../_shared/supabase.js";
 import { requireAdmin } from "../../_shared/admin.js";
 
 /** GET /api/admin/reward?q=search+term — search registered customers by
  *  name, phone, or email so the admin can find who to award points to. */
-export async function onRequestGet({ request, env }) {
+export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
   if (auth.error) return auth.error;
 
@@ -19,11 +19,11 @@ export async function onRequestGet({ request, env }) {
     `${filter}&select=id,full_name,phone,email,reward_points&limit=20`
   );
   return jsonResponse({ customers });
-}
+});
 
 /** POST /api/admin/reward — { customerId, points, reason } — award points
  *  not tied to any order (e.g. a photo competition prize). */
-export async function onRequestPost({ request, env }) {
+export const onRequestPost = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
   if (auth.error) return auth.error;
 
@@ -60,4 +60,4 @@ export async function onRequestPost({ request, env }) {
   await dbUpdate(env, "profiles", `id=eq.${customerId}`, { reward_points: newBalance });
 
   return jsonResponse({ success: true, newBalance });
-}
+});

@@ -1,4 +1,4 @@
-import { dbSelect, dbUpdate, dbInsert, jsonResponse } from "../../_shared/supabase.js";
+import { dbSelect, dbUpdate, dbInsert, jsonResponse, withErrorHandling } from "../../_shared/supabase.js";
 import {
   requireAdmin,
   PAYMENT_TRANSITIONS,
@@ -10,7 +10,7 @@ import {
 const REWARD_RATE_FALLBACK = 0.01; // 1 point per Rs. 100, used only if the
 // reward_rate row is somehow missing from settings
 
-export async function onRequestGet({ request, env }) {
+export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
   if (auth.error) return auth.error;
 
@@ -20,9 +20,9 @@ export async function onRequestGet({ request, env }) {
     "select=*,order_items(*)&order=created_at.desc&limit=200"
   );
   return jsonResponse({ orders });
-}
+});
 
-export async function onRequestPatch({ request, env }) {
+export const onRequestPatch = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
   if (auth.error) return auth.error;
 
@@ -112,4 +112,4 @@ export async function onRequestPatch({ request, env }) {
   if (historyRows.length) await dbInsert(env, "order_status_history", historyRows);
 
   return jsonResponse({ order: updated[0] });
-}
+});
