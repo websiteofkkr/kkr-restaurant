@@ -8,7 +8,7 @@ backend:
   name: github
   repo: websiteofkkr/kkr-restaurant
   branch: main
-  base_url: https://kkrrestaurant.pages.dev   # CHANGE ME
+  base_url: https://kkr-restaurant-esv.pages.dev   # CHANGE ME
   auth_endpoint: oauth
   commit_messages:
     create: "Add {{collection}} “{{slug}}” ({{author-login}})"
