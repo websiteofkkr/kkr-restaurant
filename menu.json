@@ -1,0 +1,1051 @@
+{
+  "currency": "PKR",
+  "categories": [
+    {
+      "id": "appetizers",
+      "name": "Appetizers",
+      "items": [
+        {
+          "id": "appetizers--french-fries",
+          "name": "French Fries",
+          "image": "/assets/img/menu/french-fries.webp",
+          "alt": "Basket of french fries with ketchup",
+          "available": true,
+          "price": 350.0
+        },
+        {
+          "id": "appetizers--fried-wings",
+          "name": "Fried Wings",
+          "image": "/assets/img/menu/fried-wings.webp",
+          "alt": "Plate of fried wings with ketchup",
+          "available": true,
+          "price": 499.0
+        },
+        {
+          "id": "appetizers--finger-fish",
+          "name": "Finger Fish",
+          "image": "/assets/img/menu/finger-fish.webp",
+          "alt": "Plate of finger fish with tartar sauce",
+          "available": true,
+          "price": 1199.0
+        },
+        {
+          "id": "appetizers--loaded-fries",
+          "name": "Loaded Fries",
+          "image": "/assets/img/menu/loaded-fries.webp",
+          "alt": "Bowl of loaded fries with cheese and toppings",
+          "available": true,
+          "price": 499.0
+        },
+        {
+          "id": "appetizers--shami-kabab",
+          "name": "Shami Kabab",
+          "image": "/assets/img/menu/shami-kabab.webp",
+          "alt": "Plate of shami kabab with onions and chutney",
+          "available": true,
+          "price": 100.0
+        },
+        {
+          "id": "appetizers--oven-roasted-wings",
+          "name": "Oven Roasted Wings",
+          "image": "/assets/img/menu/oven-roasted-wings.webp",
+          "alt": "Plate of oven roasted wings with lemon",
+          "available": true,
+          "price": 699.0
+        },
+        {
+          "id": "appetizers--fastfood-platter",
+          "name": "Fastfood Platter",
+          "image": "/assets/img/menu/fastfood-platter.webp",
+          "alt": "Fastfood platter with wings, fries and rolls",
+          "available": true,
+          "price": 999.0
+        }
+      ]
+    },
+    {
+      "id": "soups",
+      "name": "Soups",
+      "items": [
+        {
+          "id": "soups--hot-sour",
+          "name": "Hot & Sour",
+          "image": "/assets/img/menu/hot-sour-chicken.webp",
+          "alt": "Bowl of hot and sour chicken soup",
+          "available": true,
+          "variants": [
+            {
+              "id": "single",
+              "name": "Single",
+              "price": 230.0
+            },
+            {
+              "id": "family",
+              "name": "Family",
+              "price": 890.0
+            }
+          ]
+        },
+        {
+          "id": "soups--chicken-corn",
+          "name": "Chicken Corn",
+          "image": "/assets/img/menu/chicken-corn.webp",
+          "alt": "Bowl of chicken corn soup with peas",
+          "available": true,
+          "variants": [
+            {
+              "id": "single",
+              "name": "Single",
+              "price": 210.0
+            },
+            {
+              "id": "family",
+              "name": "Family",
+              "price": 820.0
+            }
+          ]
+        },
+        {
+          "id": "soups--kkr-special-soup",
+          "name": "KKR Special Soup",
+          "image": "/assets/img/menu/kkr-special-soup.webp",
+          "alt": "Bowl of KKR special soup with vegetables",
+          "available": true,
+          "variants": [
+            {
+              "id": "single",
+              "name": "Single",
+              "price": 310.0
+            },
+            {
+              "id": "family",
+              "name": "Family",
+              "price": 1050.0
+            }
+          ]
+        },
+        {
+          "id": "soups--chicken-chowmein",
+          "name": "Chicken Chowmein",
+          "image": "/assets/img/menu/chicken-chowmein.webp",
+          "alt": "Bowl of chicken chowmein soup with noodles",
+          "available": true,
+          "variants": [
+            {
+              "id": "single",
+              "name": "Single",
+              "price": 399.0
+            },
+            {
+              "id": "family",
+              "name": "Family",
+              "price": 999.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pizzas",
+      "name": "Pizzas",
+      "items": [
+        {
+          "id": "pizzas--kkr-special-pizza",
+          "name": "KKR Special Pizza",
+          "image": "/assets/img/menu/kkr-special-pizza.webp",
+          "alt": "KKR special pizza with mixed toppings",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 740.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 1440.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 1920.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 2950.0
+            }
+          ]
+        },
+        {
+          "id": "pizzas--crown-crust-pizza",
+          "name": "Crown Crust Pizza",
+          "image": "/assets/img/menu/crown-crust-pizza.webp",
+          "alt": "Crown crust pizza with stuffed bites around the edge",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 740.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 1440.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 1920.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 2950.0
+            }
+          ]
+        },
+        {
+          "id": "pizzas--stuffed-crust-pizza",
+          "name": "Stuffed Crust Pizza",
+          "image": "/assets/img/menu/stuffed-crust-pizza.webp",
+          "alt": "Stuffed crust pizza with cheese-filled edge",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 790.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 1590.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 2150.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 3200.0
+            }
+          ]
+        },
+        {
+          "id": "pizzas--chicken-tikka-pizza",
+          "name": "Chicken Tikka Pizza",
+          "image": "/assets/img/menu/chicken-tikka-pizza.webp",
+          "alt": "Chicken tikka pizza with peppers and olives",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 740.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 1440.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 1920.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 2950.0
+            }
+          ]
+        },
+        {
+          "id": "pizzas--creamy-melty-pizza",
+          "name": "Creamy Melty Pizza",
+          "image": "/assets/img/menu/creamy-melty-pizza.webp",
+          "alt": "Creamy melty white pizza with olives",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 790.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 1590.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 2150.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 3200.0
+            }
+          ]
+        },
+        {
+          "id": "pizzas--cheese-lover-pizza",
+          "name": "Cheese Lover Pizza",
+          "image": "/assets/img/menu/cheese-lover-pizza.webp",
+          "alt": "Cheese lover pizza with a cheese pull",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 660.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 1350.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 1800.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 2500.0
+            }
+          ]
+        },
+        {
+          "id": "pizzas--extra-topping",
+          "name": "Extra Topping",
+          "image": "/assets/img/menu/extra-topping.webp",
+          "alt": "Pizza with extra toppings including olives and onion",
+          "available": true,
+          "variants": [
+            {
+              "id": "s",
+              "name": "S",
+              "price": 200.0
+            },
+            {
+              "id": "m",
+              "name": "M",
+              "price": 300.0
+            },
+            {
+              "id": "l",
+              "name": "L",
+              "price": 450.0
+            },
+            {
+              "id": "f",
+              "name": "F",
+              "price": 550.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rolls",
+      "name": "Rolls Corner",
+      "items": [
+        {
+          "id": "rolls--bbq-paratha-roll",
+          "name": "BBQ Paratha Roll",
+          "image": "/assets/img/menu/bbq-paratha-roll.webp",
+          "alt": "BBQ paratha roll with sauce",
+          "available": true,
+          "price": 420.0
+        },
+        {
+          "id": "rolls--zinger-paratha-roll",
+          "name": "Zinger Paratha Roll",
+          "image": "/assets/img/menu/zinger-paratha-roll.webp",
+          "alt": "Zinger paratha roll with mayo",
+          "available": true,
+          "price": 490.0
+        },
+        {
+          "id": "rolls--crunchy-wrap",
+          "name": "Crunchy Wrap",
+          "image": "/assets/img/menu/crunchy-wrap.webp",
+          "alt": "Crunchy wrap with fried chicken and onion",
+          "available": true,
+          "price": 399.0
+        },
+        {
+          "id": "rolls--behari-roll",
+          "name": "Behari Roll",
+          "image": "/assets/img/menu/behari-roll.webp",
+          "alt": "Behari roll with onions and chutney",
+          "available": true,
+          "price": 599.0
+        }
+      ]
+    },
+    {
+      "id": "burgers",
+      "name": "Burgers",
+      "items": [
+        {
+          "id": "burgers--kkr-special-burger",
+          "name": "KKR Special Burger",
+          "image": "/assets/img/menu/kkr-special-burger.webp",
+          "alt": "KKR special burger with double patty and cheese",
+          "available": true,
+          "price": 699.0
+        },
+        {
+          "id": "burgers--combo-burger",
+          "name": "Combo Burger",
+          "image": "/assets/img/menu/combo-burger.webp",
+          "alt": "Combo burger with fries on the side",
+          "available": true,
+          "price": 650.0
+        },
+        {
+          "id": "burgers--shami-burger",
+          "name": "Shami Burger",
+          "image": "/assets/img/menu/shami-burger.webp",
+          "alt": "Shami burger with onions and lettuce",
+          "available": true,
+          "price": 300.0
+        },
+        {
+          "id": "burgers--zinger-burger",
+          "name": "Zinger Burger",
+          "image": "/assets/img/menu/zinger-burger.webp",
+          "alt": "Zinger burger with crispy fried chicken",
+          "available": true,
+          "price": 500.0
+        },
+        {
+          "id": "burgers--crunchy-burger",
+          "name": "Crunchy Burger",
+          "image": "/assets/img/menu/crunchy-burger.webp",
+          "alt": "Crunchy burger with cheese",
+          "available": true,
+          "price": 349.0
+        },
+        {
+          "id": "burgers--extra-cheese",
+          "name": "Extra cheese",
+          "image": "/assets/img/menu/extra-cheese.webp",
+          "alt": "Burger with extra cheese",
+          "available": true,
+          "price": 100.0
+        },
+        {
+          "id": "burgers--dip-sauce",
+          "name": "Dip sauce",
+          "image": "/assets/img/menu/dip-sauce.webp",
+          "alt": "Bowl of dip sauce",
+          "available": true,
+          "price": 70.0
+        }
+      ]
+    },
+    {
+      "id": "chapli-kabab",
+      "name": "Chapli Kabab",
+      "items": [
+        {
+          "id": "chapli-kabab--chapli-kabab-simple",
+          "name": "Chapli Kabab (Simple)",
+          "image": "/assets/img/menu/chapli-kabab-simple.webp",
+          "alt": "Plate of simple chapli kabab with salad",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 700.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1250.0
+            }
+          ]
+        },
+        {
+          "id": "chapli-kabab--chapli-kabab-with-egg",
+          "name": "Chapli Kabab with Egg",
+          "image": "/assets/img/menu/chapli-kabab-egg.webp",
+          "alt": "Chapli kabab topped with a fried egg",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 750.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1350.0
+            }
+          ]
+        },
+        {
+          "id": "chapli-kabab--chapli-kabab-with-paneer",
+          "name": "Chapli Kabab with Paneer",
+          "image": "/assets/img/menu/chapli-kabab-paneer.webp",
+          "alt": "Chapli kabab topped with grilled paneer",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 850.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1500.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "barbeque",
+      "name": "BBQ",
+      "items": [
+        {
+          "id": "barbeque--malai-boti-8-piece",
+          "name": "Malai Boti (8 piece)",
+          "image": "/assets/img/menu/malai-boti.webp",
+          "alt": "Skewers of malai boti chicken",
+          "available": true,
+          "price": 850.0
+        },
+        {
+          "id": "barbeque--chicken-tikka-boti-8-piece",
+          "name": "Chicken Tikka Boti (8 piece)",
+          "image": "/assets/img/menu/chicken-tikka-boti.webp",
+          "alt": "Plate of chicken tikka boti",
+          "available": true,
+          "price": 850.0
+        },
+        {
+          "id": "barbeque--chicken-seekh-kabab",
+          "name": "Chicken Seekh Kabab",
+          "image": "/assets/img/menu/chicken-seekh-kabab.webp",
+          "alt": "Skewers of chicken seekh kabab",
+          "available": true,
+          "price": 790.0
+        },
+        {
+          "id": "barbeque--beef-seekh-kabab",
+          "name": "Beef Seekh Kabab",
+          "image": "/assets/img/menu/beef-seekh-kabab.webp",
+          "alt": "Skewers of beef seekh kabab",
+          "available": true,
+          "price": 890.0
+        },
+        {
+          "id": "barbeque--dumba-patta-tikka-8-piece",
+          "name": "Dumba Patta Tikka (8 piece)",
+          "image": "/assets/img/menu/dumba-patta-tikka.webp",
+          "alt": "Plate of dumba patta tikka",
+          "available": true,
+          "price": 1200.0
+        },
+        {
+          "id": "barbeque--bukhari-dampukh-1-kg",
+          "name": "Bukhari Dampukh (1 kg)",
+          "image": "/assets/img/menu/bukhari-dampukh.webp",
+          "alt": "Plate of bukhari dampukh lamb",
+          "available": true,
+          "price": 3490.0
+        },
+        {
+          "id": "barbeque--boneless-fish-tikka-8-piece",
+          "name": "Boneless Fish Tikka (8 piece)",
+          "image": "/assets/img/menu/boneless-fish-tikka.webp",
+          "alt": "Plate of boneless fish tikka",
+          "available": true,
+          "price": 1590.0
+        }
+      ]
+    },
+    {
+      "id": "afghani",
+      "name": "Afghani Cuisine",
+      "items": [
+        {
+          "id": "afghani--uzbeki-special-polao",
+          "name": "Uzbeki Special Polao",
+          "image": "/assets/img/menu/uzbeki-special-polao.webp",
+          "alt": "Plate of uzbeki special polao with beef",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 910.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1700.0
+            }
+          ]
+        },
+        {
+          "id": "afghani--uzbeki-saada-polao",
+          "name": "Uzbeki Saada Polao",
+          "image": "/assets/img/menu/uzbeki-saada-polao.webp",
+          "alt": "Plate of uzbeki saada polao",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 490.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 750.0
+            }
+          ]
+        },
+        {
+          "id": "afghani--afghani-beef-tikka",
+          "name": "Afghani Beef Tikka",
+          "image": "/assets/img/menu/afghani-beef-tikka.webp",
+          "alt": "Plate of afghani beef tikka with onions",
+          "available": true,
+          "price": 799.0
+        },
+        {
+          "id": "afghani--afghani-beef-seekh-kabab",
+          "name": "Afghani Beef Seekh Kabab",
+          "image": "/assets/img/menu/afghani-beef-seekh-kabab.webp",
+          "alt": "Skewers of afghani beef seekh kabab",
+          "available": true,
+          "price": 650.0
+        },
+        {
+          "id": "afghani--namkin-rosh",
+          "name": "Namkin Rosh",
+          "image": "/assets/img/menu/namkin-rosh.webp",
+          "alt": "Bowl of namkin rosh lamb shank soup",
+          "available": true,
+          "price": 790.0
+        }
+      ]
+    },
+    {
+      "id": "shinwari",
+      "name": "Shinwari",
+      "items": [
+        {
+          "id": "shinwari--chicken-qurma",
+          "name": "Chicken Qurma",
+          "image": "/assets/img/menu/chicken-qurma.webp",
+          "alt": "Bowl of chicken qurma",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 1050.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1799.0
+            }
+          ]
+        },
+        {
+          "id": "shinwari--chicken-chatkhara",
+          "name": "Chicken Chatkhara",
+          "image": "/assets/img/menu/chicken-chatkhara.webp",
+          "alt": "Plate of chicken chatkhara",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 999.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1799.0
+            }
+          ]
+        },
+        {
+          "id": "shinwari--chicken-karahi",
+          "name": "Chicken Karahi",
+          "image": "/assets/img/menu/chicken-karahi.webp",
+          "alt": "Karahi of chicken karahi",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 999.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 1799.0
+            }
+          ]
+        },
+        {
+          "id": "shinwari--lamb-mutton-karahi",
+          "name": "Lamb / Mutton Karahi",
+          "image": "/assets/img/menu/lamb-mutton-karahi.webp",
+          "alt": "Karahi of lamb mutton karahi",
+          "available": true,
+          "price": 3600.0
+        },
+        {
+          "id": "shinwari--lamb-namkin-karahi",
+          "name": "Lamb Namkin Karahi",
+          "image": "/assets/img/menu/lamb-namkin-karahi.webp",
+          "alt": "Karahi of lamb namkin karahi",
+          "available": true,
+          "price": 3600.0
+        },
+        {
+          "id": "shinwari--lamb-sulimani-karahi",
+          "name": "Lamb Sulimani Karahi",
+          "image": "/assets/img/menu/lamb-sulimani-karahi.webp",
+          "alt": "Karahi of lamb sulimani karahi",
+          "available": true,
+          "price": 3600.0
+        },
+        {
+          "id": "shinwari--lamb-white-karahi",
+          "name": "Lamb White Karahi",
+          "image": "/assets/img/menu/lamb-white-karahi.webp",
+          "alt": "Karahi of lamb white karahi",
+          "available": true,
+          "price": 3600.0
+        },
+        {
+          "id": "shinwari--lamb-seekh-tikka",
+          "name": "Lamb Seekh Tikka",
+          "image": "/assets/img/menu/lamb-seekh-tikka.webp",
+          "alt": "Skewers of lamb seekh tikka",
+          "available": true,
+          "price": 3700.0
+        },
+        {
+          "id": "shinwari--chatpatha-lamb-mutton",
+          "name": "Chatpatha Lamb / Mutton",
+          "image": "/assets/img/menu/chatpatha-lamb-mutton.webp",
+          "alt": "Plate of chatpatha lamb mutton",
+          "available": true,
+          "price": 3700.0
+        }
+      ]
+    },
+    {
+      "id": "platters",
+      "name": "Platters",
+      "items": [
+        {
+          "id": "platters--bukhari-dampukh-platter",
+          "name": "Bukhari Dampukh Platter",
+          "image": "/assets/img/platter-1.webp",
+          "alt": "Bukhari Dampukh Platter",
+          "available": true,
+          "price": 6499.0
+        },
+        {
+          "id": "platters--bukhari-chicken-with-rice",
+          "name": "Bukhari Chicken with Rice",
+          "image": "/assets/img/menu/bukhari-chicken-rice.webp",
+          "alt": "Bowl of bukhari chicken with rice",
+          "available": true,
+          "price": 1990.0
+        },
+        {
+          "id": "platters--bukhari-dampukh-with-rice",
+          "name": "Bukhari Dampukh with Rice",
+          "image": "/assets/img/menu/bukhari-dampukh-rice.webp",
+          "alt": "Plate of bukhari dampukh with rice",
+          "available": true,
+          "price": 3899.0
+        },
+        {
+          "id": "platters--afghani-mix-platter",
+          "name": "Afghani Mix Platter",
+          "image": "/assets/img/platter-2.webp",
+          "alt": "Afghani Mix Platter",
+          "available": true,
+          "variants": [
+            {
+              "id": "half",
+              "name": "Half",
+              "price": 2890.0
+            },
+            {
+              "id": "full",
+              "name": "Full",
+              "price": 5390.0
+            }
+          ]
+        },
+        {
+          "id": "platters--chicken-lovers",
+          "name": "Chicken Lovers",
+          "image": "/assets/img/platter-3.webp",
+          "alt": "Chicken Lovers",
+          "available": true,
+          "price": 3900.0
+        },
+        {
+          "id": "platters--shahi-mix-platter",
+          "name": "Shahi Mix Platter",
+          "image": "/assets/img/menu/shahi-mix-platter-clean.webp",
+          "alt": "Shahi mix platter with lamb, chicken and seekh kabab",
+          "available": true,
+          "price": 14700.0
+        },
+        {
+          "id": "platters--damdaar-platter",
+          "name": "Damdaar Platter",
+          "image": "/assets/img/menu/damdaar-platter-clean.webp",
+          "alt": "Damdaar platter with mixed grilled meats",
+          "available": true,
+          "price": 11400.0
+        },
+        {
+          "id": "platters--kkr-special-lunch-box",
+          "name": "KKR Special Lunch Box",
+          "image": "/assets/img/menu/kkr-special-lunch-box.webp",
+          "alt": "KKR special lunch box with rice and sides",
+          "available": true,
+          "price": 690.0
+        }
+      ]
+    },
+    {
+      "id": "add-on",
+      "name": "Breads & Sides",
+      "items": [
+        {
+          "id": "add-on--roghni-nan",
+          "name": "Roghni Nan",
+          "image": "/assets/img/menu/roghni-nan.webp",
+          "alt": "Basket of roghni nan bread",
+          "available": true,
+          "price": 80.0
+        },
+        {
+          "id": "add-on--sada-naan",
+          "name": "Sada Naan",
+          "image": "/assets/img/menu/sada-naan.webp",
+          "alt": "Basket of plain naan bread",
+          "available": true,
+          "price": 30.0
+        },
+        {
+          "id": "add-on--fresh-salad",
+          "name": "Fresh Salad",
+          "image": "/assets/img/menu/fresh-salad.webp",
+          "alt": "Bowl of fresh salad with cucumber, tomato and onion",
+          "available": true,
+          "price": 120.0
+        },
+        {
+          "id": "add-on--raita",
+          "name": "Raita",
+          "image": "/assets/img/menu/raita.webp",
+          "alt": "Bowl of raita garnished with mint",
+          "available": true,
+          "price": 100.0
+        }
+      ]
+    },
+    {
+      "id": "hot-drinks",
+      "name": "Hot Section",
+      "items": [
+        {
+          "id": "hot-drinks--cappuccino",
+          "name": "Cappuccino",
+          "image": "/assets/img/menu/cappuccino.webp",
+          "alt": "Cappuccino with latte art in a white cup",
+          "available": true,
+          "price": 350.0
+        },
+        {
+          "id": "hot-drinks--caf-latte",
+          "name": "Café Latte",
+          "image": "/assets/img/menu/cafe-latte.webp",
+          "alt": "Layered cafe latte in a glass with latte art",
+          "available": true,
+          "price": 350.0
+        },
+        {
+          "id": "hot-drinks--black-coffee",
+          "name": "Black Coffee",
+          "image": "/assets/img/menu/black-coffee.webp",
+          "alt": "Black coffee in a glass mug with coffee beans",
+          "available": true,
+          "price": 300.0
+        },
+        {
+          "id": "hot-drinks--doodh-pati",
+          "name": "Doodh Pati",
+          "image": "/assets/img/menu/doodh-pati.webp",
+          "alt": "Doodh pati tea in a glass mug with spices",
+          "available": true,
+          "price": 130.0
+        },
+        {
+          "id": "hot-drinks--sada-chai",
+          "name": "Sada Chai",
+          "image": "/assets/img/menu/sada-chai.webp",
+          "alt": "Cup of sada chai with cinnamon and star anise",
+          "available": true,
+          "price": 80.0
+        },
+        {
+          "id": "hot-drinks--peshawri-kahva",
+          "name": "Peshawri Kahva",
+          "image": "/assets/img/menu/peshawri-kahva.webp",
+          "alt": "Peshwari kahva in an ornate cup and saucer",
+          "available": true,
+          "price": 50.0
+        }
+      ]
+    },
+    {
+      "id": "cold-drinks",
+      "name": "Cold Section",
+      "items": [
+        {
+          "id": "cold-drinks--water-small",
+          "name": "Water Small",
+          "image": "/assets/img/menu/water-small.webp",
+          "alt": "500ml bottle of mineral water",
+          "available": true,
+          "price": 70.0
+        },
+        {
+          "id": "cold-drinks--water-large",
+          "name": "Water Large",
+          "image": "/assets/img/menu/water-large.webp",
+          "alt": "1.5 litre bottle of mineral water",
+          "available": true,
+          "price": 120.0
+        },
+        {
+          "id": "cold-drinks--lemon-margarita",
+          "name": "Lemon Margarita",
+          "image": "/assets/img/menu/lemon-margarita.webp",
+          "alt": "Lemon margarita with a lemon wheel garnish",
+          "available": true,
+          "price": 250.0
+        },
+        {
+          "id": "cold-drinks--mint-margarita",
+          "name": "Mint Margarita",
+          "image": "/assets/img/menu/mint-margarita.webp",
+          "alt": "Mint margarita with fresh mint and lime",
+          "available": true,
+          "price": 250.0
+        },
+        {
+          "id": "cold-drinks--nr-bottle",
+          "name": "NR Bottle",
+          "image": "/assets/img/menu/nr-bottle.webp",
+          "alt": "250ml glass bottle of cold drink",
+          "available": true,
+          "price": 100.0
+        },
+        {
+          "id": "cold-drinks--can",
+          "name": "Can",
+          "image": "/assets/img/menu/can.webp",
+          "alt": "200ml can of cold drink",
+          "available": true,
+          "price": 150.0
+        },
+        {
+          "id": "cold-drinks--cold-coffee",
+          "name": "Cold Coffee",
+          "image": "/assets/img/menu/cold-coffee.webp",
+          "alt": "Iced cold coffee topped with cream",
+          "available": true,
+          "price": 350.0
+        },
+        {
+          "id": "cold-drinks--lassi",
+          "name": "Lassi",
+          "image": "/assets/img/menu/lassi.webp",
+          "alt": "Glass of lassi with a bowl of cream",
+          "available": true,
+          "price": 350.0
+        },
+        {
+          "id": "cold-drinks--fresh-lime",
+          "name": "Fresh Lime",
+          "image": "/assets/img/menu/fresh-lime.webp",
+          "alt": "Fresh lime drink with mint and lime wedges",
+          "available": true,
+          "price": 170.0
+        },
+        {
+          "id": "cold-drinks--icecream-shake",
+          "name": "Icecream Shake",
+          "image": "/assets/img/menu/icecream-shake.webp",
+          "alt": "Ice cream milkshake topped with cream",
+          "available": true,
+          "price": 330.0
+        }
+      ]
+    },
+    {
+      "id": "dessert",
+      "name": "Icecream & Dessert",
+      "items": [
+        {
+          "id": "dessert--molten-lava-cake",
+          "name": "Molten Lava Cake",
+          "image": "/assets/img/menu/lava-cake.webp",
+          "alt": "Molten lava cake with vanilla ice cream",
+          "available": true,
+          "price": 499.0
+        },
+        {
+          "id": "dessert--icecream-single-scoop",
+          "name": "Icecream Single Scoop",
+          "image": "/assets/img/menu/icecream-single.webp",
+          "alt": "Single scoop of ice cream with strawberry and mint",
+          "available": true,
+          "price": 180.0
+        },
+        {
+          "id": "dessert--icecream-double-scoop",
+          "name": "Icecream Double Scoop",
+          "image": "/assets/img/menu/icecream-double.webp",
+          "alt": "Double scoop of ice cream with chocolate drizzle",
+          "available": true,
+          "price": 350.0
+        }
+      ]
+    }
+  ]
+}

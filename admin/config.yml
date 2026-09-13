@@ -1,0 +1,1014 @@
+# Decap CMS — the restaurant's content editor.
+#
+# Set `repo` to your private GitHub repository before going live, and set
+# `base_url` to the live site address. Authentication happens through GitHub;
+# there are no passwords anywhere in this file or in the browser.
+
+backend:
+  name: github
+  repo: your-github-user/kkr-restaurant   # CHANGE ME
+  branch: main
+  base_url: https://kkrrestaurant.pages.dev   # CHANGE ME
+  auth_endpoint: oauth
+  commit_messages:
+    create: "Add {{collection}} “{{slug}}” ({{author-login}})"
+    update: "Update {{collection}} “{{slug}}” ({{author-login}})"
+    delete: "Remove {{collection}} “{{slug}}” ({{author-login}})"
+    uploadMedia: "Upload {{path}} ({{author-login}})"
+    deleteMedia: "Remove {{path}} ({{author-login}})"
+
+# Nothing is published straight to the live site: every change becomes a draft
+# that can be previewed and approved first.
+publish_mode: editorial_workflow
+
+# Lets you test the whole admin panel — including image uploads — on your own
+# computer before GitHub is connected. Run `npx decap-server` in this folder,
+# then open /admin with that server running: it edits the files on disk here
+# instead of talking to GitHub. Safe to leave on; it only activates when that
+# local server is actually running, and has no effect on the live site.
+local_backend: true
+
+media_folder: "content/uploads"
+public_folder: "/uploads"
+
+locale: en
+slug:
+  encoding: "ascii"
+  clean_accents: true
+
+collections:
+
+  # ---------------------------------------------------------------- en
+  - name: "settings_en"
+    label: "Restaurant details — English"
+    files:
+      - name: "site"
+        label: "Restaurant details"
+        file: "content/en/site.json"
+        description: "Name, logo, contact details and opening hours. These appear in the header, footer and contact section automatically."
+        fields:
+          - { label: "Restaurant name", name: "brand", widget: "object", fields: [
+              { label: "Name", name: "name", widget: "string" },
+              { label: "One-line description", name: "tagline", widget: "text" },
+              { label: "Logo", name: "logo", widget: "image", required: false },
+              { label: "Wide logo for the header", name: "wordmark", widget: "image", required: false, hint: "The KKR wordmark on its own. Leave empty to use the full logo." },
+              { label: "Cuisine", name: "cuisine", widget: "string", required: false },
+              { label: "Price range", name: "priceRange", widget: "select", options: ["$", "$$", "$$$"], required: false }
+            ] }
+          - { label: "Search engines", name: "seo", widget: "object", fields: [
+              { label: "Page title", name: "title", widget: "string", hint: "Shown in Google results and the browser tab. Under 60 characters." },
+              { label: "Page description", name: "description", widget: "text", hint: "Under 160 characters." },
+              { label: "Sharing image", name: "ogImage", widget: "image", required: false }
+            ] }
+          - { label: "Delivery strip (top of every page)", name: "delivery", widget: "object", collapsed: true, fields: [
+              { label: "Show the strip", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line", name: "label", widget: "string", required: false },
+              { label: "Main line", name: "text", widget: "string" },
+              { label: "Phone number shown beside it", name: "phone", widget: "string", required: false }
+            ] }
+          - { label: "Contact", name: "contact", widget: "object", fields: [
+              { label: "Phone numbers", name: "phones", widget: "list", fields: [
+                  { label: "Number", name: "number", widget: "string" }
+                ] },
+              { label: "WhatsApp number", name: "whatsapp", widget: "string", required: false, hint: "With country code, e.g. +92 300 1234567" },
+              { label: "WhatsApp opening message", name: "whatsappMessage", widget: "text", required: false, hint: "Pre-filled in the customer's WhatsApp when they tap the button." },
+              { label: "Email address", name: "email", widget: "string", required: false },
+              { label: "Address", name: "address", widget: "text" },
+              { label: "City", name: "city", widget: "string", required: false },
+              { label: "Google Maps link", name: "mapsUrl", widget: "string", required: false },
+              { label: "Latitude", name: "lat", widget: "number", value_type: "float", required: false },
+              { label: "Longitude", name: "lng", widget: "number", value_type: "float", required: false },
+              { label: "Opening hours", name: "hours", widget: "list", fields: [
+                  { label: "Days", name: "days", widget: "string" },
+                  { label: "Hours", name: "time", widget: "string" }
+                ] },
+              { label: "Social media", name: "social", widget: "list", required: false, fields: [
+                  { label: "Name", name: "name", widget: "string" },
+                  { label: "Icon", name: "icon", widget: "select", options: ["facebook", "instagram", "tiktok"] },
+                  { label: "Handle", name: "handle", widget: "string", required: false, hint: "e.g. @khalidkhanrestaurant" },
+                  { label: "Link", name: "url", widget: "string", required: false }
+                ] }
+            ] }
+
+      - name: "offer"
+        label: "Offer popup"
+        file: "content/en/offer.json"
+        description: "A short-lived promo popup that greets visitors when they land on the site. Turn it on, optionally set a stop date, and it switches itself off on its own — you don't need to come back and turn it off."
+        fields:
+          - { label: "Show this offer", name: "enabled", widget: "boolean", default: false, hint: "Turn on to start showing the popup to visitors. Turn off any time to stop it immediately." }
+          - { label: "Poster image", name: "image", widget: "image", required: false, hint: "Optional. Shows above the title and message." }
+          - { label: "Image description (for accessibility)", name: "imageAlt", widget: "string", required: false }
+          - { label: "Title", name: "title", widget: "string", required: false }
+          - { label: "Message", name: "message", widget: "text", required: false }
+          - { label: "Button text", name: "ctaLabel", widget: "string", required: false, default: "View menu" }
+          - { label: "Button link", name: "ctaLink", widget: "string", required: false, hint: "e.g. /en/menu/ or a WhatsApp link" }
+          - { label: "Start showing on", name: "startDate", widget: "datetime", required: false, hint: "Leave blank to start showing as soon as it's turned on." }
+          - { label: "Stop showing on", name: "endDate", widget: "datetime", required: false, hint: "Leave blank to keep showing until you turn it off manually." }
+          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
+
+      - name: "home"
+        label: "Homepage"
+        file: "content/en/home.json"
+        description: "Every section of the homepage, in order. Turn a section off and it disappears from the site."
+        fields:
+          - { label: "Hero", name: "hero", widget: "object", fields: [
+              { label: "Subheading", name: "sub", widget: "string", required: false },
+              { label: "Location line", name: "place", widget: "string", required: false },
+              { label: "Scroll cue text", name: "scrollLabel", widget: "string", required: false },
+              { label: "Headline", name: "title", widget: "string" },
+              { label: "Still frame", name: "image", widget: "image", hint: "Shown immediately, and instead of the video on slow connections." },
+              { label: "Hero video", name: "video", widget: "file", required: false, hint: "Silent MP4. Plays automatically, on a loop, beside the headline." },
+              { label: "Lighter video for phones", name: "videoSmall", widget: "file", required: false, hint: "The same clip, encoded smaller." }
+            ] }
+          - { label: "Peshawar film", name: "film", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Journey words", name: "beats", widget: "list", required: false, hint: "Peshawar, Heritage, Culture, Food, KKR Restaurant" },
+              { label: "Video file", name: "video", widget: "file", required: false, hint: "MP4, H.264. Plays only when a visitor presses play." },
+              { label: "Video file (WebM)", name: "videoWebm", widget: "file", required: false, hint: "Optional second format for browsers without H.264." },
+              { label: "Poster image", name: "poster", widget: "image", hint: "Shown before the video plays, and instead of it on slow phones." },
+              { label: "Poster description", name: "posterAlt", widget: "string", required: false },
+              { label: "Caption", name: "caption", widget: "string", required: false }
+            ] }
+          - { label: "About KKR", name: "about", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Photograph (also the video's still)", name: "image", widget: "image" },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false },
+              { label: "Video instead of the photograph", name: "video", widget: "file", required: false },
+              { label: "Video (WebM)", name: "videoWebm", widget: "file", required: false },
+              { label: "Accent line", name: "accent", widget: "string", required: false },
+              { label: "Second heading line (gold)", name: "titleAccent", widget: "string", required: false },
+              { label: "Line at the foot of the section", name: "tagline", widget: "string", required: false },
+              { label: "Side panel title", name: "panelTitle", widget: "string", required: false },
+              { label: "Side panel words", name: "panelWords", widget: "string", required: false }
+            ] }
+          - { label: "Message from the CEO", name: "ceo", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Section title", name: "title", widget: "string" },
+              { label: "CEO name", name: "name", widget: "string" },
+              { label: "Position", name: "position", widget: "string" },
+              { label: "Line under the rule", name: "company", widget: "string", required: false },
+              { label: "Message", name: "message", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Photograph", name: "photo", widget: "image", required: false },
+              { label: "Photograph description", name: "photoAlt", widget: "string", required: false },
+              { label: "Closing line", name: "closing", widget: "string", required: false },
+              { label: "Signature image", name: "signature", widget: "image", required: false }
+            ] }
+          - { label: "Signature dishes", name: "signature", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false, hint: "Dishes shown here are the ones ticked as Signature dish in the Menu." },
+              { label: "Extra platter photographs", name: "showcase", widget: "list", required: false, summary: "{{fields.name}}", fields: [
+                  { label: "Photograph", name: "image", widget: "image" },
+                  { label: "Name", name: "name", widget: "string" },
+                  { label: "Photograph description", name: "alt", widget: "string", required: false },
+                  { label: "Note under the name", name: "note", widget: "string", required: false }
+                ] }
+            ] }
+          - { label: "Menu tabs", name: "menuTabs", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false }
+            ] }
+          - { label: "Celebrations", name: "events", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Occasions", name: "items", widget: "list", required: false, fields: [
+                  { label: "Name", name: "label", widget: "string" },
+                  { label: "Icon", name: "icon", widget: "select", default: "arch", options: ["rings", "ring", "cake", "people", "peopleHeart", "briefcase", "calendar", "cloche", "dining", "toast", "arch"] }
+                ] },
+              { label: "Button text", name: "cta", widget: "string", required: false }
+            ] }
+          - { label: "Gallery section", name: "gallery", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false },
+              { label: "Follow button text", name: "followLabel", widget: "string", required: false }
+            ] }
+          - { label: "Reviews section", name: "reviews", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" }
+            ] }
+          - { label: "Call to action band", name: "ctaBand", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "text", required: false },
+              { label: "Call button text", name: "callLabel", widget: "string" },
+              { label: "Booking button text", name: "bookLabel", widget: "string" }
+            ] }
+          - { label: "Reservations", name: "reservation", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Headline", name: "headline", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Occasion choices", name: "types", widget: "list" },
+              { label: "WhatsApp opening message", name: "whatsappMessage", widget: "text", required: false }
+            ] }
+          - { label: "Contact section", name: "connect", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Second heading line (gold)", name: "titleAccent", widget: "string", required: false },
+              { label: "Lead paragraph", name: "lead", widget: "text", required: false },
+              { label: "Line under the buttons", name: "tagline", widget: "string", required: false },
+              { label: "Photograph", name: "image", widget: "image", required: false },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false },
+              { label: "Ways to eat", name: "ways", widget: "list", required: false, summary: "{{fields.text}}", fields: [
+                  { label: "Icon", name: "icon", widget: "select", options: ["scooter", "cloche", "home", "people", "call"], default: "scooter" },
+                  { label: "Text", name: "text", widget: "string" }
+                ] },
+              { label: "Delivery note (right side)", name: "deliveryNote", widget: "text", required: false },
+              { label: "Call card title", name: "callTitle", widget: "string" },
+              { label: "Email card title", name: "emailTitle", widget: "string" },
+              { label: "WhatsApp card title", name: "whatsappTitle", widget: "string" },
+              { label: "Visit card title", name: "visitTitle", widget: "string" },
+              { label: "Delivery card", name: "delivery", widget: "object", collapsed: true, fields: [
+                  { label: "Show this card", name: "enabled", widget: "boolean", default: true },
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Text", name: "text", widget: "text" },
+                  { label: "Button text", name: "ctaLabel", widget: "string", required: false }
+                ] },
+              { label: "Label above the form", name: "formBadge", widget: "string", required: false },
+              { label: "Message form title", name: "formTitle", widget: "string" }
+            ] }
+          - label: "Extra sections"
+            name: "sections"
+            widget: "list"
+            required: false
+            label_singular: "section"
+            summary: "{{fields.title}} ({{fields.type}})"
+            hint: "Add one of the approved section designs. They cannot contain code."
+            fields:
+              - { label: "Design", name: "type", widget: "select", options: [
+                    { label: "Text only", value: "text" },
+                    { label: "Photograph and text", value: "image_text" },
+                    { label: "Call to action", value: "cta" },
+                    { label: "Questions and answers", value: "faq" },
+                    { label: "Offer", value: "offer" }
+                  ] }
+              - { label: "Show this section", name: "enabled", widget: "boolean", default: true }
+              - { label: "Where it goes", name: "placement", widget: "select", default: "before_footer", options: [
+                    { label: "After About KKR", value: "after_about" },
+                    { label: "After signature dishes", value: "after_menu" },
+                    { label: "After the gallery", value: "after_gallery" },
+                    { label: "Just above the footer", value: "before_footer" }
+                  ] }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Text", name: "body", widget: "list", required: false, field: { label: "Paragraph", name: "p", widget: "text" } }
+              - { label: "Small label (Offer only)", name: "label", widget: "string", required: false }
+              - { label: "Photograph", name: "image", widget: "image", required: false }
+              - { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+              - { label: "Photograph on the other side", name: "flip", widget: "boolean", default: false, required: false }
+              - { label: "Button text", name: "ctaLabel", widget: "string", required: false }
+              - { label: "Button link", name: "ctaUrl", widget: "string", required: false, hint: "A page on this site, e.g. #reserve" }
+              - { label: "Questions", name: "items", widget: "list", required: false, fields: [
+                    { label: "Question", name: "question", widget: "string" },
+                    { label: "Answer", name: "answer", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } }
+                  ] }
+              - { label: "Anchor name", name: "id", widget: "string", required: false, pattern: ["^[a-z0-9-]*$", "Lowercase letters, numbers and hyphens only"] }
+
+      - name: "menu"
+        label: "Menu"
+        file: "content/en/menu.json"
+        description: "Categories, dishes and prices. Tick Signature dish to show a dish on the homepage."
+        fields:
+          - { label: "Page title", name: "title", widget: "string" }
+          - { label: "Intro", name: "intro", widget: "text", required: false }
+          - { label: "Search title", name: "seoTitle", widget: "string", required: false }
+          - { label: "Search description", name: "seoDescription", widget: "text", required: false }
+          - { label: "Section list label", name: "jumpLabel", widget: "string", required: false }
+          - { label: "Printed menu", name: "manual", widget: "object", collapsed: true, fields: [
+              { label: "Show the printed menu", name: "enabled", widget: "boolean", default: true },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "text", required: false },
+              { label: "PDF menu", name: "file", widget: "file", required: false },
+              { label: "Menu photographs", name: "images", widget: "list", required: false, field: { label: "Page", name: "img", widget: "image" } },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+            ] }
+          - label: "Categories"
+            name: "categories"
+            widget: "list"
+            label_singular: "category"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Category name", name: "name", widget: "string" }
+              - { label: "Short code", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and hyphens only"], hint: "Used in the web address. Keep it the same in all three languages." }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Order", name: "order", widget: "number", value_type: "int", default: 1 }
+              - label: "Dishes"
+                name: "items"
+                widget: "list"
+                label_singular: "dish"
+                summary: "{{fields.name}} — {{fields.price}}"
+                fields:
+                  - { label: "Dish name", name: "name", widget: "string" }
+                  - { label: "Description", name: "description", widget: "text", required: false }
+                  - { label: "Price", name: "price", widget: "string" }
+                  - { label: "Price before the offer", name: "priceBefore", widget: "string", required: false, hint: "Shown struck through beside the new price. Leave empty when there is no offer." }
+                  - { label: "Offer tag", name: "offer", widget: "string", required: false, hint: "A short badge on the card, for example: 15% off, or Weekend special." }
+                  - { label: "Sticker", name: "badge", widget: "string", required: false, hint: "A gold sticker on the item, for example: Best seller, Chef's pick, or New." }
+                  - { label: "Serves", name: "serves", widget: "string", required: false, hint: "For example: 5-6 persons. Shown on the platter cards." }
+                  - { label: "Available today", name: "available", widget: "boolean", default: true }
+                  - { label: "Signature dish", name: "featured", widget: "boolean", default: false }
+                  - { label: "Best food", name: "bestFood", widget: "boolean", default: false, hint: "Adds a gold 'Best Food' badge next to this dish everywhere it appears on the site." }
+                  - { label: "Photograph", name: "image", widget: "image", required: false }
+                  - { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+
+      - name: "gallery"
+        label: "Gallery"
+        file: "content/en/gallery.json"
+        fields:
+          - label: "Categories"
+            name: "categories"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Short code", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and hyphens only"] }
+          - label: "Photographs"
+            name: "images"
+            widget: "list"
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "Photograph", name: "src", widget: "image" }
+              - { label: "Description for screen readers", name: "alt", widget: "string", hint: "Describe what is in the photograph." }
+              - { label: "Caption", name: "caption", widget: "string", required: false }
+              - { label: "Category", name: "category", widget: "string", required: false }
+              - { label: "Order", name: "order", widget: "number", value_type: "int", default: 1 }
+              - { label: "Show this photograph", name: "enabled", widget: "boolean", default: true }
+
+      - name: "reviews"
+        label: "Customer reviews"
+        file: "content/en/reviews.json"
+        description: "Only add reviews real guests have given you. Leave the list empty and the section disappears from the site."
+        fields:
+          - label: "Reviews"
+            name: "items"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Customer name", name: "name", widget: "string" }
+              - { label: "Rating out of 5", name: "rating", widget: "number", value_type: "int", min: 1, max: 5, required: false }
+              - { label: "Review", name: "text", widget: "text" }
+
+
+  # ---------------------------------------------------------------- ur
+  - name: "settings_ur"
+    label: "Restaurant details — اردو — Urdu"
+    files:
+      - name: "site"
+        label: "Restaurant details"
+        file: "content/ur/site.json"
+        description: "Name, logo, contact details and opening hours. These appear in the header, footer and contact section automatically."
+        fields:
+          - { label: "Restaurant name", name: "brand", widget: "object", fields: [
+              { label: "Name", name: "name", widget: "string" },
+              { label: "One-line description", name: "tagline", widget: "text" },
+              { label: "Logo", name: "logo", widget: "image", required: false },
+              { label: "Wide logo for the header", name: "wordmark", widget: "image", required: false, hint: "The KKR wordmark on its own. Leave empty to use the full logo." },
+              { label: "Cuisine", name: "cuisine", widget: "string", required: false },
+              { label: "Price range", name: "priceRange", widget: "select", options: ["$", "$$", "$$$"], required: false }
+            ] }
+          - { label: "Search engines", name: "seo", widget: "object", fields: [
+              { label: "Page title", name: "title", widget: "string", hint: "Shown in Google results and the browser tab. Under 60 characters." },
+              { label: "Page description", name: "description", widget: "text", hint: "Under 160 characters." },
+              { label: "Sharing image", name: "ogImage", widget: "image", required: false }
+            ] }
+          - { label: "Delivery strip (top of every page)", name: "delivery", widget: "object", collapsed: true, fields: [
+              { label: "Show the strip", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line", name: "label", widget: "string", required: false },
+              { label: "Main line", name: "text", widget: "string" },
+              { label: "Phone number shown beside it", name: "phone", widget: "string", required: false }
+            ] }
+          - { label: "Contact", name: "contact", widget: "object", fields: [
+              { label: "Phone numbers", name: "phones", widget: "list", fields: [
+                  { label: "Number", name: "number", widget: "string" }
+                ] },
+              { label: "WhatsApp number", name: "whatsapp", widget: "string", required: false, hint: "With country code, e.g. +92 300 1234567" },
+              { label: "WhatsApp opening message", name: "whatsappMessage", widget: "text", required: false, hint: "Pre-filled in the customer's WhatsApp when they tap the button." },
+              { label: "Email address", name: "email", widget: "string", required: false },
+              { label: "Address", name: "address", widget: "text" },
+              { label: "City", name: "city", widget: "string", required: false },
+              { label: "Google Maps link", name: "mapsUrl", widget: "string", required: false },
+              { label: "Latitude", name: "lat", widget: "number", value_type: "float", required: false },
+              { label: "Longitude", name: "lng", widget: "number", value_type: "float", required: false },
+              { label: "Opening hours", name: "hours", widget: "list", fields: [
+                  { label: "Days", name: "days", widget: "string" },
+                  { label: "Hours", name: "time", widget: "string" }
+                ] },
+              { label: "Social media", name: "social", widget: "list", required: false, fields: [
+                  { label: "Name", name: "name", widget: "string" },
+                  { label: "Icon", name: "icon", widget: "select", options: ["facebook", "instagram", "tiktok"] },
+                  { label: "Handle", name: "handle", widget: "string", required: false, hint: "e.g. @khalidkhanrestaurant" },
+                  { label: "Link", name: "url", widget: "string", required: false }
+                ] }
+            ] }
+
+      - name: "offer"
+        label: "Offer popup"
+        file: "content/ur/offer.json"
+        description: "A short-lived promo popup that greets visitors when they land on the site. Turn it on, optionally set a stop date, and it switches itself off on its own — you don't need to come back and turn it off."
+        fields:
+          - { label: "Show this offer", name: "enabled", widget: "boolean", default: false, hint: "Turn on to start showing the popup to visitors. Turn off any time to stop it immediately." }
+          - { label: "Poster image", name: "image", widget: "image", required: false, hint: "Optional. Shows above the title and message." }
+          - { label: "Image description (for accessibility)", name: "imageAlt", widget: "string", required: false }
+          - { label: "Title", name: "title", widget: "string", required: false }
+          - { label: "Message", name: "message", widget: "text", required: false }
+          - { label: "Button text", name: "ctaLabel", widget: "string", required: false, default: "مینیو دیکھیں" }
+          - { label: "Button link", name: "ctaLink", widget: "string", required: false, hint: "e.g. /ur/menu/ or a WhatsApp link" }
+          - { label: "Start showing on", name: "startDate", widget: "datetime", required: false, hint: "Leave blank to start showing as soon as it's turned on." }
+          - { label: "Stop showing on", name: "endDate", widget: "datetime", required: false, hint: "Leave blank to keep showing until you turn it off manually." }
+          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
+
+      - name: "home"
+        label: "Homepage"
+        file: "content/ur/home.json"
+        description: "Every section of the homepage, in order. Turn a section off and it disappears from the site."
+        fields:
+          - { label: "Hero", name: "hero", widget: "object", fields: [
+              { label: "Subheading", name: "sub", widget: "string", required: false },
+              { label: "Location line", name: "place", widget: "string", required: false },
+              { label: "Scroll cue text", name: "scrollLabel", widget: "string", required: false },
+              { label: "Headline", name: "title", widget: "string" },
+              { label: "Still frame", name: "image", widget: "image", hint: "Shown immediately, and instead of the video on slow connections." },
+              { label: "Hero video", name: "video", widget: "file", required: false, hint: "Silent MP4. Plays automatically, on a loop, beside the headline." },
+              { label: "Lighter video for phones", name: "videoSmall", widget: "file", required: false, hint: "The same clip, encoded smaller." }
+            ] }
+          - { label: "Peshawar film", name: "film", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Journey words", name: "beats", widget: "list", required: false, hint: "Peshawar, Heritage, Culture, Food, KKR Restaurant" },
+              { label: "Video file", name: "video", widget: "file", required: false, hint: "MP4, H.264. Plays only when a visitor presses play." },
+              { label: "Video file (WebM)", name: "videoWebm", widget: "file", required: false, hint: "Optional second format for browsers without H.264." },
+              { label: "Poster image", name: "poster", widget: "image", hint: "Shown before the video plays, and instead of it on slow phones." },
+              { label: "Poster description", name: "posterAlt", widget: "string", required: false },
+              { label: "Caption", name: "caption", widget: "string", required: false }
+            ] }
+          - { label: "About KKR", name: "about", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Photograph", name: "image", widget: "image" },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+            ] }
+          - { label: "Message from the CEO", name: "ceo", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Section title", name: "title", widget: "string" },
+              { label: "CEO name", name: "name", widget: "string" },
+              { label: "Position", name: "position", widget: "string" },
+              { label: "Line under the rule", name: "company", widget: "string", required: false },
+              { label: "Message", name: "message", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Photograph", name: "photo", widget: "image", required: false },
+              { label: "Photograph description", name: "photoAlt", widget: "string", required: false },
+              { label: "Closing line", name: "closing", widget: "string", required: false },
+              { label: "Signature image", name: "signature", widget: "image", required: false }
+            ] }
+          - { label: "Signature dishes", name: "signature", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false, hint: "Dishes shown here are the ones ticked as Signature dish in the Menu." },
+              { label: "Extra platter photographs", name: "showcase", widget: "list", required: false, summary: "{{fields.name}}", fields: [
+                  { label: "Photograph", name: "image", widget: "image" },
+                  { label: "Name", name: "name", widget: "string" },
+                  { label: "Photograph description", name: "alt", widget: "string", required: false },
+                  { label: "Note under the name", name: "note", widget: "string", required: false }
+                ] }
+            ] }
+          - { label: "Menu tabs", name: "menuTabs", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false }
+            ] }
+          - { label: "Celebrations", name: "events", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Occasions", name: "items", widget: "list", required: false, fields: [
+                  { label: "Name", name: "label", widget: "string" },
+                  { label: "Icon", name: "icon", widget: "select", default: "arch", options: ["rings", "ring", "cake", "people", "peopleHeart", "briefcase", "calendar", "cloche", "dining", "toast", "arch"] }
+                ] },
+              { label: "Button text", name: "cta", widget: "string", required: false }
+            ] }
+          - { label: "Gallery section", name: "gallery", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false },
+              { label: "Follow button text", name: "followLabel", widget: "string", required: false }
+            ] }
+          - { label: "Reviews section", name: "reviews", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" }
+            ] }
+          - { label: "Call to action band", name: "ctaBand", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "text", required: false },
+              { label: "Call button text", name: "callLabel", widget: "string" },
+              { label: "Booking button text", name: "bookLabel", widget: "string" }
+            ] }
+          - { label: "Reservations", name: "reservation", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Headline", name: "headline", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Occasion choices", name: "types", widget: "list" },
+              { label: "WhatsApp opening message", name: "whatsappMessage", widget: "text", required: false }
+            ] }
+          - { label: "Contact section", name: "connect", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Second heading line (gold)", name: "titleAccent", widget: "string", required: false },
+              { label: "Lead paragraph", name: "lead", widget: "text", required: false },
+              { label: "Line under the buttons", name: "tagline", widget: "string", required: false },
+              { label: "Photograph", name: "image", widget: "image", required: false },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false },
+              { label: "Ways to eat", name: "ways", widget: "list", required: false, summary: "{{fields.text}}", fields: [
+                  { label: "Icon", name: "icon", widget: "select", options: ["scooter", "cloche", "home", "people", "call"], default: "scooter" },
+                  { label: "Text", name: "text", widget: "string" }
+                ] },
+              { label: "Delivery note (right side)", name: "deliveryNote", widget: "text", required: false },
+              { label: "Call card title", name: "callTitle", widget: "string" },
+              { label: "Email card title", name: "emailTitle", widget: "string" },
+              { label: "WhatsApp card title", name: "whatsappTitle", widget: "string" },
+              { label: "Visit card title", name: "visitTitle", widget: "string" },
+              { label: "Delivery card", name: "delivery", widget: "object", collapsed: true, fields: [
+                  { label: "Show this card", name: "enabled", widget: "boolean", default: true },
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Text", name: "text", widget: "text" },
+                  { label: "Button text", name: "ctaLabel", widget: "string", required: false }
+                ] },
+              { label: "Label above the form", name: "formBadge", widget: "string", required: false },
+              { label: "Message form title", name: "formTitle", widget: "string" }
+            ] }
+          - label: "Extra sections"
+            name: "sections"
+            widget: "list"
+            required: false
+            label_singular: "section"
+            summary: "{{fields.title}} ({{fields.type}})"
+            hint: "Add one of the approved section designs. They cannot contain code."
+            fields:
+              - { label: "Design", name: "type", widget: "select", options: [
+                    { label: "Text only", value: "text" },
+                    { label: "Photograph and text", value: "image_text" },
+                    { label: "Call to action", value: "cta" },
+                    { label: "Questions and answers", value: "faq" },
+                    { label: "Offer", value: "offer" }
+                  ] }
+              - { label: "Show this section", name: "enabled", widget: "boolean", default: true }
+              - { label: "Where it goes", name: "placement", widget: "select", default: "before_footer", options: [
+                    { label: "After About KKR", value: "after_about" },
+                    { label: "After signature dishes", value: "after_menu" },
+                    { label: "After the gallery", value: "after_gallery" },
+                    { label: "Just above the footer", value: "before_footer" }
+                  ] }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Text", name: "body", widget: "list", required: false, field: { label: "Paragraph", name: "p", widget: "text" } }
+              - { label: "Small label (Offer only)", name: "label", widget: "string", required: false }
+              - { label: "Photograph", name: "image", widget: "image", required: false }
+              - { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+              - { label: "Photograph on the other side", name: "flip", widget: "boolean", default: false, required: false }
+              - { label: "Button text", name: "ctaLabel", widget: "string", required: false }
+              - { label: "Button link", name: "ctaUrl", widget: "string", required: false, hint: "A page on this site, e.g. #reserve" }
+              - { label: "Questions", name: "items", widget: "list", required: false, fields: [
+                    { label: "Question", name: "question", widget: "string" },
+                    { label: "Answer", name: "answer", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } }
+                  ] }
+              - { label: "Anchor name", name: "id", widget: "string", required: false, pattern: ["^[a-z0-9-]*$", "Lowercase letters, numbers and hyphens only"] }
+
+      - name: "menu"
+        label: "Menu"
+        file: "content/ur/menu.json"
+        description: "Categories, dishes and prices. Tick Signature dish to show a dish on the homepage."
+        fields:
+          - { label: "Page title", name: "title", widget: "string" }
+          - { label: "Intro", name: "intro", widget: "text", required: false }
+          - { label: "Search title", name: "seoTitle", widget: "string", required: false }
+          - { label: "Search description", name: "seoDescription", widget: "text", required: false }
+          - { label: "Section list label", name: "jumpLabel", widget: "string", required: false }
+          - { label: "Printed menu", name: "manual", widget: "object", collapsed: true, fields: [
+              { label: "Show the printed menu", name: "enabled", widget: "boolean", default: true },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "text", required: false },
+              { label: "PDF menu", name: "file", widget: "file", required: false },
+              { label: "Menu photographs", name: "images", widget: "list", required: false, field: { label: "Page", name: "img", widget: "image" } },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+            ] }
+          - label: "Categories"
+            name: "categories"
+            widget: "list"
+            label_singular: "category"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Category name", name: "name", widget: "string" }
+              - { label: "Short code", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and hyphens only"], hint: "Used in the web address. Keep it the same in all three languages." }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Order", name: "order", widget: "number", value_type: "int", default: 1 }
+              - label: "Dishes"
+                name: "items"
+                widget: "list"
+                label_singular: "dish"
+                summary: "{{fields.name}} — {{fields.price}}"
+                fields:
+                  - { label: "Dish name", name: "name", widget: "string" }
+                  - { label: "Description", name: "description", widget: "text", required: false }
+                  - { label: "Price", name: "price", widget: "string" }
+                  - { label: "Price before the offer", name: "priceBefore", widget: "string", required: false, hint: "Shown struck through beside the new price. Leave empty when there is no offer." }
+                  - { label: "Offer tag", name: "offer", widget: "string", required: false, hint: "A short badge on the card, for example: 15% off, or Weekend special." }
+                  - { label: "Sticker", name: "badge", widget: "string", required: false, hint: "A gold sticker on the item, for example: Best seller, Chef's pick, or New." }
+                  - { label: "Serves", name: "serves", widget: "string", required: false, hint: "For example: 5-6 persons. Shown on the platter cards." }
+                  - { label: "Available today", name: "available", widget: "boolean", default: true }
+                  - { label: "Signature dish", name: "featured", widget: "boolean", default: false }
+                  - { label: "Best food", name: "bestFood", widget: "boolean", default: false, hint: "Adds a gold 'Best Food' badge next to this dish everywhere it appears on the site." }
+                  - { label: "Photograph", name: "image", widget: "image", required: false }
+                  - { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+
+      - name: "gallery"
+        label: "Gallery"
+        file: "content/ur/gallery.json"
+        fields:
+          - label: "Categories"
+            name: "categories"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Short code", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and hyphens only"] }
+          - label: "Photographs"
+            name: "images"
+            widget: "list"
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "Photograph", name: "src", widget: "image" }
+              - { label: "Description for screen readers", name: "alt", widget: "string", hint: "Describe what is in the photograph." }
+              - { label: "Caption", name: "caption", widget: "string", required: false }
+              - { label: "Category", name: "category", widget: "string", required: false }
+              - { label: "Order", name: "order", widget: "number", value_type: "int", default: 1 }
+              - { label: "Show this photograph", name: "enabled", widget: "boolean", default: true }
+
+      - name: "reviews"
+        label: "Customer reviews"
+        file: "content/ur/reviews.json"
+        description: "Only add reviews real guests have given you. Leave the list empty and the section disappears from the site."
+        fields:
+          - label: "Reviews"
+            name: "items"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Customer name", name: "name", widget: "string" }
+              - { label: "Rating out of 5", name: "rating", widget: "number", value_type: "int", min: 1, max: 5, required: false }
+              - { label: "Review", name: "text", widget: "text" }
+
+
+  # ---------------------------------------------------------------- ps
+  - name: "settings_ps"
+    label: "Restaurant details — پښتو — Pashto"
+    files:
+      - name: "site"
+        label: "Restaurant details"
+        file: "content/ps/site.json"
+        description: "Name, logo, contact details and opening hours. These appear in the header, footer and contact section automatically."
+        fields:
+          - { label: "Restaurant name", name: "brand", widget: "object", fields: [
+              { label: "Name", name: "name", widget: "string" },
+              { label: "One-line description", name: "tagline", widget: "text" },
+              { label: "Logo", name: "logo", widget: "image", required: false },
+              { label: "Wide logo for the header", name: "wordmark", widget: "image", required: false, hint: "The KKR wordmark on its own. Leave empty to use the full logo." },
+              { label: "Cuisine", name: "cuisine", widget: "string", required: false },
+              { label: "Price range", name: "priceRange", widget: "select", options: ["$", "$$", "$$$"], required: false }
+            ] }
+          - { label: "Search engines", name: "seo", widget: "object", fields: [
+              { label: "Page title", name: "title", widget: "string", hint: "Shown in Google results and the browser tab. Under 60 characters." },
+              { label: "Page description", name: "description", widget: "text", hint: "Under 160 characters." },
+              { label: "Sharing image", name: "ogImage", widget: "image", required: false }
+            ] }
+          - { label: "Delivery strip (top of every page)", name: "delivery", widget: "object", collapsed: true, fields: [
+              { label: "Show the strip", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line", name: "label", widget: "string", required: false },
+              { label: "Main line", name: "text", widget: "string" },
+              { label: "Phone number shown beside it", name: "phone", widget: "string", required: false }
+            ] }
+          - { label: "Contact", name: "contact", widget: "object", fields: [
+              { label: "Phone numbers", name: "phones", widget: "list", fields: [
+                  { label: "Number", name: "number", widget: "string" }
+                ] },
+              { label: "WhatsApp number", name: "whatsapp", widget: "string", required: false, hint: "With country code, e.g. +92 300 1234567" },
+              { label: "WhatsApp opening message", name: "whatsappMessage", widget: "text", required: false, hint: "Pre-filled in the customer's WhatsApp when they tap the button." },
+              { label: "Email address", name: "email", widget: "string", required: false },
+              { label: "Address", name: "address", widget: "text" },
+              { label: "City", name: "city", widget: "string", required: false },
+              { label: "Google Maps link", name: "mapsUrl", widget: "string", required: false },
+              { label: "Latitude", name: "lat", widget: "number", value_type: "float", required: false },
+              { label: "Longitude", name: "lng", widget: "number", value_type: "float", required: false },
+              { label: "Opening hours", name: "hours", widget: "list", fields: [
+                  { label: "Days", name: "days", widget: "string" },
+                  { label: "Hours", name: "time", widget: "string" }
+                ] },
+              { label: "Social media", name: "social", widget: "list", required: false, fields: [
+                  { label: "Name", name: "name", widget: "string" },
+                  { label: "Icon", name: "icon", widget: "select", options: ["facebook", "instagram", "tiktok"] },
+                  { label: "Handle", name: "handle", widget: "string", required: false, hint: "e.g. @khalidkhanrestaurant" },
+                  { label: "Link", name: "url", widget: "string", required: false }
+                ] }
+            ] }
+
+      - name: "offer"
+        label: "Offer popup"
+        file: "content/ps/offer.json"
+        description: "A short-lived promo popup that greets visitors when they land on the site. Turn it on, optionally set a stop date, and it switches itself off on its own — you don't need to come back and turn it off."
+        fields:
+          - { label: "Show this offer", name: "enabled", widget: "boolean", default: false, hint: "Turn on to start showing the popup to visitors. Turn off any time to stop it immediately." }
+          - { label: "Poster image", name: "image", widget: "image", required: false, hint: "Optional. Shows above the title and message." }
+          - { label: "Image description (for accessibility)", name: "imageAlt", widget: "string", required: false }
+          - { label: "Title", name: "title", widget: "string", required: false }
+          - { label: "Message", name: "message", widget: "text", required: false }
+          - { label: "Button text", name: "ctaLabel", widget: "string", required: false, default: "مینو وګورئ" }
+          - { label: "Button link", name: "ctaLink", widget: "string", required: false, hint: "e.g. /ps/menu/ or a WhatsApp link" }
+          - { label: "Start showing on", name: "startDate", widget: "datetime", required: false, hint: "Leave blank to start showing as soon as it's turned on." }
+          - { label: "Stop showing on", name: "endDate", widget: "datetime", required: false, hint: "Leave blank to keep showing until you turn it off manually." }
+          - { label: "Auto-close after (seconds)", name: "displaySeconds", widget: "number", default: 6, hint: "How long the popup stays before it closes itself. Visitors can also close it early with the × button." }
+
+      - name: "home"
+        label: "Homepage"
+        file: "content/ps/home.json"
+        description: "Every section of the homepage, in order. Turn a section off and it disappears from the site."
+        fields:
+          - { label: "Hero", name: "hero", widget: "object", fields: [
+              { label: "Subheading", name: "sub", widget: "string", required: false },
+              { label: "Location line", name: "place", widget: "string", required: false },
+              { label: "Scroll cue text", name: "scrollLabel", widget: "string", required: false },
+              { label: "Headline", name: "title", widget: "string" },
+              { label: "Still frame", name: "image", widget: "image", hint: "Shown immediately, and instead of the video on slow connections." },
+              { label: "Hero video", name: "video", widget: "file", required: false, hint: "Silent MP4. Plays automatically, on a loop, beside the headline." },
+              { label: "Lighter video for phones", name: "videoSmall", widget: "file", required: false, hint: "The same clip, encoded smaller." }
+            ] }
+          - { label: "Peshawar film", name: "film", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Journey words", name: "beats", widget: "list", required: false, hint: "Peshawar, Heritage, Culture, Food, KKR Restaurant" },
+              { label: "Video file", name: "video", widget: "file", required: false, hint: "MP4, H.264. Plays only when a visitor presses play." },
+              { label: "Video file (WebM)", name: "videoWebm", widget: "file", required: false, hint: "Optional second format for browsers without H.264." },
+              { label: "Poster image", name: "poster", widget: "image", hint: "Shown before the video plays, and instead of it on slow phones." },
+              { label: "Poster description", name: "posterAlt", widget: "string", required: false },
+              { label: "Caption", name: "caption", widget: "string", required: false }
+            ] }
+          - { label: "About KKR", name: "about", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Photograph", name: "image", widget: "image" },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+            ] }
+          - { label: "Message from the CEO", name: "ceo", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Section title", name: "title", widget: "string" },
+              { label: "CEO name", name: "name", widget: "string" },
+              { label: "Position", name: "position", widget: "string" },
+              { label: "Line under the rule", name: "company", widget: "string", required: false },
+              { label: "Message", name: "message", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Photograph", name: "photo", widget: "image", required: false },
+              { label: "Photograph description", name: "photoAlt", widget: "string", required: false },
+              { label: "Closing line", name: "closing", widget: "string", required: false },
+              { label: "Signature image", name: "signature", widget: "image", required: false }
+            ] }
+          - { label: "Signature dishes", name: "signature", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false, hint: "Dishes shown here are the ones ticked as Signature dish in the Menu." },
+              { label: "Extra platter photographs", name: "showcase", widget: "list", required: false, summary: "{{fields.name}}", fields: [
+                  { label: "Photograph", name: "image", widget: "image" },
+                  { label: "Name", name: "name", widget: "string" },
+                  { label: "Photograph description", name: "alt", widget: "string", required: false },
+                  { label: "Note under the name", name: "note", widget: "string", required: false }
+                ] }
+            ] }
+          - { label: "Menu tabs", name: "menuTabs", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false }
+            ] }
+          - { label: "Celebrations", name: "events", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Occasions", name: "items", widget: "list", required: false, fields: [
+                  { label: "Name", name: "label", widget: "string" },
+                  { label: "Icon", name: "icon", widget: "select", default: "arch", options: ["rings", "ring", "cake", "people", "peopleHeart", "briefcase", "calendar", "cloche", "dining", "toast", "arch"] }
+                ] },
+              { label: "Button text", name: "cta", widget: "string", required: false }
+            ] }
+          - { label: "Gallery section", name: "gallery", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Intro", name: "intro", widget: "text", required: false },
+              { label: "Follow button text", name: "followLabel", widget: "string", required: false }
+            ] }
+          - { label: "Reviews section", name: "reviews", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" }
+            ] }
+          - { label: "Call to action band", name: "ctaBand", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "text", required: false },
+              { label: "Call button text", name: "callLabel", widget: "string" },
+              { label: "Booking button text", name: "bookLabel", widget: "string" }
+            ] }
+          - { label: "Reservations", name: "reservation", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Headline", name: "headline", widget: "string" },
+              { label: "Text", name: "body", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } },
+              { label: "Occasion choices", name: "types", widget: "list" },
+              { label: "WhatsApp opening message", name: "whatsappMessage", widget: "text", required: false }
+            ] }
+          - { label: "Contact section", name: "connect", widget: "object", collapsed: true, fields: [
+              { label: "Show this section", name: "enabled", widget: "boolean", default: true },
+              { label: "Small line above the title", name: "kicker", widget: "string", required: false },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Second heading line (gold)", name: "titleAccent", widget: "string", required: false },
+              { label: "Lead paragraph", name: "lead", widget: "text", required: false },
+              { label: "Line under the buttons", name: "tagline", widget: "string", required: false },
+              { label: "Photograph", name: "image", widget: "image", required: false },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false },
+              { label: "Ways to eat", name: "ways", widget: "list", required: false, summary: "{{fields.text}}", fields: [
+                  { label: "Icon", name: "icon", widget: "select", options: ["scooter", "cloche", "home", "people", "call"], default: "scooter" },
+                  { label: "Text", name: "text", widget: "string" }
+                ] },
+              { label: "Delivery note (right side)", name: "deliveryNote", widget: "text", required: false },
+              { label: "Call card title", name: "callTitle", widget: "string" },
+              { label: "Email card title", name: "emailTitle", widget: "string" },
+              { label: "WhatsApp card title", name: "whatsappTitle", widget: "string" },
+              { label: "Visit card title", name: "visitTitle", widget: "string" },
+              { label: "Delivery card", name: "delivery", widget: "object", collapsed: true, fields: [
+                  { label: "Show this card", name: "enabled", widget: "boolean", default: true },
+                  { label: "Title", name: "title", widget: "string" },
+                  { label: "Text", name: "text", widget: "text" },
+                  { label: "Button text", name: "ctaLabel", widget: "string", required: false }
+                ] },
+              { label: "Label above the form", name: "formBadge", widget: "string", required: false },
+              { label: "Message form title", name: "formTitle", widget: "string" }
+            ] }
+          - label: "Extra sections"
+            name: "sections"
+            widget: "list"
+            required: false
+            label_singular: "section"
+            summary: "{{fields.title}} ({{fields.type}})"
+            hint: "Add one of the approved section designs. They cannot contain code."
+            fields:
+              - { label: "Design", name: "type", widget: "select", options: [
+                    { label: "Text only", value: "text" },
+                    { label: "Photograph and text", value: "image_text" },
+                    { label: "Call to action", value: "cta" },
+                    { label: "Questions and answers", value: "faq" },
+                    { label: "Offer", value: "offer" }
+                  ] }
+              - { label: "Show this section", name: "enabled", widget: "boolean", default: true }
+              - { label: "Where it goes", name: "placement", widget: "select", default: "before_footer", options: [
+                    { label: "After About KKR", value: "after_about" },
+                    { label: "After signature dishes", value: "after_menu" },
+                    { label: "After the gallery", value: "after_gallery" },
+                    { label: "Just above the footer", value: "before_footer" }
+                  ] }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Text", name: "body", widget: "list", required: false, field: { label: "Paragraph", name: "p", widget: "text" } }
+              - { label: "Small label (Offer only)", name: "label", widget: "string", required: false }
+              - { label: "Photograph", name: "image", widget: "image", required: false }
+              - { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+              - { label: "Photograph on the other side", name: "flip", widget: "boolean", default: false, required: false }
+              - { label: "Button text", name: "ctaLabel", widget: "string", required: false }
+              - { label: "Button link", name: "ctaUrl", widget: "string", required: false, hint: "A page on this site, e.g. #reserve" }
+              - { label: "Questions", name: "items", widget: "list", required: false, fields: [
+                    { label: "Question", name: "question", widget: "string" },
+                    { label: "Answer", name: "answer", widget: "list", field: { label: "Paragraph", name: "p", widget: "text" } }
+                  ] }
+              - { label: "Anchor name", name: "id", widget: "string", required: false, pattern: ["^[a-z0-9-]*$", "Lowercase letters, numbers and hyphens only"] }
+
+      - name: "menu"
+        label: "Menu"
+        file: "content/ps/menu.json"
+        description: "Categories, dishes and prices. Tick Signature dish to show a dish on the homepage."
+        fields:
+          - { label: "Page title", name: "title", widget: "string" }
+          - { label: "Intro", name: "intro", widget: "text", required: false }
+          - { label: "Search title", name: "seoTitle", widget: "string", required: false }
+          - { label: "Search description", name: "seoDescription", widget: "text", required: false }
+          - { label: "Section list label", name: "jumpLabel", widget: "string", required: false }
+          - { label: "Printed menu", name: "manual", widget: "object", collapsed: true, fields: [
+              { label: "Show the printed menu", name: "enabled", widget: "boolean", default: true },
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Text", name: "body", widget: "text", required: false },
+              { label: "PDF menu", name: "file", widget: "file", required: false },
+              { label: "Menu photographs", name: "images", widget: "list", required: false, field: { label: "Page", name: "img", widget: "image" } },
+              { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+            ] }
+          - label: "Categories"
+            name: "categories"
+            widget: "list"
+            label_singular: "category"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Category name", name: "name", widget: "string" }
+              - { label: "Short code", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and hyphens only"], hint: "Used in the web address. Keep it the same in all three languages." }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "Order", name: "order", widget: "number", value_type: "int", default: 1 }
+              - label: "Dishes"
+                name: "items"
+                widget: "list"
+                label_singular: "dish"
+                summary: "{{fields.name}} — {{fields.price}}"
+                fields:
+                  - { label: "Dish name", name: "name", widget: "string" }
+                  - { label: "Description", name: "description", widget: "text", required: false }
+                  - { label: "Price", name: "price", widget: "string" }
+                  - { label: "Price before the offer", name: "priceBefore", widget: "string", required: false, hint: "Shown struck through beside the new price. Leave empty when there is no offer." }
+                  - { label: "Offer tag", name: "offer", widget: "string", required: false, hint: "A short badge on the card, for example: 15% off, or Weekend special." }
+                  - { label: "Sticker", name: "badge", widget: "string", required: false, hint: "A gold sticker on the item, for example: Best seller, Chef's pick, or New." }
+                  - { label: "Serves", name: "serves", widget: "string", required: false, hint: "For example: 5-6 persons. Shown on the platter cards." }
+                  - { label: "Available today", name: "available", widget: "boolean", default: true }
+                  - { label: "Signature dish", name: "featured", widget: "boolean", default: false }
+                  - { label: "Best food", name: "bestFood", widget: "boolean", default: false, hint: "Adds a gold 'Best Food' badge next to this dish everywhere it appears on the site." }
+                  - { label: "Photograph", name: "image", widget: "image", required: false }
+                  - { label: "Photograph description", name: "imageAlt", widget: "string", required: false }
+
+      - name: "gallery"
+        label: "Gallery"
+        file: "content/ps/gallery.json"
+        fields:
+          - label: "Categories"
+            name: "categories"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Short code", name: "id", widget: "string", pattern: ["^[a-z0-9-]+$", "Lowercase letters, numbers and hyphens only"] }
+          - label: "Photographs"
+            name: "images"
+            widget: "list"
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: "Photograph", name: "src", widget: "image" }
+              - { label: "Description for screen readers", name: "alt", widget: "string", hint: "Describe what is in the photograph." }
+              - { label: "Caption", name: "caption", widget: "string", required: false }
+              - { label: "Category", name: "category", widget: "string", required: false }
+              - { label: "Order", name: "order", widget: "number", value_type: "int", default: 1 }
+              - { label: "Show this photograph", name: "enabled", widget: "boolean", default: true }
+
+      - name: "reviews"
+        label: "Customer reviews"
+        file: "content/ps/reviews.json"
+        description: "Only add reviews real guests have given you. Leave the list empty and the section disappears from the site."
+        fields:
+          - label: "Reviews"
+            name: "items"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Customer name", name: "name", widget: "string" }
+              - { label: "Rating out of 5", name: "rating", widget: "number", value_type: "int", min: 1, max: 5, required: false }
+              - { label: "Review", name: "text", widget: "text" }

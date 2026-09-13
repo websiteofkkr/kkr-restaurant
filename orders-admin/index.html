@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KKR Orders Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="../styles/site.css?v=eb54d886a6">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=1">
+</head>
+<body class="orders-admin">
+
+<div class="oa-login" data-oa-login>
+  <div class="oa-login__card">
+    <h1>KKR Orders Admin</h1>
+    <p class="oa-muted">Log in with an admin account.</p>
+    <input type="email" class="cart-input" placeholder="Email" data-oa-email autocomplete="email">
+    <input type="password" class="cart-input" placeholder="Password" data-oa-password autocomplete="current-password">
+    <p class="cart-checkout__error" data-oa-login-error hidden></p>
+    <button type="button" class="btn btn--reserve cart-checkout__wide" data-oa-login-submit>Log in</button>
+  </div>
+</div>
+
+<div class="oa-app" data-oa-app hidden>
+  <header class="oa-header">
+    <h1>KKR Orders Admin</h1>
+    <div class="oa-header__right">
+      <span data-oa-whoami></span>
+      <button type="button" class="cart-drawer__back" data-oa-logout>Log out</button>
+    </div>
+  </header>
+
+  <nav class="oa-tabs">
+    <button type="button" class="oa-tab is-active" data-oa-tab="orders">Orders</button>
+    <button type="button" class="oa-tab" data-oa-tab="rewards">Reward points</button>
+    <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
+  </nav>
+
+  <!-- ------------------------------------------------------------ orders -->
+  <section class="oa-panel" data-oa-panel="orders">
+    <div class="oa-toolbar">
+      <button type="button" class="btn btn--ghost" data-oa-refresh-orders>Refresh</button>
+      <span class="oa-muted" data-oa-orders-count></span>
+    </div>
+    <div class="oa-table-wrap">
+      <table class="oa-table">
+        <thead>
+          <tr>
+            <th>Order</th><th>Customer</th><th>Type</th><th>Payment</th><th>Order status</th><th>Total</th><th>Placed</th>
+          </tr>
+        </thead>
+        <tbody data-oa-orders-body></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------- rewards -->
+  <section class="oa-panel" data-oa-panel="rewards" hidden>
+    <div class="oa-block">
+      <h2>Award reward points</h2>
+      <p class="oa-muted">For manual competitions or goodwill gestures — separate from points earned automatically on confirmed orders. Only registered customers can receive points.</p>
+      <input type="text" class="cart-input" placeholder="Search by name, phone, or email" data-oa-reward-search>
+      <ul class="oa-reward-results" data-oa-reward-results></ul>
+      <div class="oa-reward-form" data-oa-reward-form hidden>
+        <p><strong data-oa-reward-selected-name></strong> — <span data-oa-reward-selected-points></span> current points</p>
+        <input type="number" class="cart-input" placeholder="Points to award (e.g. 50, or -10 to deduct)" data-oa-reward-points>
+        <input type="text" class="cart-input" placeholder="Reason (e.g. September photo competition winner)" data-oa-reward-reason>
+        <p class="cart-checkout__error" data-oa-reward-error hidden></p>
+        <p class="cart-checkout__note" data-oa-reward-success hidden></p>
+        <button type="button" class="btn btn--reserve" data-oa-reward-submit>Award points</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- settings -->
+  <section class="oa-panel" data-oa-panel="settings" hidden>
+    <div class="oa-block oa-block--narrow">
+      <h2>Storefront settings</h2>
+      <p class="oa-muted">Changes apply to every order placed after saving. Past orders keep the tax/delivery amounts they were charged at the time.</p>
+
+      <label class="oa-field">
+        <span>Tax rate (%)</span>
+        <input type="number" step="0.1" min="0" max="100" class="cart-input" data-oa-setting="tax_rate">
+      </label>
+      <label class="oa-field">
+        <span>Delivery fee (Rs.)</span>
+        <input type="number" step="1" min="0" class="cart-input" data-oa-setting="delivery_fee">
+      </label>
+      <label class="oa-field">
+        <span>Free delivery threshold (Rs.)</span>
+        <input type="number" step="1" min="0" class="cart-input" data-oa-setting="free_delivery_threshold">
+      </label>
+      <label class="oa-field">
+        <span>Reward points earned per Rs. 100 spent on food</span>
+        <input type="number" step="0.1" min="0" class="cart-input" data-oa-setting="reward_rate">
+      </label>
+
+      <p class="cart-checkout__error" data-oa-settings-error hidden></p>
+      <p class="cart-checkout__note" data-oa-settings-success hidden></p>
+      <button type="button" class="btn btn--reserve" data-oa-settings-save>Save settings</button>
+    </div>
+  </section>
+</div>
+
+<script src="../scripts/supabase-config.js" defer></script>
+<script src="../scripts/auth.js" defer></script>
+<script src="../scripts/orders-admin.js" defer></script>
+</body>
+</html>

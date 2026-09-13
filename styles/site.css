@@ -1,0 +1,3113 @@
+/* ==========================================================================
+   KKR Restaurant
+   Gold, white and warm black, taken from the KKR mark itself. Light sections
+   are ivory or white with charcoal text; dark sections are warm black with
+   white text. Gold is the only accent: rules, prices, and the pointed-arch
+   frame borrowed from old Peshawar's ivans.
+   ========================================================================== */
+
+/* Modern Peshawari luxury: dark cinematic ground, antique gold used sparingly,
+   warm ivory for the sections that need to breathe. */
+:root {
+  --color-dark:        #0B0907;
+  --color-dark-surface:#15110C;
+  --color-darkest:     #090806;
+  --color-gold:        #C9A35B;
+  --color-gold-light:  #E7C982;
+  --color-gold-deep:   #806126;
+  --color-ivory:       #F6F0E7;
+  --page:              #FFFFFF;   /* the light sections are white now */
+  --color-cream:       #E9DDCA;
+  --color-muted:       #B8AB96;
+  --color-white:       #FFFFFF;
+  --color-red:         #7B1E14;   /* deep pomegranate — the accent band */
+  --color-red-deep:    #5E1610;
+  --color-sage:        #6E7C63;   /* the corner accent on the celebration cards */
+
+  /* Names used throughout the stylesheet, mapped onto the palette above. */
+  --ink:        var(--color-dark);
+  --ink-raised: var(--color-dark-surface);
+  --ink-line:   #241D14;
+  --white:      var(--color-white);
+  --ivory:      var(--color-ivory);
+  --ivory-2:    var(--color-cream);
+  --gold:       var(--color-gold);
+  --gold-bright:var(--color-gold-light);
+  --gold-deep:  var(--color-gold-deep);
+  --gold-light: var(--color-gold-light);
+  --muted:      var(--color-muted);
+  --muted-dark: #6F6353;
+  --danger:     #A8402C;
+
+  --display: "Marcellus", "Times New Roman", serif;
+  --poster: "Anton", "Arial Narrow", system-ui, sans-serif;
+  --body: "Karla", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --step--1: clamp(.82rem, .79rem + .14vw, .9rem);
+  --step-0:  clamp(1rem, .96rem + .2vw, 1.09rem);
+  --step-1:  clamp(1.2rem, 1.1rem + .5vw, 1.45rem);
+  --step-2:  clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+  --step-3:  clamp(1.9rem, 1.5rem + 2vw, 3.1rem);
+  --step-4:  clamp(2.5rem, 1.6rem + 3.6vw, 5rem);
+
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --rhythm: clamp(2.25rem, 5vw, 4.5rem);
+  --measure: 62ch;
+  --shell: 78rem;
+  --radius: 3px;
+  --radius-card: 14px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --header-h: 7.4rem;
+}
+
+/* ------------------------------------------------------------------ reset */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 1.5rem); }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 400 var(--step-0)/1.65 var(--body);
+  overflow-x: hidden;
+}
+img, svg, video { display: block; max-width: 100%; height: auto; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.14; margin: 0 0 .6em; }
+p { margin: 0 0 1em; max-width: var(--measure); }
+a { color: inherit; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+.arch-defs { position: absolute; width: 0; height: 0; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.skip {
+  position: absolute; inset-block-start: -100%; inset-inline-start: 1rem; z-index: 100;
+  background: var(--ink); color: var(--white); padding: .7rem 1.1rem;
+}
+.skip:focus { inset-block-start: 1rem; }
+
+/* ------------------------------------------------- Urdu and Pashto scripts
+
+   Arabic-script type must never be letter-spaced: the gaps break the shape of
+   the word. It also needs a larger size and much more leading than Latin. */
+
+.lang-ur, .lang-ps { font-size: 1.06em; }
+.lang-ur { font-family: "Noto Nastaliq Urdu", var(--body); line-height: 2.45; }
+.lang-ur h1, .lang-ur h2, .lang-ur h3 { font-family: "Noto Nastaliq Urdu", var(--display); line-height: 2; }
+.lang-ur .hero__title { line-height: 1.9; }
+.lang-ps { font-family: "Noto Naskh Arabic", var(--body); line-height: 2.05; }
+.lang-ps h1, .lang-ps h2, .lang-ps h3 { font-family: "Noto Naskh Arabic", var(--display); line-height: 1.75; }
+
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3,
+[dir="rtl"] .btn, [dir="rtl"] .sitenav__list a, [dir="rtl"] .langs a,
+[dir="rtl"] .hero__kicker, [dir="rtl"] .film__beats, [dir="rtl"] .film__play,
+[dir="rtl"] .ceo__role, [dir="rtl"] .chip, [dir="rtl"] .review figcaption,
+[dir="rtl"] .field label, [dir="rtl"] .block__eyebrow, [dir="rtl"] .menu__jump a,
+[dir="rtl"] .mitem__tag, [dir="rtl"] .footer h2, [dir="rtl"] .section-head h2,
+[dir="rtl"] .events__list li, [dir="rtl"] .ccard h3, [dir="rtl"] .stars {
+  letter-spacing: normal;
+}
+/* Nastaliq descends a long way; give it room inside controls. */
+.lang-ur .btn { padding-block: .95rem 1.15rem; }
+.lang-ur .field input, .lang-ur .field select { padding-block: .85rem 1rem; }
+/* Prices and phone numbers stay left-to-right inside right-to-left text. */
+[dir="rtl"] .mitem__price, [dir="rtl"] .dish__price,
+[dir="rtl"] .footer__hours li, [dir="rtl"] .ccard p { direction: ltr; unicode-bidi: isolate; text-align: start; }
+[dir="rtl"] .footer__hours li { flex-direction: row-reverse; }
+
+/* --------------------------------------------------------------- helpers */
+
+.kicker {
+  font-family: var(--body); font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold); margin: 0 0 1rem;
+}
+/* Arabic script must not be tracked out or forced to uppercase. */
+[dir="rtl"] .kicker { letter-spacing: normal; text-transform: none; font-weight: 400; }
+
+.section-head {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter);
+  margin-block-end: clamp(2rem, 4vw, 3.25rem);
+}
+
+.section-head h2 { font-size: var(--step-3); margin-block-end: .35em; }
+.section-head p { color: var(--muted-dark); font-size: var(--step-1); max-width: 52ch; }
+.section-head p + p { margin-block-start: -.35em; }
+.section-more { max-width: var(--shell); margin: 2rem auto 0; padding-inline: var(--gutter); display: flex; flex-wrap: wrap; gap: .9rem; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .9rem 1.9rem; text-decoration: none; font-family: var(--body);
+  font-weight: 600; font-size: var(--step--1); letter-spacing: .14em;
+  text-transform: uppercase; border: 1px solid transparent; border-radius: var(--radius);
+  cursor: pointer; background: none;
+  transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease),
+              transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+/* Every call-to-action button on the site gets the same pop as the cards
+   and videos — held to a smaller size than the big carousel pop since
+   buttons usually sit right next to another one. */
+.btn:hover, .btn:focus-visible, .btn:active {
+  transform: scale(1.15);
+  box-shadow: 0 16px 32px -8px rgba(0,0,0,.4);
+  z-index: 5; position: relative;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease); }
+  .btn:hover, .btn:focus-visible, .btn:active { transform: none; }
+}
+.lang-ur .btn, .lang-ps .btn { font-family: inherit; text-transform: none; letter-spacing: normal; }
+/* Solid gold buttons carry white, bold type. Plain #C9A35B would give white
+   only 2.4:1, so the fill is the deeper gold used by the reserve action. */
+.btn--solid {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white); font-weight: 700;
+}
+.btn--solid:hover {
+  background: linear-gradient(160deg, var(--color-gold-deep), #6F5320 60%, #5E4519);
+  border-color: #6F5320; color: var(--color-white);
+}
+.btn--ghost { background: transparent; border-color: var(--gold); color: inherit; }
+.btn--ghost:hover { background: var(--gold); border-color: var(--gold); color: var(--color-dark); }
+
+/* --------------------------------------------------------------- masthead */
+
+/* --------------------------------------------------------- delivery strip
+
+   A dark-gold bar across the top: the scooter in a rounded cap on the left,
+   the offer in the middle, the number in a gold-edged pill on the right. The
+   scooter drives forward, leaves the frame, and comes round again. */
+
+.delivery {
+  background: linear-gradient(180deg, #4A3612, #2E210B 55%, #40300F);
+  border-block-end: 1px solid rgba(201,163,91,.55);
+  box-shadow: inset 0 1px 0 rgba(231,201,130,.35);
+  overflow: hidden;
+}
+.delivery__inner {
+  max-width: var(--shell); margin: 0 auto; padding: .35rem var(--gutter);
+  display: flex; align-items: center; justify-content: center; gap: clamp(.75rem, 2vw, 1.5rem);
+}
+
+/* Rounded cap holding the scooter. */
+.delivery__badge {
+  position: relative; flex: none; overflow: hidden;
+  width: 4.4rem; height: 2.7rem; border-radius: 999px;
+  background: radial-gradient(circle at 35% 45%, rgba(231,201,130,.32), rgba(11,9,7,.55));
+  border: 1px solid rgba(231,201,130,.55);
+  display: grid; place-items: center;
+}
+.delivery__scooter { display: block; width: 2.5rem; height: 1.65rem; color: var(--color-gold-light); }
+.delivery__scooter svg { width: 100%; height: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .delivery__scooter { animation: ride 3.6s cubic-bezier(.3,.1,.5,1) infinite; }
+  @keyframes ride {
+    0%   { transform: translateX(-2.1rem); opacity: 0; }
+    12%  { transform: translateX(-1.3rem); opacity: 1; }
+    64%  { transform: translateX(.9rem);   opacity: 1; }
+    82%  { transform: translateX(2rem);    opacity: 0; }
+    100% { transform: translateX(-2.1rem); opacity: 0; }
+  }
+}
+[dir="rtl"] .delivery__scooter { transform: scaleX(-1); }
+[dir="rtl"] .delivery__scooter svg { transform: scaleX(-1); }
+
+.delivery__words { display: flex; align-items: baseline; gap: .6rem; min-width: 0; }
+.delivery__label {
+  font-size: .78rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--color-gold-light); white-space: nowrap;
+}
+.delivery__lead {
+  font-size: 1.05rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--color-white); white-space: nowrap;
+}
+.lang-ur .delivery__label, .lang-ps .delivery__label,
+.lang-ur .delivery__lead, .lang-ps .delivery__lead {
+  letter-spacing: normal; text-transform: none; font-weight: 600;
+}
+
+/* The number, in its own gold-edged pill. */
+.delivery__phone {
+  flex: none; display: inline-flex; align-items: center; gap: .5rem;
+  padding: .25rem .85rem .25rem .35rem; border-radius: 999px;
+  border: 1px solid rgba(231,201,130,.7);
+  background: rgba(11,9,7,.35);
+  color: var(--color-white); text-decoration: none;
+  font-weight: 700; font-size: 1rem; white-space: nowrap;
+  transition: background-color .25s var(--ease), border-color .25s var(--ease);
+}
+.delivery__phone:hover { background: rgba(231,201,130,.18); border-color: var(--color-gold-light); color: var(--color-white); }
+.delivery__phone-icon {
+  display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  background: linear-gradient(160deg, var(--color-gold-light), var(--color-gold));
+  color: var(--color-dark);
+}
+.delivery__phone-icon svg { width: .85rem; height: .85rem; }
+/* Hairline between the words and the number. */
+.delivery__words::after {
+  content: ""; align-self: center; margin-inline-start: clamp(.75rem, 2vw, 1.5rem);
+  width: 1px; height: 1.5rem; background: rgba(231,201,130,.45);
+}
+
+@media (max-width: 52rem) {
+  .delivery__label { display: none; }
+  .delivery__lead { font-size: .92rem; }
+  .delivery__phone { font-size: .92rem; }
+  .delivery__words::after { display: none; }
+}
+@media (max-width: 30rem) {
+  .delivery__badge { display: none; }
+  .delivery__inner { gap: .6rem; padding-inline: 1rem; }
+}
+
+/* Locked to the top of every page; the whole site scrolls beneath it. */
+.masthead {
+  position: fixed; inset-inline: 0; inset-block-start: 0; z-index: 100;
+  background: var(--color-white);
+  border-block-end: 1px solid rgba(11,9,7,.10);
+  color: var(--color-dark);
+  box-shadow: 0 1px 0 rgba(11,9,7,.04);
+  transition: background-color .35s var(--ease), border-color .35s var(--ease),
+              padding .35s var(--ease);
+}
+/* The bar is opaque on every page, so it always reads and always sits above
+   the content — nothing scrolls over it. */
+.masthead.is-stuck { box-shadow: 0 6px 24px rgba(11,9,7,.10); }
+/* Inner pages have no hero behind the bar, so they need the space back. */
+body { padding-block-start: var(--header-h); }
+
+.masthead.is-stuck .masthead__inner { padding-block: .65rem; }
+.masthead__inner {
+  max-width: var(--shell); margin-inline: auto; padding: .9rem var(--gutter);
+  display: flex; align-items: center; gap: .85rem;
+}
+.brand { flex: none; perspective: 900px; margin-inline-start: -1.5rem; }
+.brand img { width: clamp(120px, 10vw, 155px); height: auto; }
+
+/* The mark turns in on load. It used to sit behind a no-preference query, so
+   on any machine with animation effects switched off it never ran at all —
+   which is what "the logo stopped animating" was. Everyone gets movement now;
+   those who ask for reduced motion get a plain fade instead of the turn. */
+.brand img { animation: markTurn 2s cubic-bezier(.25,.6,.25,1) .15s both; }
+@keyframes markTurn {
+  0%   { opacity: 0; transform: rotateY(-360deg) scale(.94); }
+  45%  { opacity: 1; }
+  100% { opacity: 1; transform: rotateY(0deg) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand img { animation: markFade .6s ease both; }
+  @keyframes markFade { from { opacity: 0; } to { opacity: 1; } }
+}
+/* Replayed when a navigation link is used, since those do not reload a page. */
+.brand img.is-replay { animation: none; }
+/* Same pop used everywhere else, sized down for the header's own height —
+   the full 1.55x would spill the mark over the nav links beside it in a
+   bar this slim, so it lifts by a third instead of more than half. */
+.brand { display: inline-flex; transition: transform .4s var(--ease); }
+.brand:hover, .brand:focus-visible, .brand:active { transform: scale(1.3); z-index: 5; }
+@media (prefers-reduced-motion: reduce) {
+  .brand { transition: none; }
+  .brand:hover, .brand:focus-visible, .brand:active { transform: none; }
+}
+.sitenav { display: flex; align-items: center; gap: clamp(.5rem, 1.2vw, 1.1rem); margin-inline-start: auto; flex-wrap: nowrap; }
+.sitenav__list { display: flex; gap: clamp(.15rem, .5vw, .5rem); flex-wrap: nowrap; }
+.sitenav__list a {
+  text-decoration: none; font-size: 1rem; font-weight: 600; letter-spacing: .02em;
+  white-space: nowrap;                    /* "Our story" was breaking in two */
+  text-transform: uppercase; color: var(--color-dark);
+  padding: .4rem .5rem; border-radius: 999px;
+  background: transparent;
+  transition: color .25s var(--ease), background-color .25s var(--ease), background-image .25s var(--ease),
+              transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.lang-ur .sitenav__list a, .lang-ps .sitenav__list a { text-transform: none; letter-spacing: normal; }
+.sitenav__list a:hover,
+.sitenav__list a[aria-current] {
+  color: var(--color-white);
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+}
+/* Same header-scaled pop as the logo and Reserve button — kept to 1.3x so
+   a link doesn't swallow the ones sitting right beside it in the row. */
+.sitenav__list a:hover, .sitenav__list a:focus-visible, .sitenav__list a:active {
+  transform: scale(1.3);
+  box-shadow: 0 16px 32px -6px rgba(0,0,0,.35);
+  z-index: 5; position: relative;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sitenav__list a { transition: color .25s var(--ease), background-color .25s var(--ease), background-image .25s var(--ease); }
+  .sitenav__list a:hover, .sitenav__list a:focus-visible, .sitenav__list a:active { transform: none; }
+}
+.langs { position: relative; font-size: .85rem; }
+.langs__trigger {
+  display: flex; align-items: center; gap: .4rem;
+  background: transparent; border: 1px solid rgba(128,97,38,.35); border-radius: 999px;
+  padding: .4rem .8rem; color: var(--muted-dark); font: inherit; cursor: pointer;
+  transition: color .25s var(--ease), background-color .25s var(--ease), border-color .25s var(--ease);
+}
+.langs__caret { width: .8rem; height: .8rem; transition: transform .25s var(--ease); }
+.langs[data-open] .langs__caret { transform: rotate(180deg); }
+.langs__trigger:hover, .langs__trigger:focus-visible {
+  color: var(--color-white);
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep);
+}
+.langs__menu {
+  position: absolute; inset-block-start: calc(100% + .5rem); inset-inline-end: 0;
+  min-width: 8rem; background: var(--color-white); border: 1px solid rgba(128,97,38,.3);
+  border-radius: 12px; box-shadow: 0 20px 45px -12px rgba(11,9,7,.3);
+  padding: .4rem; display: flex; flex-direction: column; gap: .15rem;
+  opacity: 0; visibility: hidden; transform: translateY(-.35rem);
+  transition: opacity .2s var(--ease), transform .2s var(--ease), visibility 0s linear .2s;
+  z-index: 40;
+}
+.langs[data-open] .langs__menu {
+  opacity: 1; visibility: visible; transform: none;
+  transition: opacity .2s var(--ease), transform .2s var(--ease);
+}
+.langs__menu a {
+  text-decoration: none; color: var(--color-dark); padding: .45rem .7rem; border-radius: 8px;
+  transition: color .2s var(--ease), background-color .2s var(--ease);
+}
+.langs__menu a[aria-current] { color: var(--color-gold-deep); font-weight: 700; }
+.langs__menu a:hover, .langs__menu a:focus-visible { background: rgba(201,163,91,.14); color: var(--color-gold-deep); }
+}
+.masthead__cta {
+  padding: .62rem 1rem; white-space: nowrap; font-size: .74rem; letter-spacing: .06em;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.masthead__cta:hover, .masthead__cta:focus-visible, .masthead__cta:active {
+  transform: scale(1.3);
+  box-shadow: 0 20px 40px -6px rgba(0,0,0,.4);
+  z-index: 5; position: relative;
+}
+@media (prefers-reduced-motion: reduce) {
+  .masthead__cta { transition: none; }
+  .masthead__cta:hover, .masthead__cta:focus-visible, .masthead__cta:active { transform: none; }
+}
+
+.burger { display: none; background: none; border: 0; padding: .6rem; margin-inline-start: auto; cursor: pointer; }
+.burger__bars { display: block; width: 26px; }
+.burger__bars span {
+  display: block; height: 2px; background: var(--color-dark); margin: 6px 0;
+  transition: transform .3s ease;
+}
+.burger[aria-expanded="true"] .burger__bars span:first-child { transform: translateY(4px) rotate(45deg); }
+.burger[aria-expanded="true"] .burger__bars span:last-child { transform: translateY(-4px) rotate(-45deg); }
+
+@media (max-width: 1150px) {
+  .burger { display: block; }
+  .sitenav {
+    position: fixed; inset: auto 0 0 0; inset-block-start: var(--header-h);
+    background: var(--color-white); flex-direction: column; align-items: flex-start;
+    gap: 1.25rem; padding: 2rem var(--gutter) 3rem;
+    transform: translateY(-120%); visibility: hidden;
+    transition: transform .35s cubic-bezier(.4,0,.2,1), visibility .35s;
+    max-height: calc(100dvh - var(--header-h)); overflow-y: auto;
+    border-block-start: 1px solid rgba(201,163,91,.16);
+    border-block-end: 1px solid rgba(11,9,7,.1);
+    box-shadow: 0 20px 40px rgba(11,9,7,.12);
+  }
+  .sitenav.is-open { transform: none; visibility: visible; }
+  .sitenav__list { flex-direction: column; gap: 1.1rem; width: 100%; }
+  .sitenav__list a { font-size: var(--step-1); font-family: var(--display); }
+  .lang-ur .sitenav__list a, .lang-ps .sitenav__list a { font-family: inherit; }
+  .masthead__cta { width: 100%; }
+}
+
+/* ------------------------------------------------------------------- hero
+
+   The film runs full width behind the words. It was shot 9:16, so on a wide
+   screen only a band of it can show — the framing is pulled upward so the
+   logo reveal lands in view rather than being cut in half. */
+
+.hero {
+  position: relative; background: var(--color-dark); color: var(--color-ivory);
+  min-height: calc(100svh - var(--header-h)); display: grid; place-items: end start;
+  padding: clamp(3rem, 7vw, 5rem) var(--gutter) clamp(4.5rem, 9vw, 7rem);
+  overflow: hidden; text-align: center;
+}
+.hero__media { position: absolute; inset: 0; filter: brightness(.82); }
+.hero__media img, .hero__video {
+  width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%;
+}
+.hero__video { position: absolute; inset: 0; animation: reelIn 1s ease .25s both; }
+@keyframes reelIn { from { opacity: 0; } to { opacity: 1; } }
+/* The film is never hidden for reduced motion — the pause control below is
+   the mechanism that matters. Only the fade-in is dropped. */
+@media (prefers-reduced-motion: reduce) { .hero__video { animation: none; } }
+
+.hero__toggle {
+  position: absolute; z-index: 3; inset-block-end: 1.25rem; inset-inline-end: 1.25rem;
+  width: 2.6rem; height: 2.6rem; display: grid; place-items: center;
+  border-radius: 50%; cursor: pointer;
+  background: rgba(11,9,7,.55); border: 1px solid rgba(246,240,231,.3);
+  color: var(--color-ivory);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background-color .25s var(--ease), border-color .25s var(--ease), opacity .25s var(--ease);
+  opacity: .55;
+}
+.hero__toggle:hover, .hero__toggle:focus-visible { opacity: 1; border-color: var(--color-gold); }
+.hero__toggle-icon { display: block; width: 1.1rem; height: 1.1rem; }
+.hero__toggle-icon svg { width: 100%; height: 100%; }
+.hero__toggle .is-play { display: none; }
+.hero__toggle.is-paused .is-pause { display: none; }
+.hero__toggle.is-paused .is-play { display: block; }
+.hero__toggle.is-paused { opacity: 1; }
+/* Autoplay was refused: enlarge the control so it reads as "press me". */
+.hero__media.is-blocked .hero__toggle {
+  opacity: 1; width: 4rem; height: 4rem;
+  background: rgba(201,163,91,.9); color: var(--color-dark); border-color: var(--color-gold);
+}
+.hero__media.is-blocked .hero__toggle-icon { width: 1.6rem; height: 1.6rem; }
+
+/* Centred content wants a centred vignette, not a side wash. Kept
+   asymmetric on purpose: a little black on the left for the text sitting
+   there to stay readable, opening up to real light on the right instead
+   of the video reading as flatly black edge-to-edge. */
+.hero::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to right, rgba(11,9,7,.68) 0%, rgba(11,9,7,.32) 45%, rgba(11,9,7,.04) 100%),
+    linear-gradient(180deg, rgba(11,9,7,.5) 0%, transparent 35%, rgba(11,9,7,.85) 100%);
+}
+
+.hero__body {
+  position: relative; z-index: 2; width: 100%;
+  max-width: calc(var(--shell) + var(--gutter) * 2); margin-inline: auto;
+  display: grid; justify-items: start; text-align: start;
+}
+.hero__body > * { max-width: 44rem; }
+.hero__logo {
+  width: min(20rem, 62vw); height: auto; margin-block-end: clamp(1.75rem, 4vw, 3rem);
+  filter: drop-shadow(0 10px 40px rgba(0,0,0,.55));
+}
+.hero__title {
+  font-family: var(--poster); font-weight: 400;
+  font-size: clamp(2.1rem, 4.9vw, 3.75rem); line-height: 1.02;
+  letter-spacing: .005em; text-transform: uppercase;
+  margin-block-end: .45em; display: grid; gap: .02em;
+  text-shadow: 0 2px 28px rgba(0,0,0,.45);
+}
+.hero__line1 { color: var(--color-white); }
+/* Both lines now share the same bold poster font — line two used to
+   switch to an italic serif, but the brief was for both lines to read as
+   one consistent, heavy typographic block, with the second line carrying
+   a metallic "shine" instead of a flourish. The gradient alternates
+   light/dark gold stops on a diagonal so it reads as a sheen catching
+   the light across the letterforms, not just a flat tint. */
+.hero__line2 {
+  background: linear-gradient(100deg, #8E6B29 0%, var(--color-gold-light) 22%, #FFF3D6 38%, var(--color-gold) 55%, #8E6B29 72%, var(--color-gold-light) 88%, #B8862F 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-family: var(--poster); font-style: normal; font-weight: 400;
+  text-transform: uppercase; letter-spacing: .005em;
+}
+.lang-ur .hero__title, .lang-ps .hero__title {
+  font-family: inherit; text-transform: none; line-height: 1.7;
+  font-size: clamp(1.4rem, 3.4vw, 2.2rem); letter-spacing: normal;
+}
+/* Anton has no Arabic-script glyphs, so line two needs the same RTL
+   fallback the title itself already gets — otherwise Urdu/Pashto text
+   silently falls back to whatever the browser picks, uncontrolled. */
+.lang-ur .hero__line2, .lang-ps .hero__line2 { font-family: inherit; text-transform: none; letter-spacing: normal; }
+.hero__sub {
+  font-family: var(--body); font-size: var(--step-0); color: rgba(246,240,231,.88);
+  margin-block-end: .4em; max-width: 34ch; line-height: 1.55;
+}
+.lang-ur .hero__sub, .lang-ps .hero__sub { font-family: inherit; }
+/* One quiet badge under the buttons. */
+.hero__badges { margin-block-start: 1.5rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+.hero__badge {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .55rem 1.1rem; border-radius: 999px;
+  background: rgba(246,240,231,.10); border: 1px solid rgba(246,240,231,.18);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  font-size: var(--step--1); font-weight: 600; color: var(--color-ivory);
+}
+/* "Open daily" always carries the gold fill. */
+.hero__badge:not(.hero__badge--link) {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+.hero__badge:not(.hero__badge--link) .hero__badge-icon { color: var(--color-white); }
+/* The address turns gold on hover and while clicked/held, instead of the
+   plain glass tint it had before. */
+.hero__badge--link { text-decoration: none; transition: border-color .25s var(--ease), background-color .25s var(--ease), color .25s var(--ease); }
+.hero__badge--link:hover, .hero__badge--link:focus-visible, .hero__badge--link:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+.hero__badge--link:hover .hero__badge-icon,
+.hero__badge--link:focus-visible .hero__badge-icon,
+.hero__badge--link:active .hero__badge-icon { color: var(--color-white); }
+.hero__badge-icon { display: block; width: 1.05rem; height: 1.05rem; color: var(--color-gold); }
+.hero__badge-icon svg { width: 100%; height: 100%; }
+.hero__actions {
+  display: flex; flex-wrap: wrap; gap: .9rem;
+  margin-block-start: clamp(1.5rem, 3vw, 2rem);
+}
+
+/* Quiet scroll cue, in the reference's spirit. */
+.hero__scroll {
+  position: absolute; inset-block-end: 0; inset-inline: 0; z-index: 3;
+  display: grid; justify-items: center; gap: .75rem;
+  text-decoration: none; color: var(--color-gold);
+  font-size: .7rem; letter-spacing: .24em; text-transform: uppercase;
+}
+.lang-ur .hero__scroll, .lang-ps .hero__scroll { letter-spacing: normal; text-transform: none; font-size: var(--step--1); }
+.hero__scroll-line {
+  width: 1px; height: 3.5rem;
+  background: linear-gradient(var(--color-gold), transparent);
+}
+.hero__scroll:hover { color: var(--color-gold-light); }
+
+@media (max-width: 48rem) {
+  .hero { min-height: calc(92svh - var(--header-h)); place-items: end start; }
+  .hero__media { filter: brightness(.75); }
+  .hero__media img, .hero__video { object-position: 50% 50%; }
+  .hero__title { font-size: clamp(1.85rem, 8vw, 2.5rem); }
+  .hero__actions .btn { flex: 1 1 12rem; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__logo, .hero__title, .hero__sub, .hero__place, .hero__actions {
+    animation: rise .8s var(--ease) backwards;
+  }
+  .hero__title { animation-delay: .12s; }
+  .hero__sub { animation-delay: .2s; }
+  .hero__place { animation-delay: .26s; }
+  .hero__actions { animation-delay: .34s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(25px); } }
+}
+
+/* ------------------------------------------------------------------- film */
+
+.film {
+  background: var(--color-dark-surface); color: var(--color-ivory);
+  padding: var(--rhythm) var(--gutter);
+  display: grid; gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1fr);
+  border-block-start: 1px solid var(--ink-line);
+}
+.film > * { max-width: var(--shell); margin-inline: auto; width: 100%; }
+.film__intro h2 { font-size: var(--step-3); }
+.film__intro p { color: var(--muted); }
+.film__beats {
+  display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; margin-block-start: 1.5rem;
+  color: var(--gold); font-size: var(--step--1); letter-spacing: .14em;
+}
+.film__beats li { position: relative; }
+.film__beats li + li::before {
+  content: ""; position: absolute; inset-inline-start: -.9rem; inset-block: .6em auto;
+  width: .45rem; height: 1px; background: var(--gold-deep);
+}
+.film__frame { margin: 0; }
+.film__player {
+  position: relative; aspect-ratio: 16 / 9; background: var(--ink-raised);
+  border: 1px solid var(--gold-deep); overflow: hidden;
+}
+.film__player img { width: 100%; height: 100%; object-fit: cover; }
+.film__player video { width: 100%; height: 100%; object-fit: cover; background: #000; display: block; }
+
+/* Sound toggle for the film. */
+.film__sound {
+  position: absolute; inset-block-end: 1rem; inset-inline-end: 1rem; z-index: 2;
+  width: 2.8rem; height: 2.8rem; display: grid; place-items: center;
+  border-radius: 50%; cursor: pointer;
+  background: rgba(11,9,7,.6); border: 1px solid rgba(246,240,231,.3);
+  color: var(--color-ivory);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background-color .25s var(--ease), border-color .25s var(--ease);
+}
+.film__sound:hover, .film__sound:focus-visible { border-color: var(--color-gold); background: rgba(11,9,7,.85); }
+.film__sound-icon { display: block; width: 1.3rem; height: 1.3rem; }
+.film__sound-icon svg { width: 100%; height: 100%; }
+.film__sound .is-loud { display: none; }
+.film__sound.is-loud .is-muted { display: none; }
+.film__sound.is-loud .is-loud { display: block; }
+.film__play {
+  position: absolute; inset: 0; margin: auto; width: max-content; height: max-content;
+  display: flex; align-items: center; gap: .7rem;
+  background: rgba(15,13,10,.8); color: var(--white);
+  border: 1px solid var(--gold); padding: .9rem 1.6rem; cursor: pointer;
+  font-size: var(--step--1); letter-spacing: .1em;
+  transition: background-color .25s ease, color .25s ease;
+}
+.film__play:hover { background: var(--gold); color: var(--ink); }
+.film__play svg { width: 1.5rem; height: 1.5rem; }
+.film__pending {
+  position: absolute; inset-block-end: 1rem; inset-inline: 1rem; margin: 0;
+  color: var(--muted); font-size: var(--step--1); text-align: center;
+}
+.film__frame figcaption { color: var(--muted); font-size: var(--step--1); margin-block-start: .8rem; }
+
+@media (min-width: 60rem) {
+  .film {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr); align-items: center;
+    max-width: calc(var(--shell) + var(--gutter) * 2); margin-inline: auto;
+  }
+  .film > * { max-width: none; }
+}
+
+/* ------------------------------------------------------------ why kkr */
+
+.whykkr {
+  background: #FFFFFF;
+  padding-block: var(--rhythm);
+  padding-inline: var(--gutter);
+}
+.whykkr__head {
+  max-width: var(--shell); margin: 0 auto clamp(2rem, 4vw, 2.75rem);
+}
+.whykkr__head .kicker { color: var(--color-gold); }
+.whykkr__head h2 {
+  font-family: var(--poster); font-weight: 400;
+  font-size: var(--step-3); color: var(--color-dark);
+  margin: 0 0 .6em; max-width: 20ch;
+}
+.whykkr__lead {
+  color: var(--muted-dark); max-width: 56ch; margin: 0;
+  font-size: var(--step-0);
+}
+.whykkr__grid {
+  max-width: var(--shell); margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+.whykkr__card {
+  position: relative; overflow: hidden;
+  background: var(--color-dark-surface);
+  border: 1px solid rgba(201,163,91,.22);
+  border-radius: var(--radius-card);
+  padding: clamp(1.5rem, 2.5vw, 1.9rem);
+  transition: border-color .3s var(--ease), transform .3s var(--ease);
+}
+.whykkr__card:hover {
+  border-color: rgba(201,163,91,.5);
+  transform: translateY(-3px);
+}
+.whykkr__icon {
+  display: block; font-size: 1.9rem; line-height: 1;
+  margin-block-end: 1.1rem;
+}
+.whykkr__card h3 {
+  font-family: var(--body); font-weight: 700;
+  font-size: var(--step-0); color: var(--color-white);
+  margin: 0 0 .5rem;
+}
+.whykkr__card p {
+  color: var(--color-muted); font-size: var(--step--1);
+  margin: 0; max-width: none;
+}
+@media (max-width: 74rem) {
+  .whykkr__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 30rem) {
+  .whykkr__grid { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------------------------ about */
+
+.about {
+  position: relative; overflow: visible;
+  background: linear-gradient(150deg, #FDFBF7, #FAF5EC 60%, #F6EFE2);
+  padding: var(--rhythm) var(--gutter);
+  display: grid; gap: clamp(1.5rem, 3.5vw, 3rem); align-items: start;
+}
+/* Bab-e-Khyber spans the lower half, behind everything. */
+
+.about > * { position: relative; z-index: 1; }
+
+.about__kicker {
+  display: flex; align-items: center; gap: .8rem; margin: 0 0 .4rem;
+  font-size: .78rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
+.about__kicker span { flex: 0 1 7rem; height: 1px; background: rgba(128,97,38,.5); }
+.lang-ur .about__kicker, .lang-ps .about__kicker { letter-spacing: normal; text-transform: none; }
+
+.about__text h2 {
+  font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.08;
+  margin: 0 0 .55em; display: grid; gap: .04em;
+}
+.about__line1 { color: var(--color-dark); }
+.about__line2 {
+  color: var(--color-gold-deep);
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+
+
+.about__text p { color: #554B3E; }
+.about__text h2 + p { margin-block-start: 0; }
+
+/* The closing claim: previously boxed into the narrow text column where it
+   wrapped across two or three lines; now a full-width row beneath both the
+   copy and the film, centred, so the sentence reads on one line. */
+.about__accent {
+  grid-column: 1 / -1;
+  position: relative;
+  margin-block-start: clamp(.5rem, 1.5vw, 1rem);
+  padding-block-start: clamp(1rem, 2vw, 1.5rem);
+  border-block-start: 1px solid rgba(128,97,38,.4);
+  text-align: center;
+  font-family: var(--display); font-size: var(--step-1); line-height: 1.5;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--color-gold-deep);
+}
+@media (min-width: 60rem) {
+  .about__accent { white-space: nowrap; }
+}
+.lang-ur .about__accent, .lang-ps .about__accent {
+  font-family: inherit; letter-spacing: normal; text-transform: none;
+}
+.about__cta { margin-block-start: clamp(1.5rem, 3vw, 2rem); }
+
+/* The line that closes the section. */
+.about__tagline {
+  grid-column: 1 / -1; justify-self: end; margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+  display: flex; align-items: center; gap: 1rem;
+  font-size: .78rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
+.about__tagline span { width: clamp(2rem, 6vw, 5rem); height: 1px; background: rgba(128,97,38,.5); }
+.lang-ur .about__tagline, .lang-ps .about__tagline { letter-spacing: normal; text-transform: none; }
+
+/* Media block: just the film now — the narrow side panel is gone, so the
+   frame is free to run full width. */
+.about__media {
+  align-self: start;
+  margin-block-start: clamp(1rem, 3vw, 2.25rem);
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  border-radius: var(--radius-card); overflow: hidden;
+  border: 2px solid rgba(201,163,91,.75);
+  box-shadow: 0 22px 55px rgba(11,9,7,.28);
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+  /* The frame sits at the outer edge of its column — scaling from the
+     centre pushed half the growth straight off the side of the screen.
+     Anchoring to that outer edge means it only grows back into the open
+     space beside it, so the whole clip stays on screen. Grid mirrors this
+     column for RTL, so the anchor flips with it. */
+  transform-origin: right center;
+}
+[dir="rtl"] .about__media { transform-origin: left center; }
+/* Same big pop as the Moments and Platters carousels — the whole frame
+   lifts and enlarges from its own spot, then eases straight back once the
+   cursor moves off. */
+.about__media:hover, .about__media:focus-within, .about__media:active {
+  transform: scale(1.3);
+  box-shadow: 0 40px 80px rgba(0,0,0,.5);
+  border-color: var(--color-gold);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .about__media { transition: none; }
+  .about__media:hover, .about__media:focus-within, .about__media:active { transform: none; }
+}
+.about__figure { position: relative; min-height: 100%; }
+.about__play {
+  position: absolute; inset-block-start: 50%; inset-inline-start: 50%;
+  transform: translate(-50%, -50%); cursor: pointer; z-index: 2;
+  width: 3.4rem; height: 3.4rem; display: grid; place-items: center; border-radius: 50%;
+  background: rgba(11,9,7,.55); border: 2px solid var(--color-gold); color: var(--color-gold-light);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+}
+.about__play:hover { background: rgba(11,9,7,.75); color: var(--color-gold); }
+.about__play[hidden] { display: none; }
+.about__play svg { width: 1.2rem; height: 1.2rem; margin-inline-start: .12rem; }
+.about__figure img, .about__video {
+  width: 100%; height: 100%; aspect-ratio: 7 / 5; object-fit: cover; display: block;
+  background: #F3EFE8;
+}
+.about__panel {
+  position: relative; display: grid; align-content: center; justify-items: center;
+  gap: .5rem; padding: 1.5rem 1rem; text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(201,163,91,.2), transparent 65%),
+    linear-gradient(180deg, var(--color-dark-surface), var(--color-darkest));
+  border-inline-start: 1px solid rgba(201,163,91,.4);
+  color: var(--color-ivory);
+}
+.about__panel::before {
+  content: ""; position: absolute; inset: 0; opacity: .12; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='110' viewBox='0 0 84 110'%3E%3Cpath d='M14 110V46C14 26 26 12 42 6c16 6 28 20 28 40v64' fill='none' stroke='%23C9A35B' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: 84px 110px;
+}
+.about__panel > * { position: relative; z-index: 1; }
+.about__panel-mark { display: block; width: 1.6rem; height: 1.6rem; color: var(--color-gold); }
+.about__panel-mark svg { width: 100%; height: 100%; }
+.about__panel h3 {
+  font-family: var(--display); font-size: var(--step-1);
+  letter-spacing: .22em; text-transform: uppercase; margin: 0; color: var(--color-white);
+}
+.lang-ur .about__panel h3, .lang-ps .about__panel h3 { letter-spacing: normal; text-transform: none; }
+.about__panel p { margin: 0; font-size: var(--step--1); color: var(--color-cream); letter-spacing: .08em; }
+.lang-ur .about__panel p, .lang-ps .about__panel p { letter-spacing: normal; }
+.about__panel-rule {
+  display: block; width: 3.5rem; height: 2px; margin-block-start: .35rem;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+@media (min-width: 60rem) {
+  .about {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    max-width: calc(var(--shell) + var(--gutter) * 2); margin-inline: auto;
+    align-items: center;
+  }
+}
+
+/* -------------------------------------------------------------------- ceo */
+
+.ceo {
+  background: var(--page); color: var(--color-dark);
+  padding: var(--rhythm) var(--gutter);
+}
+.ceo__head { max-width: var(--shell); margin: 0 auto clamp(2rem, 4vw, 3rem); text-align: center; }
+.ceo__head h2 { font-size: var(--step-3); margin: 0; }
+
+/* On the CEO section the badge is filled, matching the card below it. */
+.ceo .pill {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+.ceo .pill .pill__icon { color: var(--color-white); }
+
+/* Small outlined badge above the heading. */
+.pill {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border: 1px solid rgba(128,97,38,.45); border-radius: 999px;
+  padding: .45rem 1.1rem; margin: 0 auto 1.5rem;
+  font-family: var(--body); font-size: .72rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--color-gold-deep);
+}
+.lang-ur .pill, .lang-ps .pill {
+  font-family: inherit; letter-spacing: normal; text-transform: none; font-size: var(--step--1);
+}
+.pill--solid {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep);
+  color: var(--color-white); margin-block-end: 1.25rem;
+}
+.pill__icon { display: block; width: .85rem; height: .85rem; }
+.pill__icon svg { width: 100%; height: 100%; }
+
+/* The card the portrait and the words share. */
+.ceo__card {
+  max-width: 68rem; margin-inline: auto;
+  /* Deep gold, because white on the lighter gold would be 2.4:1. */
+  background: linear-gradient(150deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border: 1px solid rgba(11,9,7,.25); border-radius: var(--radius-card);
+  box-shadow: 0 16px 40px rgba(11,9,7,.18);
+  padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.75rem, 3.5vw, 3rem);
+  display: grid; gap: clamp(1.75rem, 3.5vw, 3rem); align-items: center;
+}
+@media (min-width: 54rem) {
+  .ceo__card { grid-template-columns: minmax(0, 13.5rem) minmax(0, 1fr); }
+}
+
+/* Gold corner brackets, drawn around the portrait. */
+.ceo__seal { position: relative; padding: .65rem; justify-self: center; width: 100%; }
+.ceo__seal::before, .ceo__seal::after {
+  content: ""; position: absolute; width: 2.5rem; height: 2.5rem;
+  border: 2px solid rgba(255,255,255,.75); pointer-events: none;
+}
+.ceo__seal::before {
+  inset-block-start: 0; inset-inline-start: 0;
+  border-inline-end: 0; border-block-end: 0; border-start-start-radius: 4px;
+}
+.ceo__seal::after {
+  inset-block-end: 0; inset-inline-end: 0;
+  border-inline-start: 0; border-block-start: 0; border-end-end-radius: 4px;
+}
+.ceo__photo {
+  width: 100%; height: auto; display: block; border-radius: 4px;
+  background: #F3EFE8; box-shadow: 0 16px 38px rgba(11,9,7,.35);
+}
+
+.ceo__quote { display: block; width: 2rem; height: 2rem; color: rgba(255,255,255,.75); margin-block-end: .9rem; }
+.ceo__quote svg { width: 100%; height: 100%; }
+.ceo__message blockquote { margin: 0; }
+.ceo__message blockquote p {
+  font-family: var(--display); font-size: var(--step-0); line-height: 1.65;
+  color: var(--color-white); max-width: 62ch;
+}
+.lang-ur .ceo__message blockquote p, .lang-ps .ceo__message blockquote p {
+  font-family: inherit; font-size: var(--step-0); line-height: 2.2;
+}
+.ceo__closing {
+  font-family: var(--display); font-size: var(--step-1); color: var(--color-white);
+  letter-spacing: .1em; margin-block-start: 1.5rem;
+}
+.lang-ur .ceo__closing, .lang-ps .ceo__closing { font-family: inherit; letter-spacing: normal; }
+.ceo__sign { margin-block-start: 2rem; }
+.ceo__company {
+  margin: .55rem 0 0; font-size: var(--step--1);
+  color: rgba(255,255,255,.95); letter-spacing: .08em;
+}
+.lang-ur .ceo__company, .lang-ps .ceo__company { letter-spacing: normal; }
+.ceo__sign img { margin-block-end: .5rem; filter: brightness(0) invert(1); }
+.ceo__name { font-family: var(--display); font-size: var(--step-1); margin: 0; color: var(--color-white); }
+.lang-ur .ceo__name, .lang-ps .ceo__name { font-family: inherit; }
+.ceo__role {
+  display: inline-block; color: var(--color-white); font-size: var(--step--1);
+  letter-spacing: .16em; text-transform: uppercase; margin: .4rem 0 0;
+  padding-block-end: .5rem; border-block-end: 2px solid rgba(255,255,255,.6);
+}
+.lang-ur .ceo__role, .lang-ps .ceo__role { letter-spacing: normal; text-transform: none; }
+
+/* -------------------------------------------------------------- signature */
+
+/* ------------------------------------------------------- special platters
+
+   Dark ground with the gate behind it, a two-tone heading, and the cards on
+   the same drifting marquee as the reels. */
+
+.signature {
+  position: relative; overflow: hidden;
+  padding-block: var(--rhythm) clamp(1.75rem, 3vw, 2.75rem);
+  background: var(--color-white); color: var(--color-dark);
+}
+.signature::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: url("../assets/img/fort.webp") no-repeat 88% bottom / auto 108%;
+  opacity: .05; filter: none;
+}
+.signature > * { position: relative; z-index: 1; }
+
+.signature__head {
+  max-width: 42rem; margin: 0 auto clamp(1.75rem, 3vw, 2.5rem);
+  padding-inline: var(--gutter);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: .75rem;
+}
+.signature__kicker {
+  margin: 0 0 .35rem; font-size: .78rem; font-weight: 600;
+  letter-spacing: .28em; text-transform: uppercase; color: var(--color-gold);
+}
+.lang-ur .signature__kicker, .lang-ps .signature__kicker { letter-spacing: normal; text-transform: none; }
+.signature__head h2 {
+  margin: 0; font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.05;
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .35em;
+}
+.signature__line1 { color: var(--color-dark); }
+/* The second line carries the gold, as a gradient across the letterforms —
+   and switches to an italic serif so "Peshawar" reads as a flourish rather
+   than shouting in the same block capitals as the line above it. */
+.signature__line2 { color: var(--color-gold); }
+.signature__rule { flex: 0 1 6rem; height: 1px; background: rgba(201,163,91,.7); }
+
+.signature__strap {
+  margin: .5rem 0 0; font-size: .82rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; color: rgba(11,9,7,.6);
+}
+.lang-ur .signature__strap, .lang-ps .signature__strap { letter-spacing: normal; text-transform: none; }
+
+/* The decorative tag block ("A Peshawari / Tradition at your table") used
+   to sit pinned to the right in a two-column header — now the whole head
+   is one centred column, so it just stacks underneath, centred the same
+   as everything else above it. */
+.signature__tag { text-align: center; color: rgba(11,9,7,.7); margin-block-start: .5rem; }
+.signature__tag p {
+  margin: 0; font-size: .8rem; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; line-height: 1.9;
+}
+/* "A Peshawari" is short enough that the same wide tracking used on the
+   longer line below reads as loose and uneven; tighten it so it sits
+   closer to the line beneath it. */
+.signature__tag p:first-child { letter-spacing: .06em; }
+.lang-ur .signature__tag p, .lang-ps .signature__tag p { letter-spacing: normal; text-transform: none; }
+.signature__diamond { display: block; width: 9rem; height: .9rem; margin-block-start: .4rem; margin-inline: auto; color: var(--color-gold); }
+
+/* Cards */
+.marquee--platters { padding-block: 4.5rem; }
+.marquee--platters .marquee__track { gap: clamp(1.25rem, 2.5vw, 1.75rem); animation-duration: calc(var(--count) * 7s); }
+.marquee--platters .dish { flex: 0 0 clamp(15rem, 22vw, 18rem); }
+
+.dish {
+  position: relative;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: linear-gradient(180deg, rgba(30,23,14,.92), rgba(12,10,7,.96));
+  border: 1px solid rgba(201,163,91,.45); border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+}
+/* The whole card pops forward on hover — a big, deliberate lift, not a
+   subtle nudge — then eases back to its exact original size and place the
+   moment the cursor leaves. Raising its stacking order lets it rise above
+   the cards on either side instead of being tucked behind them. */
+.dish:hover {
+  transform: scale(1.3);
+  box-shadow: 0 40px 80px rgba(0,0,0,.65);
+  border-color: var(--color-gold);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dish { transition: none; }
+  .dish:hover { transform: none; }
+}
+.dish__media { position: relative; padding: .55rem .55rem 0; }
+.dish__offer {
+  position: absolute; inset-block-start: 1.1rem; inset-inline-start: 1.1rem; z-index: 1;
+  padding: .3rem .7rem; border-radius: 999px;
+  background: var(--color-red); color: var(--color-white);
+  font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+.lang-ur .dish__offer, .lang-ps .dish__offer { letter-spacing: normal; text-transform: none; }
+.dish__badges {
+  position: absolute; inset-block-start: 1.1rem; inset-inline-end: 1.1rem; z-index: 1;
+  display: grid; gap: .4rem; justify-items: end;
+}
+.dish__best, .dish__badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .7rem; border-radius: 999px;
+  background: linear-gradient(160deg, var(--color-gold-light), var(--color-gold) 60%, var(--color-gold-deep));
+  color: var(--color-dark);
+  font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+}
+.dish__best svg, .dish__badge svg { width: .8rem; height: .8rem; }
+.lang-ur .dish__best, .lang-ps .dish__best,
+.lang-ur .dish__badge, .lang-ps .dish__badge { letter-spacing: normal; text-transform: none; font-weight: 700; }
+.dish__media img {
+  width: 100%; aspect-ratio: 5 / 4; object-fit: cover; display: block;
+  border-radius: 10px; border: 0; background: var(--color-darkest);
+}
+.dish__body { padding: .85rem 1rem 1rem; display: flex; flex-direction: column; flex: 1; }
+.dish__body h3 { font-size: var(--step-1); margin: 0 0 .35em; color: var(--color-white); }
+/* Four lines is enough on a card; the full text is on the menu page. */
+.dish__body p {
+  margin: 0; color: rgba(246,240,231,.72); font-size: var(--step--1); line-height: 1.55;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
+.dish__foot {
+  margin-block-start: auto; padding-block-start: .8rem;
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+}
+.dish__price { margin: 0; font-family: var(--display); font-size: var(--step-1); color: var(--color-gold); }
+.dish__price s { color: rgba(246,240,231,.55); font-size: .75em; margin-inline-end: .25em; }
+.dish__viewmenu {
+  display: inline-flex; align-items: center; gap: .35rem;
+  margin-block-start: .5rem; font-size: .74rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; text-decoration: none;
+  color: var(--color-gold-light);
+  transition: color .25s var(--ease), gap .25s var(--ease);
+}
+.dish__viewmenu:hover, .dish__viewmenu:focus-visible { color: var(--color-white); gap: .55rem; }
+.dish__viewmenu span { transition: transform .25s var(--ease); }
+.dish__viewmenu:hover span { transform: translateX(3px); }
+.dish__serves {
+  margin: 0; display: inline-flex; align-items: center; gap: .4rem;
+  font-size: var(--step--1); color: rgba(246,240,231,.7); white-space: nowrap;
+}
+.dish__serves span { display: block; width: 1.1rem; height: 1.1rem; color: var(--color-gold); }
+.dish__serves svg { width: 100%; height: 100%; }
+.dish__out { color: var(--color-muted); font-weight: 400; font-style: italic; }
+
+.signature__foot {
+  max-width: var(--shell); margin: clamp(1.25rem, 2.5vw, 2rem) auto 0;
+  padding-inline: var(--gutter);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.signature__dots { display: inline-flex; gap: .5rem; }
+.signature__dots i { width: .5rem; height: .5rem; border-radius: 50%; background: rgba(246,240,231,.3); }
+.signature__dots i:first-child { background: var(--color-gold); }
+.signature__hint {
+  margin: 0; display: inline-flex; align-items: center; gap: .8rem;
+  font-size: .76rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--color-gold);
+}
+.signature__hint svg { width: 2.5rem; height: .7rem; }
+.lang-ur .signature__hint, .lang-ps .signature__hint { letter-spacing: normal; text-transform: none; }
+
+
+/* -------------------------------------------------------------- menu tabs
+
+   A scrolling strip of categories with the chosen one filled, and the dishes
+   beneath it. Switching is done by hidden radio inputs, so no script is
+   involved. */
+
+.mtabs {
+  scroll-margin-block-start: calc(var(--header-h) + 1rem);
+  /* Sampled from the swatch: lighter at the top left, warmer to the right. */
+  background: linear-gradient(115deg, #D6B36B, #DDBC75 55%, #E4C57E);
+  color: var(--color-dark);
+  padding-block: clamp(1.75rem, 3vw, 2.75rem) var(--rhythm);
+}
+.mtabs .section-head h2 { color: var(--color-white); font-weight: 700; text-shadow: 0 1px 3px rgba(11,9,7,.3); }
+.mtabs .section-head p { color: rgba(11,9,7,.78); }
+.mtabs__inner { position: relative; max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* Tab strip container — the dish panels below now carry their own bordered
+   card each (.menucard), so this stays a plain wrapper for the pill strip. */
+.mtabs__frame {
+  position: relative;
+}
+
+/* ------------------------------------------------------------- menu card
+
+   The printed-menu look, shared by the homepage tabs and the standalone
+   menu page: a bordered card with curled corners, the category name set
+   large, a small city watermark, dishes running in three ruled columns,
+   and one closing line under a pair of rules. */
+.menucard {
+  position: relative;
+  background: linear-gradient(155deg, #FFFEFB, var(--color-cream) 130%);
+  border: 1px solid rgba(128,97,38,.4);
+  border-radius: clamp(1.25rem, 2.5vw, 1.75rem);
+  padding: clamp(1.75rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3.25rem) clamp(2rem, 4vw, 3rem);
+  overflow: visible;
+}
+.menucard::before, .menucard::after {
+  content: ""; position: absolute; inset-inline-start: 50%; width: .6rem; height: .6rem;
+  background: var(--color-cream); border: 1.5px solid var(--color-gold-deep);
+  transform: translateX(-50%) rotate(45deg); z-index: 1;
+}
+.menucard::before { inset-block-start: -.35rem; }
+.menucard::after { inset-block-end: -.35rem; }
+.menucard__corner {
+  position: absolute; width: 1.9rem; height: 1.9rem; z-index: 1;
+  border: 1.5px solid var(--color-gold-deep); opacity: .75;
+}
+.menucard__corner--tl { inset-block-start: .85rem; inset-inline-start: .85rem; border-inline-end: 0; border-block-end: 0; border-start-start-radius: .9rem; }
+.menucard__corner--tr { inset-block-start: .85rem; inset-inline-end: .85rem; border-inline-start: 0; border-block-end: 0; border-start-end-radius: .9rem; }
+.menucard__corner--bl { inset-block-end: .85rem; inset-inline-start: .85rem; border-inline-end: 0; border-block-start: 0; border-end-start-radius: .9rem; }
+.menucard__corner--br { inset-block-end: .85rem; inset-inline-end: .85rem; border-inline-start: 0; border-block-start: 0; border-end-end-radius: .9rem; }
+
+.menucard__accordion { position: relative; z-index: 1; }
+.menucard__head {
+  position: relative; z-index: 1;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem;
+  cursor: pointer; list-style: none; user-select: none;
+  transition: opacity .2s var(--ease);
+}
+.menucard__head::-webkit-details-marker { display: none; }
+.menucard__head:hover { opacity: .85; }
+.menucard__head-text { max-width: 70%; }
+.menucard__head h2 {
+  font-size: clamp(2rem, 4vw, 2.75rem); color: var(--color-dark); margin: 0;
+}
+.lang-ur .menucard__head h2, .lang-ps .menucard__head h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); }
+.menucard__sub {
+  margin: .4em 0 0; color: var(--color-gold-deep);
+  font-size: .78rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+}
+.lang-ur .menucard__sub, .lang-ps .menucard__sub { letter-spacing: normal; text-transform: none; font-weight: 400; }
+/* The chevron is the one visual cue that this whole header is a button —
+   without it, "click the title to expand" isn't discoverable at all. */
+.menucard__chevron {
+  flex: none; width: 2.6rem; height: 2.6rem; margin-block-start: .3rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(128,97,38,.35); border-radius: 999px; color: var(--color-gold-deep);
+  transition: transform .3s var(--ease), background-color .25s var(--ease), color .25s var(--ease);
+}
+.menucard__chevron svg { width: 1.1rem; height: 1.1rem; }
+.menucard__head:hover .menucard__chevron { background: rgba(201,163,91,.12); }
+.menucard__accordion[open] > .menucard__head .menucard__chevron { transform: rotate(180deg); }
+/* The panel only needs its own reveal animation — the accordion's open/
+   closed state itself is native <details> behaviour, so no JS is needed
+   just to show or hide the content. */
+.menucard__panel { margin-block-start: clamp(2.5rem, 5vw, 3.5rem); }
+@media (prefers-reduced-motion: no-preference) {
+  .menucard__panel { animation: menucardReveal .35s var(--ease); }
+}
+@keyframes menucardReveal {
+  from { opacity: 0; transform: translateY(-.5rem); }
+  to { opacity: 1; transform: none; }
+}
+
+/* A faint fort silhouette and a small two-line mark — a nod to the printed
+   menu's letterhead, without repeating the section title. */
+.menucard__badge {
+  position: absolute; inset-block-start: clamp(1.25rem, 3vw, 1.75rem); inset-inline-end: clamp(1.75rem, 4vw, 3.25rem);
+  z-index: 0; display: none; text-align: end; width: 8rem;
+  pointer-events: none;
+}
+@media (min-width: 56rem) { .menucard__badge { display: block; } }
+.menucard__badge-img { width: 3.5rem; height: auto; opacity: .5; margin-inline-start: auto; }
+.menucard__badge-line { display: block; width: 2.25rem; height: 1px; margin-inline-start: auto; background: var(--color-gold-deep); margin-block: .4rem; opacity: .8; }
+.menucard__badge-text {
+  font-size: .6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--color-gold-deep); line-height: 1.45; opacity: .85; white-space: nowrap;
+}
+.lang-ur .menucard__badge-text, .lang-ps .menucard__badge-text { letter-spacing: normal; text-transform: none; font-weight: 400; }
+
+.menucard__items {
+  position: relative; z-index: 1;
+  column-count: var(--cols, 3); column-gap: clamp(2rem, 4vw, 3rem);
+  column-rule: 1px solid rgba(128,97,38,.35);
+}
+.menucard__items > li { break-inside: avoid; }
+/* Multi-column layout balances by height, not item count, so a category
+   like Pizzas — where some names wrap to two lines and others don't — can
+   end up 3/2/2 instead of the even 2/3/2 its seven items should make.
+   Forcing the break where the column should end keeps every column's item
+   count consistent regardless of how tall any one name happens to render. */
+#panel-pizzas .menucard__items > li:nth-child(2),
+#cat-pizzas .menucard__items > li:nth-child(2),
+#panel-pizzas .menucard__items > li:nth-child(5),
+#cat-pizzas .menucard__items > li:nth-child(5),
+#panel-barbeque .menucard__items > li:nth-child(3),
+#cat-barbeque .menucard__items > li:nth-child(3),
+#panel-barbeque .menucard__items > li:nth-child(6),
+#cat-barbeque .menucard__items > li:nth-child(6),
+#panel-afghani .menucard__items > li:nth-child(1),
+#cat-afghani .menucard__items > li:nth-child(1),
+#panel-afghani .menucard__items > li:nth-child(3),
+#cat-afghani .menucard__items > li:nth-child(3) {
+  break-after: column;
+}
+@media (max-width: 62rem) { .menucard__items { column-count: min(var(--cols, 3), 2); } }
+@media (max-width: 34rem) { .menucard__items { column-count: 1; } }
+
+.menucard__foot {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 1.25rem;
+  width: 100%; max-width: none;
+  margin: clamp(2rem, 4vw, 2.75rem) 0 0;
+  font-size: .78rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--color-gold-deep); text-align: center; white-space: nowrap;
+}
+/* The line is set in one unbroken row (the rules either side depend on it),
+   so on a narrow phone it tightens up instead of overflowing the card. */
+@media (max-width: 26rem) {
+  .menucard__foot { font-size: .64rem; letter-spacing: .06em; gap: .6rem; }
+}
+.lang-ur .menucard__foot, .lang-ps .menucard__foot { letter-spacing: normal; text-transform: none; font-weight: 400; white-space: normal; }
+.menucard__foot span { flex: 1 1 auto; height: 1px; background: rgba(128,97,38,.4); }
+
+.mtabs__strip {
+  display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+  position: relative;
+  background: linear-gradient(165deg, #FFFEFB 0%, #FBF4E6 55%, #F5EAD4 100%);
+  border: 2.5px solid var(--color-gold-deep);
+  border-radius: 999px;
+  padding: .3rem 0;
+  margin-block-end: clamp(1.75rem, 3vw, 2.5rem);
+  /* A physical-plaque treatment: a bright hairline along the top inner edge
+     reads as an embossed highlight, a faint dark line along the bottom
+     inner edge gives it a little depth, and the outer shadow lifts the
+     whole strip off the page. */
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.8),
+    inset 0 -1.5px 3px rgba(128,97,38,.14),
+    0 16px 32px -10px rgba(11,9,7,.24),
+    0 4px 10px rgba(11,9,7,.08);
+}
+/* A second, thinner gold line set just inside the bold outer border —
+   the "double border" look of a mounted plaque. Purely decorative, so it
+   never intercepts clicks on the tabs beneath it. */
+.mtabs__strip::before {
+  content: "";
+  position: absolute; inset: 4px;
+  border: 1px solid rgba(201,163,91,.5);
+  border-radius: 999px;
+  pointer-events: none;
+}
+/* On a phone, 14 categories wrapping to fit the width stacks into seven-plus
+   rows — the whole strip becomes taller than the screen itself before any
+   actual menu content appears. A single swipeable row, like the platters
+   and moments carousels already use, keeps it to one compact band instead;
+   the fade at each edge hints that there is more to scroll to. */
+@media (max-width: 56rem) {
+  .mtabs__strip {
+    flex-wrap: nowrap; justify-content: flex-start;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-inline: .85rem;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+  .mtabs__strip::-webkit-scrollbar { display: none; }
+}
+
+.mtabs__radio {
+  position: absolute; inset-block-start: 0; inset-inline-start: 0;
+  width: 1px; height: 1px; opacity: 0; pointer-events: none;
+}
+/* The checked radio reveals the panel that follows it. */
+.mtabs__panel { display: none; }
+.mtabs__radio:checked + .mtabs__panel { display: block; }
+
+.mtabs__tab {
+  flex: none; user-select: none;
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  border: 1px solid transparent; border-inline-start: 1px solid rgba(128,97,38,.2);
+  border-radius: 14px; background: transparent;
+  color: rgba(11,9,7,.78); cursor: pointer;
+  padding: .6rem 1.1rem; font-size: .7rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+  transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease),
+              transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.mtabs__tab:first-child { border-inline-start-color: transparent; }
+.mtabs__tab-icon { width: 1.35rem; height: 1.35rem; }
+.mtabs__tab-icon svg { width: 100%; height: 100%; }
+.mtabs__tab-label { position: relative; padding-block-end: .3rem; }
+.mtabs__tab-label::after {
+  content: ""; position: absolute; inset-block-end: 0; inset-inline-start: 50%;
+  width: 0; height: 2px; background: currentColor; border-radius: 999px;
+  transform: translateX(-50%); transition: width .25s var(--ease);
+}
+.lang-ur .mtabs__tab, .lang-ps .mtabs__tab { letter-spacing: normal; text-transform: none; font-weight: 400; }
+/* Hovering fills the tab with gold, turns the type white, and pops it —
+   the same lift the rest of the header controls use. */
+.mtabs__tab:hover, .mtabs__tab:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+  transform: scale(1.3);
+  box-shadow: 0 16px 32px -6px rgba(0,0,0,.35);
+  z-index: 5; position: relative;
+}
+.mtabs__tab:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mtabs__tab { transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease); }
+  .mtabs__tab:hover, .mtabs__tab:active { transform: none; }
+}
+/* The first tab is dark before JS runs (progressive enhancement — the
+   page still works with JS switched off, just without the highlight ever
+   moving to another tab). Once the small script in site.js runs, it adds
+   .is-active to whichever tab's own radio is actually checked, and that
+   becomes the real source of truth — unlike the :has()-only version this
+   replaced, it doesn't depend on a selector Firefox didn't support until
+   December 2023 and older Edge/IE never supported at all. */
+.mtabs__tab.is-first { background: var(--color-dark); border-color: var(--color-dark); color: var(--color-ivory); }
+.mtabs__tab.is-first .mtabs__tab-label::after { width: 1.1rem; }
+.mtabs__tab.is-active { background: var(--color-dark); border-color: var(--color-dark); color: var(--color-ivory); }
+.mtabs__tab.is-active .mtabs__tab-label::after { width: 1.1rem; }
+.mtabs__tab.is-active:hover {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+/* Once JS has tagged the real active tab, is-first (which only ever
+   describes the first tab in the list, not the selected one) steps aside. */
+.mtabs__tab.is-first:not(.is-active) { background: transparent; border-color: transparent; color: rgba(11,9,7,.78); }
+.mtabs__tab.is-first:not(.is-active) .mtabs__tab-label::after { width: 0; }
+.mtabs__tab.is-first:not(.is-active):hover {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+
+/* Kept as a belt-and-braces layer for browsers new enough to support
+   :has() but where JS failed to run for some other reason — harmless
+   where the class above already applies, since both describe the same
+   tab. */
+.mtabs__inner:has(.mtabs__radio:checked) .mtabs__tab.is-first { background: transparent; border-color: transparent; color: rgba(11,9,7,.78); }
+.mtabs__inner:has(.mtabs__radio:checked) .mtabs__tab.is-first .mtabs__tab-label::after { width: 0; }
+.mtabs__inner:has(#tab-appetizers:checked) .mtabs__tab.is-first,
+.mtabs__inner:has(#tab-appetizers:checked) .mtabs__tab.is-first:hover { background: var(--color-dark); border-color: var(--color-dark); color: var(--color-ivory); }
+.mtabs__inner:has(#tab-appetizers:checked) .mtabs__tab.is-first .mtabs__tab-label::after { width: 1.1rem; }
+/* Matching specificity, or the rule above would stop the first tab reacting. */
+.mtabs__inner:has(.mtabs__radio:checked) .mtabs__tab.is-first:hover {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+
+.mtabs__items {
+  list-style: none; margin: 0; padding: 0;
+}
+.mtabs__items li {
+  display: flex; align-items: center; gap: 1.1rem;
+  padding-block-end: 1.1rem; margin-block-end: 1.1rem; border-block-end: 1px solid rgba(11,9,7,.18);
+  position: relative; border-radius: 12px;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), background-color .4s var(--ease);
+}
+/* Each dish pops up on its own — hover, keyboard focus, or a press/tap all
+   trigger it — so the photo and price are unmistakably clear even packed
+   into a dense multi-column list. */
+.mtabs__items li:hover {
+  transform: scale(1.35);
+  box-shadow: 0 30px 60px -12px rgba(11,9,7,.4);
+  background: var(--color-ivory);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mtabs__items li { transition: none; }
+  .mtabs__items li:hover { transform: none; }
+}
+.mtabs__itemcopy { flex: 1 1 auto; min-width: 0; }
+.mtabs__thumb {
+  flex: none; width: 5.75rem; height: 5.75rem; border-radius: 12px;
+  object-fit: cover; border: 1px solid rgba(128,97,38,.3);
+  box-shadow: 0 8px 18px -6px rgba(11,9,7,.4);
+}
+.mtabs__row { display: flex; align-items: baseline; gap: .75rem; }
+.mtabs__name { font-family: var(--display); font-size: var(--step-1); color: var(--color-dark); }
+.lang-ur .mtabs__name, .lang-ps .mtabs__name { font-family: inherit; font-size: var(--step-0); }
+.mtabs__dots { flex: 1 1 2rem; min-width: 1.5rem; border-block-end: 1px dotted rgba(11,9,7,.4); transform: translateY(-.3em); }
+.mtabs__price { font-weight: 700; color: var(--color-gold-deep); text-align: end; font-size: var(--step--1); }
+.mtabs__price s { color: rgba(11,9,7,.5); font-weight: 400; margin-inline-end: .3em; }
+.mtabs__badge {
+  display: inline-block; margin-inline-start: .5rem; padding: .1rem .55rem;
+  border-radius: 999px; background: var(--color-dark); color: var(--color-gold-light);
+  font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  vertical-align: middle; font-family: var(--body);
+}
+.lang-ur .mtabs__badge, .lang-ps .mtabs__badge { letter-spacing: normal; text-transform: none; }
+/* The offer tag: a small red flag for a discount or special, distinct from
+   the gold "sticker" badge above so the two never get confused at a glance. */
+.mtabs__offer {
+  display: inline-block; margin-inline-start: .5rem; padding: .1rem .55rem;
+  border-radius: 999px; background: var(--color-red); color: var(--color-white);
+  font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  vertical-align: middle; font-family: var(--body);
+}
+.lang-ur .mtabs__offer, .lang-ps .mtabs__offer { letter-spacing: normal; text-transform: none; }
+/* Best food: a gold star pill, the same treatment used on the featured
+   carousel and the standalone menu, so the flag reads the same everywhere. */
+.mtabs__best {
+  display: inline-flex; align-items: center; gap: .3rem; margin-inline-start: .5rem; padding: .1rem .55rem;
+  border-radius: 999px;
+  background: linear-gradient(160deg, var(--color-gold-light), var(--color-gold) 60%, var(--color-gold-deep));
+  color: var(--color-dark);
+  font-size: .62rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  vertical-align: middle; font-family: var(--body);
+}
+.lang-ur .mtabs__best, .lang-ps .mtabs__best { letter-spacing: normal; text-transform: none; }
+.mtabs__desc { margin: .35rem 0 0; font-size: var(--step--1); color: rgba(11,9,7,.72); max-width: 46ch; line-height: 1.6; }
+.mtabs__items li.is-out { opacity: .5; }
+
+.mtabs__foot {
+  max-width: var(--shell); margin: clamp(2rem, 4vw, 3rem) auto 0;
+  padding-inline: var(--gutter);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 1.5rem 2rem;
+}
+.mtabs__foot .section-more { margin: 0; padding-inline: 0; }
+/* Scan card for the digital menu. */
+.qrcard {
+  margin: 0; display: flex; align-items: center; gap: 1rem;
+  padding: .85rem 1.25rem .85rem .85rem;
+  background: var(--color-white);
+  border: 1px solid rgba(11,9,7,.08); border-radius: var(--radius-card);
+  box-shadow: 0 12px 28px -14px rgba(11,9,7,.35);
+}
+.qrcard img { width: 5.5rem; height: 5.5rem; border-radius: 6px; background: #fff; padding: .35rem; }
+.qrcard figcaption { font-size: var(--step--1); color: rgba(11,9,7,.78); max-width: 12rem; line-height: 1.5; }
+
+/* --------------------------------------------------------------- moments
+
+   A marquee of short clips on a dark ground. The movement is a CSS animation
+   over a track printed twice, so it loops seamlessly and needs no script. It
+   stops on hover and for anyone who asks for reduced motion. */
+
+.moments {
+  background: var(--color-white); color: var(--color-dark);
+  padding-block: var(--rhythm); overflow: hidden;
+}
+.moments__head {
+  max-width: 42rem; margin: 0 auto clamp(1.75rem, 3vw, 2.5rem);
+  padding-inline: var(--gutter); text-align: center;
+}
+.moments__head h2 { font-size: var(--step-3); margin-block-end: .35em; color: var(--color-gold-deep); }
+.moments__head p { color: var(--muted-dark); max-width: 46ch; margin: 0 auto; }
+
+.marquee { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+.marquee__track {
+  display: flex; gap: 1.25rem; width: max-content;
+  padding-inline: var(--gutter);
+  animation: marquee calc(var(--count) * 4.5s) linear infinite;
+}
+.marquee:hover .marquee__track, .marquee:focus-within .marquee__track { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee { overflow-x: auto; }
+  .marquee__track { animation: none; }
+}
+
+.moment {
+  flex: 0 0 clamp(11rem, 17vw, 15rem);
+  position: relative;
+  transition: transform .4s var(--ease);
+}
+/* Same big, deliberate pop as the platters — the whole clip lifts and
+   enlarges in place, then eases straight back once the cursor moves on. */
+.moment:hover, .moment:focus-within, .moment:active {
+  transform: scale(1.3);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .moment { transition: none; }
+  .moment:hover, .moment:focus-within, .moment:active { transform: none; }
+}
+/* Extra room above and below the row so the enlarged clip has somewhere
+   to go without being clipped by the carousel's own edge. */
+.moments .marquee { padding-block: 4rem; }
+
+/* The platters use the same marquee, with wider cards and a slower pass. */
+.marquee--platters { padding-block: 4.5rem; }
+.marquee--platters .marquee__track { gap: clamp(1.25rem, 2.5vw, 2rem); animation-duration: calc(var(--count) * 7s); }
+.marquee--platters .dish { flex: 0 0 clamp(14rem, 21vw, 17.5rem); }
+.moment__frame {
+  position: relative; overflow: hidden; border-radius: var(--radius-card);
+  border: 1px solid rgba(201,163,91,.3); background: var(--color-darkest);
+  aspect-ratio: 3 / 4;
+  transition: box-shadow .4s var(--ease), border-color .4s var(--ease);
+}
+.moment:hover .moment__frame, .moment:focus-within .moment__frame, .moment:active .moment__frame {
+  box-shadow: 0 40px 80px rgba(0,0,0,.65);
+  border-color: var(--color-gold);
+}
+.moment__video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.moment__time {
+  position: absolute; inset-block-end: .7rem; inset-inline-end: .7rem;
+  font-size: .72rem; font-weight: 600; color: var(--color-ivory);
+  background: rgba(11,9,7,.65); padding: .15rem .5rem; border-radius: 999px;
+}
+.moment h3 { font-size: var(--step-0); margin: .8rem 0 .15rem; color: var(--color-dark); }
+.moment p { margin: 0; font-size: var(--step--1); color: var(--muted-dark); }
+
+/* ----------------------------------------------------------------- events */
+
+/* Celebrations: no photograph, so colour, weight and shadow carry it. Warm
+   ivory washing into cream, a heavier arcade behind, and cards that lift. */
+.events {
+  position: relative; overflow: visible;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(201,163,91,.10), transparent 60%),
+    linear-gradient(180deg, var(--page) 0%, #FBF8F3 100%);
+  color: var(--color-dark);
+  padding: var(--rhythm) var(--gutter); text-align: center;
+}
+.events::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='150' viewBox='0 0 120 150'%3E%3Cpath d='M20 150V60C20 33 38 15 60 15s40 18 40 45v90' fill='none' stroke='%23806126' stroke-width='2'/%3E%3C/svg%3E");
+  background-size: 120px 150px;
+}
+.events > * { position: relative; z-index: 1; }
+
+/* The bordered card that frames the whole section — a fine gold rule, a
+   curled bracket at each corner, and a diamond bead straddling the border
+   top and bottom, echoing the menu card above. */
+.events__frame {
+  position: relative;
+  max-width: var(--shell); margin-inline: auto;
+  border: 1px solid rgba(128,97,38,.4);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  padding: clamp(2.25rem, 5vw, 3.75rem) clamp(1.5rem, 4vw, 3.5rem);
+}
+.events__frame::before, .events__frame::after {
+  content: ""; position: absolute; inset-inline-start: 50%; width: .65rem; height: .65rem;
+  background: var(--page); border: 1.5px solid var(--color-gold-deep);
+  transform: translateX(-50%) rotate(45deg);
+}
+.events__frame::before { inset-block-start: -.37rem; }
+.events__frame::after { inset-block-end: -.37rem; }
+
+.events__corner {
+  position: absolute; width: 2.1rem; height: 2.1rem;
+  border: 1.5px solid var(--color-gold-deep); opacity: .8;
+}
+.events__corner--tl {
+  inset-block-start: .9rem; inset-inline-start: .9rem;
+  border-inline-end: 0; border-block-end: 0; border-start-start-radius: 1rem;
+}
+.events__corner--tr {
+  inset-block-start: .9rem; inset-inline-end: .9rem;
+  border-inline-start: 0; border-block-end: 0; border-start-end-radius: 1rem;
+}
+.events__corner--bl {
+  inset-block-end: .9rem; inset-inline-start: .9rem;
+  border-inline-end: 0; border-block-start: 0; border-end-start-radius: 1rem;
+}
+.events__corner--br {
+  inset-block-end: .9rem; inset-inline-end: .9rem;
+  border-inline-start: 0; border-block-start: 0; border-end-end-radius: 1rem;
+}
+
+.events__head { max-width: 48rem; margin-inline: auto; }
+.events__head h2 { font-size: var(--step-3); margin-block-end: .5em; color: var(--color-dark); }
+.events__line2 { color: var(--color-gold); }
+/* A bold rule under the heading, the section's one heavy line. */
+.events__head h2::after {
+  content: ""; display: block; width: 4.5rem; height: 3px;
+  margin: .6em auto 0;
+  background: linear-gradient(90deg, var(--color-gold-deep), var(--color-gold-light), var(--color-gold-deep));
+}
+.events__head p { color: var(--muted-dark); margin-inline: auto; }
+
+.events__list {
+  max-width: 72rem; margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+/* Ivory card, fine gold edge, and a gold corner cut away at the bottom. */
+.events__list li {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; justify-items: center; align-content: center; gap: .9rem;
+  flex: 1 1 12.25rem; max-width: 12.5rem;
+  padding: 2.1rem 1.25rem 1.9rem;
+  background: linear-gradient(160deg, #FFFFFF 0%, #FBF7F0 55%, var(--color-ivory) 100%);
+  border: 1px solid rgba(201,163,91,.55);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(11,9,7,.10);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease),
+              border-color .35s var(--ease);
+}
+/* The gold wedge in the lower corner, with its pale hairline. */
+.events__list li::after {
+  content: ""; position: absolute; z-index: -1;
+  inset-block-end: -60%; inset-inline-end: -35%;
+  width: 150%; height: 130%;
+  background: linear-gradient(160deg, transparent 49.6%, rgba(255,255,255,.85) 49.6% 50.2%, var(--color-gold-deep) 50.2%);
+  opacity: .92;
+}
+.events__list li:hover, .events__list li:active {
+  transform: scale(1.3);
+  box-shadow: 0 40px 80px rgba(11,9,7,.35);
+  border-color: var(--color-gold);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .events__list li { transition: none; }
+  .events__list li:hover, .events__list li:active { transform: none; }
+}
+
+/* The icon sits inside a drawn Mughal arch rather than a circle. */
+.events__icon {
+  display: grid; place-items: center;
+  width: 4.6rem; height: 5.2rem;
+  padding-block-start: 1.1rem;
+  color: var(--color-gold-deep);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 112' fill='none' stroke='%23C9A35B' stroke-width='2.4'%3E%3Cpath d='M14 112V50c0-15 10-25 22-33 6-4 11-8 14-15 3 7 8 11 14 15 12 8 22 18 22 33v62'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center; background-size: contain;
+  transition: color .35s var(--ease), transform .35s var(--ease);
+}
+.events__icon svg { width: 1.7rem; height: 1.7rem; }
+.events__list li:hover .events__icon, .events__list li:active .events__icon { color: var(--color-gold); transform: translateY(-2px); }
+
+.events__label {
+  font-size: var(--step--1); font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--color-dark);
+  line-height: 1.5;
+}
+.lang-ur .events__label, .lang-ps .events__label {
+  letter-spacing: normal; text-transform: none; font-weight: 400;
+}
+/* Dash - diamond - dash, the same bead motif as the frame corners. */
+.events__flourish { display: flex; align-items: center; gap: .4rem; color: var(--color-gold-deep); opacity: .9; }
+.events__flourish i { display: block; width: 1.1rem; height: 1px; background: currentColor; }
+.events__flourish b { display: block; width: .4rem; height: .4rem; background: currentColor; transform: rotate(45deg); }
+
+.events__cta { margin-block-start: clamp(2rem, 4vw, 2.75rem); margin-inline: auto; }
+
+
+/* ---------------------------------------------------------------- gallery */
+
+.gallery { padding-block: var(--rhythm); background: var(--color-dark); color: var(--color-ivory); }
+.gallery .section-head p { color: var(--color-muted); }
+.gallery__filters {
+  max-width: var(--shell); margin: 0 auto 2rem; padding-inline: var(--gutter);
+  display: flex; flex-wrap: wrap; gap: .6rem;
+}
+.chip {
+  border: 1px solid rgba(201,163,91,.28); background: transparent; color: var(--color-muted);
+  border-radius: var(--radius);
+  padding: .5rem 1.2rem; cursor: pointer; font-size: var(--step--1); letter-spacing: .05em;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.chip:hover { border-color: var(--color-gold); color: var(--color-ivory); }
+.chip.is-on { background: var(--color-gold); border-color: var(--color-gold); color: var(--color-dark); }
+.gallery__grid {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter);
+  display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+}
+.tile { margin: 0; }
+.tile[hidden] { display: none; }
+.tile__btn { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.tile__btn { overflow: hidden; }
+.tile__btn img {
+  width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--color-dark-surface);
+  transform: scale(1); transition: transform .5s var(--ease);
+}
+.tile__btn:hover img, .tile__btn:focus-visible img { transform: scale(1.04); }
+.tile figcaption { font-size: var(--step--1); color: var(--color-muted); padding-block-start: .6rem; }
+.tile:nth-child(6n + 1) { grid-column: span 2; }
+.tile:nth-child(6n + 1) .tile__btn img { aspect-ratio: 2 / 1; }
+@media (max-width: 30rem) {
+  .tile:nth-child(6n + 1) { grid-column: auto; }
+  .tile:nth-child(6n + 1) .tile__btn img { aspect-ratio: 1; }
+}
+
+.lightbox { border: 0; padding: 0; background: transparent; max-width: 92vw; max-height: 92dvh; color: var(--white); }
+.lightbox::backdrop { background: rgba(9,8,6,.94); }
+.lightbox figure { margin: 0; }
+.lightbox img { max-height: 82dvh; width: auto; margin-inline: auto; }
+.lightbox figcaption { text-align: center; padding-block-start: .75rem; font-size: var(--step--1); }
+.lightbox__close {
+  position: fixed; inset-block-start: 1rem; inset-inline-end: 1.25rem;
+  background: none; border: 0; color: var(--gold); font-size: 2.5rem; line-height: 1; cursor: pointer;
+}
+
+/* ---------------------------------------------------------------- reviews */
+
+.reviews { padding-block: var(--rhythm); background: var(--page); }
+.reviews__grid {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter);
+  display: grid; gap: clamp(1.5rem, 3vw, 2.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+.review { margin: 0; padding-block-start: 1.25rem; border-block-start: 2px solid var(--gold); }
+.review blockquote { margin: .5rem 0 1rem; }
+.review blockquote p { font-family: var(--display); font-size: var(--step-1); line-height: 1.5; }
+.lang-ur .review blockquote p, .lang-ps .review blockquote p { font-family: inherit; }
+.review figcaption { font-size: var(--step--1); letter-spacing: .08em; color: var(--muted-dark); }
+.stars { color: var(--gold); letter-spacing: .15em; }
+
+/* ---------------------------------------------------------------- reserve */
+
+.reserve {
+  background: var(--color-white); color: var(--color-dark);
+  padding: var(--rhythm) var(--gutter);
+  display: grid; gap: clamp(2rem, 4vw, 3rem); justify-items: center;
+  max-width: var(--shell); margin-inline: auto;
+}
+/* A <select>'s widest option can otherwise force its grid track (and every
+   ancestor grid up to <body>) far past the viewport — invisible in English,
+   where the option text is short, but very real once a language's option
+   text runs longer, and it silently stretched the whole page sideways. */
+.reserve > * { min-width: 0; }
+.reserve__copy { max-width: 42rem; text-align: center; }
+.reserve h2 { font-size: var(--step-3); color: var(--color-gold-deep); }
+.reserve__headline { font-family: var(--display); font-size: var(--step-2); color: var(--color-dark); }
+.lang-ur .reserve__headline, .lang-ps .reserve__headline { font-family: inherit; }
+.reserve p { color: var(--muted-dark); }
+.reserve__alt { display: flex; justify-content: center; }
+.reserve__alt a { color: var(--color-gold-deep); }
+.reserve .form { max-width: 40rem; }
+
+/* ------------------------------------------------------------------ forms */
+
+.form { display: grid; gap: 1.1rem 1.25rem; grid-template-columns: 1fr 1fr; }
+.field { display: grid; gap: .4rem; grid-column: 1 / -1; min-width: 0; }
+.field--half { grid-column: auto; }
+@media (max-width: 34rem) { .field--half { grid-column: 1 / -1; } }
+.field label { font-size: var(--step--1); letter-spacing: .06em; }
+.field input, .field select, .field textarea {
+  background: var(--color-white); border: 1px solid rgba(128,97,38,.25); color: var(--color-dark);
+  padding: .85rem .95rem; width: 100%; min-width: 0; border-radius: var(--radius);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.field input::placeholder, .field textarea::placeholder { color: rgba(111,99,83,.6); }
+.field input:focus, .field select:focus, .field textarea:focus {
+  box-shadow: 0 0 0 3px rgba(201,163,91,.18);
+}
+/* This page used to have a dark background, so its fields were given
+   their own translucent-on-dark styling here — now that .reserve is a
+   plain white section like everywhere else, the default light-theme
+   field styles above already apply correctly and this override is gone
+   rather than fighting them. */
+.reserve .field select option {
+  background: var(--color-white); color: var(--color-dark);
+}
+.field input:hover, .field select:hover, .field textarea:hover,
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+.field [aria-invalid="true"] { border-color: var(--danger); }
+.field .error { font-size: var(--step--1); color: var(--danger); }
+.form .btn { grid-column: 1 / -1; justify-self: start; }
+.form .btn--block { justify-self: stretch; }
+.form__status { grid-column: 1 / -1; margin: 0; font-size: var(--step--1); }
+.form__status.is-ok { color: var(--gold-deep); }
+.form__status.is-error { color: var(--danger); }
+.form__note { grid-column: 1 / -1; font-size: var(--step--1); color: var(--muted); margin: 0; }
+/* Off-screen via a large negative offset is a classic honeypot trick, but
+   "left" is a physical direction: under dir="rtl" it doesn't just sit off
+   the visual edge, it can inflate the whole page's scrollable width by
+   thousands of pixels (RTL scroll geometry extends the other way). Clipping
+   to a 1px box — the same technique .sr-only already uses — hides it just
+   as well without moving it anywhere. */
+.hp { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------------------------------------------------------------- connect */
+
+.connect { padding-block: var(--rhythm); background: var(--page); }
+/* .ctaband already adds its own bottom padding before this section, and
+   both share the same white background — without this, the two paddings
+   stack into one large blank gap that reads as broken spacing. */
+.ctaband + .connect { padding-block-start: 0; }
+.connect__grid {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter);
+  display: grid; gap: clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  align-items: stretch;
+}
+/* --------------------------------------------------------------- the banner
+
+   Three columns: the invitation and its two actions, the ways to eat behind a
+   gold rule, and a photograph curving in on the right. Bab-e-Khyber sits in
+   the lower left corner. */
+
+.serve {
+  position: relative; overflow: hidden;
+  max-width: var(--shell); margin: 0 auto clamp(2rem, 4vw, 3rem);
+  border: 1px solid rgba(201,163,91,.4); border-radius: var(--radius-card);
+  background: linear-gradient(120deg, #FDFBF7 0%, #FAF4E9 55%, #F5EAD8 100%);
+  box-shadow: 0 14px 36px rgba(11,9,7,.07);
+  display: grid; gap: clamp(1.5rem, 3vw, 2.5rem);
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+@media (min-width: 64rem) {
+  .serve {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, .9fr) minmax(0, .85fr);
+    align-items: center; padding-inline-end: 0;
+  }
+}
+/* The fort, low in the corner. */
+.serve::before {
+  content: ""; position: absolute; inset-block-end: 0; inset-inline-start: 0;
+  width: 19rem; height: 13rem; opacity: .3; pointer-events: none;
+  background: url("../assets/img/fort.webp") no-repeat left bottom / contain;
+}
+.serve > * { position: relative; z-index: 1; }
+
+.serve__kicker {
+  display: flex; align-items: center; gap: .8rem; margin: 0 0 .5rem;
+  font-size: .78rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
+.serve__kicker span { flex: 1 1 4rem; max-width: 8rem; height: 1px; background: rgba(128,97,38,.5); }
+.lang-ur .serve__kicker, .lang-ps .serve__kicker { letter-spacing: normal; text-transform: none; }
+
+.serve__main h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.06; margin: 0 0 .5em; display: grid; }
+.serve__line1 { color: var(--color-dark); }
+/* The second line in gold, underlined by a swoosh. */
+.serve__line2 {
+  position: relative; color: var(--color-gold-deep); justify-self: start;
+  padding-inline-start: clamp(1rem, 4vw, 3.5rem); padding-block-end: .12em;
+}
+.serve__line2::after {
+  content: ""; position: absolute; inset-block-end: 0; inset-inline: 0;
+  height: .16em; border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--color-gold-deep) 20%, var(--color-gold) 70%, transparent);
+}
+.serve__lead { color: var(--muted-dark); max-width: 46ch; margin: 0; }
+.serve__actions { display: flex; flex-wrap: wrap; gap: .9rem; margin-block-start: clamp(1.25rem, 2.5vw, 1.75rem); }
+.serve__actions .btn--ghost { color: var(--color-gold-deep); border-color: rgba(128,97,38,.55); }
+.serve__actions .btn--ghost:hover, .serve__actions .btn--ghost:focus-visible, .serve__actions .btn--ghost:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+.serve__tagline {
+  margin: clamp(1.5rem, 3vw, 2.25rem) 0 0; font-size: .78rem; font-weight: 600;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--color-gold-deep);
+}
+.lang-ur .serve__tagline, .lang-ps .serve__tagline { letter-spacing: normal; text-transform: none; }
+
+/* The three ways to eat. */
+.serve__ways { list-style: none; margin: 0; padding: 0 0 0 clamp(0rem, 2vw, 1.75rem); display: grid; gap: 1.25rem; }
+@media (min-width: 64rem) { .serve__ways { border-inline-start: 1px solid rgba(201,163,91,.55); } }
+.serve__ways li { display: flex; align-items: center; gap: .9rem; font-size: var(--step--1); color: var(--muted-dark); line-height: 1.5; }
+.serve__ways li + li { padding-block-start: 1.25rem; border-block-start: 1px solid rgba(201,163,91,.3); }
+.serve__way-icon {
+  flex: none; display: grid; place-items: center; width: 3.2rem; height: 3.2rem;
+  border-radius: 50%; background: rgba(201,163,91,.18); color: var(--color-gold-deep);
+}
+.serve__way-icon svg { width: 1.5rem; height: 1.5rem; }
+/* The scooter is drawn on a wide viewBox, so it gets its own size. */
+.serve__ways li:first-child .serve__way-icon svg { width: 2rem; height: 1.3rem; }
+
+/* The photograph, curving in from the right. */
+.serve__figure { position: relative; margin: 0; align-self: stretch; min-height: 13rem; }
+.serve__figure img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  border-radius: var(--radius-card);
+}
+@media (min-width: 64rem) {
+  .serve__figure { margin-block: calc(clamp(1.75rem, 3.5vw, 2.75rem) * -1); }
+  .serve__figure img {
+    border-radius: 0;
+    -webkit-mask-image: radial-gradient(140% 100% at 100% 50%, #000 62%, transparent 63%);
+    mask-image: radial-gradient(140% 100% at 100% 50%, #000 62%, transparent 63%);
+  }
+  .serve__figure::before {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    border-inline-start: 2px solid rgba(201,163,91,.75);
+    border-start-start-radius: 100% 50%; border-end-start-radius: 100% 50%;
+    width: 38%;
+  }
+}
+
+/* Fact cards: circular icon on one side, a gold rule, then the detail.
+   A faint gold arch in the lower corner, echoing the celebration cards. */
+.ccard {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.1rem;
+  padding: 1.9rem 1.5rem;
+  min-height: 17rem;
+  background: linear-gradient(150deg, var(--color-gold-light), var(--color-gold) 55%, var(--color-gold-light));
+  border: 1px solid var(--color-gold);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(11,9,7,.08);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+}
+.ccard::after {
+  content: ""; position: absolute; inset-block-end: -2.5rem; inset-inline-end: -1.5rem;
+  width: 8rem; height: 9rem; opacity: .10; pointer-events: none;
+  border: 2px solid var(--color-dark); border-block-end: 0;
+  border-start-start-radius: 50%; border-start-end-radius: 50%;
+}
+.ccard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 44px rgba(11,9,7,.2);
+  border-color: var(--color-gold-deep);
+}
+
+.ccard__aside { display: flex; flex-direction: column; align-items: center; gap: .8rem; }
+.ccard__icon {
+  display: grid; place-items: center; width: 2.9rem; height: 2.9rem;
+  border-radius: 50%; color: var(--color-dark);
+  background: rgba(11,9,7,.10);
+  border: 1px solid rgba(11,9,7,.22);
+  transition: background-color .35s var(--ease), color .35s var(--ease);
+}
+.ccard__icon svg { width: 1.4rem; height: 1.4rem; }
+.ccard--scooter .ccard__icon svg { width: 1.7rem; height: 1.15rem; }
+
+.ccard:hover .ccard__icon { background: rgba(11,9,7,.18); }
+/* The hairline that runs down beside the detail. */
+.ccard__rule {
+  display: block; width: 1px; flex: 1; min-height: 2.5rem; height: 100%;
+  background: linear-gradient(180deg, rgba(11,9,7,.55), rgba(11,9,7,0));
+}
+.ccard__body { position: relative; z-index: 1; display: flex; flex-direction: column; }
+
+.ccard h3 {
+  font-family: var(--body); font-size: .76rem; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--color-dark); margin: .35rem 0 .8rem;
+}
+.lang-ur .ccard h3, .lang-ps .ccard h3 {
+  font-family: inherit; letter-spacing: normal; text-transform: none; font-size: var(--step--1);
+}
+.ccard p { margin: 0 0 .35rem; font-size: var(--step--1); line-height: 1.6; color: var(--color-dark); font-weight: 600; }
+.ccard p a { text-decoration: none; color: inherit; }
+.ccard p a:hover { color: var(--color-darkest); text-decoration: underline; text-underline-offset: 3px; }
+/* Opening hours and the address read as text, not as links. */
+.ccard--clock p, .ccard--pin p { color: rgba(11,9,7,.85); font-weight: 500; }
+.ccard p:last-of-type { margin-block-end: 1rem; }
+
+.ccard__link {
+  display: inline-flex; align-items: center; gap: .5rem;
+  margin-block-start: auto; padding-block-start: .8rem;
+  font-size: var(--step--1); font-weight: 700; text-decoration: none;
+  color: var(--color-dark); border-block-start: 1px solid rgba(11,9,7,.25);
+  transition: color .25s var(--ease);
+}
+.ccard__link:hover { color: var(--color-darkest); text-decoration: underline; text-underline-offset: 3px; }
+.ccard__link-icon { display: block; width: 1.05rem; height: 1.05rem; }
+.ccard__link-icon svg { width: 100%; height: 100%; }
+
+/* Message form in its own panel, below the facts. */
+.connect__form {
+  max-width: var(--shell); margin: clamp(2rem, 4vw, 3rem) auto 0;
+  padding-inline: var(--gutter); text-align: center;
+}
+.connect__form .formpanel { text-align: start; }
+.formpanel {
+  max-width: 46rem; margin-inline: auto;
+  border: 1px solid rgba(128,97,38,.22); border-radius: var(--radius-card);
+  background: rgba(255,255,255,.6); padding: clamp(1.75rem, 4vw, 2.75rem);
+}
+.formpanel h3 { color: var(--color-gold-deep); font-size: var(--step-2); margin-block-end: .3em; }
+.req { color: var(--color-red); font-weight: 700; }
+.btn--block { width: 100%; justify-self: stretch; }
+.formpanel .form select { appearance: auto; }
+.formpanel__note { color: var(--muted-dark); font-size: var(--step--1); margin-block-end: 1.75rem; }
+
+/* ------------------------------------------------------------ admin blocks */
+
+.block { padding: var(--rhythm) var(--gutter); background: var(--white); }
+.block > div { max-width: var(--shell); margin-inline: auto; }
+.block h2 { font-size: var(--step-2); }
+.block--text p, .block--faq p { color: var(--muted-dark); }
+.block--split {
+  display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center;
+  max-width: calc(var(--shell) + var(--gutter) * 2); margin-inline: auto;
+}
+.block--split .block__media img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+@media (min-width: 60rem) {
+  .block--split { grid-template-columns: 1fr 1fr; }
+  .block--split.is-flipped .block__text { order: 2; }
+}
+.block--cta { background: var(--ink-raised); color: var(--white); }
+.block--cta p { color: var(--muted); }
+.block--offer { background: var(--gold); color: var(--ink); }
+.block--offer p { color: rgba(15,13,10,.8); }
+.block__eyebrow { font-size: var(--step--1); letter-spacing: .18em; margin-block-end: .5rem; }
+.block--faq details { border-block-end: 1px solid var(--ivory-2); padding-block: 1rem; max-width: var(--measure); }
+.block--faq summary { cursor: pointer; font-family: var(--display); font-size: var(--step-1); }
+.lang-ur .block--faq summary, .lang-ps .block--faq summary { font-family: inherit; }
+.block--faq details[open] summary { color: var(--gold-deep); }
+
+/* -------------------------------------------------------------- menu page */
+
+.menupage { padding-block-end: var(--rhythm); background: var(--color-ivory); }
+.menu__head { max-width: var(--shell); margin-inline: auto; padding: clamp(3rem, 7vw, 5rem) var(--gutter) 2rem; }
+.menu__head h1 { font-size: var(--step-4); }
+.menu__title-gold { color: var(--color-gold-deep); }
+.menu__head-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; }
+.menu__qr {
+  flex: none; display: flex; flex-direction: column; align-items: center; gap: .35rem;
+  margin: 0; text-align: center;
+}
+.menu__qr img {
+  width: 6.75rem; height: 6.75rem; border-radius: 10px; background: var(--color-white);
+  padding: .4rem; border: 1px solid rgba(128,97,38,.3);
+}
+.menu__qr figcaption { font-size: .74rem; color: var(--muted-dark); max-width: 7.5rem; line-height: 1.35; }
+@media (max-width: 34rem) {
+  .menu__head-top { flex-direction: column-reverse; align-items: flex-start; gap: 1rem; }
+  .menu__qr { flex-direction: row; }
+}
+.menu__head > p { color: var(--muted-dark); font-size: var(--step-1); }
+.menu__search { margin-block-start: 2rem; max-width: 26rem; }
+.menu__search label { display: block; font-size: var(--step--1); margin-block-end: .4rem; }
+.menu__search input {
+  width: 100%; padding: .8rem .95rem;
+  border: 1px solid rgba(128,97,38,.35); border-radius: var(--radius);
+  background: #FFFFFF; color: var(--color-dark); font: inherit;
+}
+.menu__search input:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 1px; }
+.menu__count { margin: .5rem 0 0; font-size: var(--step--1); color: var(--muted-dark); }
+.menu__search input:focus { border-color: var(--gold); }
+.menu__count { font-size: var(--step--1); color: var(--muted-dark); margin: .5rem 0 0; }
+.menu__jump {
+  position: sticky; inset-block-start: var(--header-h); z-index: 20;
+  background: var(--color-ivory); border-block: 1px solid var(--ivory-2);
+  padding-block: .5rem;
+}
+.menu__jump ul {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter);
+  display: flex; flex-wrap: wrap; justify-content: center; list-style: none;
+}
+/* Same reasoning as the homepage tab strip — on a phone, fourteen wrapped
+   categories turn this sticky bar into several rows tall, eating most of
+   the screen before any dish is visible. A single swipeable row keeps it
+   to a compact band that stays out of the way. */
+@media (max-width: 56rem) {
+  .menu__jump ul {
+    flex-wrap: nowrap; justify-content: flex-start;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+  .menu__jump ul::-webkit-scrollbar { display: none; }
+  .menu__jump li { flex: none; }
+}
+.menu__jump a {
+  display: flex; flex-direction: column; align-items: center; gap: .25rem;
+  text-decoration: none; white-space: nowrap; font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; font-weight: 600; color: var(--muted-dark);
+  padding: .5rem .85rem; border-radius: 12px; border-inline-start: 1px solid rgba(128,97,38,.18);
+  transition: background-color .25s var(--ease), color .25s var(--ease), transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.lang-ur .menu__jump a, .lang-ps .menu__jump a { letter-spacing: normal; text-transform: none; font-weight: 400; }
+.menu__jump li:first-child a { border-inline-start-color: transparent; }
+.menu__jump-icon { width: 1.15rem; height: 1.15rem; }
+.menu__jump-icon svg { width: 100%; height: 100%; }
+.menu__jump a:hover, .menu__jump a:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  color: var(--color-white);
+  transform: scale(1.3); box-shadow: 0 16px 32px -6px rgba(0,0,0,.35);
+  z-index: 5; position: relative;
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu__jump a { transition: background-color .25s var(--ease), color .25s var(--ease); }
+  .menu__jump a:hover, .menu__jump a:active { transform: none; }
+}
+.menu__cat { max-width: var(--shell); margin-inline: auto; padding: clamp(1.25rem, 3vw, 2rem) var(--gutter) 0; }
+.menu__cat[hidden] { display: none; }
+.menu__cat-head h2 {
+  font-size: var(--step-2); color: var(--ink); display: inline-block;
+  padding-block-end: .5rem; border-block-end: 1px solid var(--gold);
+}
+.menu__cat-head p { color: var(--muted-dark); font-size: var(--step--1); }
+.menu__items {
+  list-style: none; margin: 0; padding: 0;
+}
+.mitem[hidden] { display: none; }
+.mitem {
+  display: flex; align-items: center; gap: 1.1rem;
+  position: relative; border-radius: 12px;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), background-color .4s var(--ease);
+}
+.mitem:hover {
+  transform: scale(1.35);
+  box-shadow: 0 30px 60px -12px rgba(11,9,7,.4);
+  background: var(--color-ivory);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mitem { transition: none; }
+  .mitem:hover { transform: none; }
+}
+.mitem__copy { flex: 1 1 auto; min-width: 0; }
+.mitem__thumb {
+  flex: none; width: 5.75rem; height: 5.75rem; border-radius: 12px;
+  object-fit: cover; border: 1px solid rgba(128,97,38,.3);
+  box-shadow: 0 8px 18px -6px rgba(11,9,7,.4);
+}
+.mitem__head { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
+.mitem__head h3 { font-size: var(--step-1); margin: 0; }
+.mitem__dots { flex: 1 1 2rem; min-width: 1.5rem; border-block-end: 1px dotted var(--muted-dark); opacity: .4; transform: translateY(-.25em); }
+.mitem__price { font-weight: 600; color: var(--color-gold-deep); text-align: end; }
+.mitem__price s { color: var(--muted-dark); font-weight: 400; margin-inline-end: .3em; }
+.mitem__offer {
+  display: inline-block; margin-inline-start: .5rem; padding: .1rem .5rem;
+  border-radius: 999px; background: var(--color-red); color: var(--color-white);
+  font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  vertical-align: middle;
+}
+.lang-ur .mitem__offer, .lang-ps .mitem__offer { letter-spacing: normal; text-transform: none; }
+.mitem__badge {
+  display: inline-block; margin-inline-start: .5rem; padding: .1rem .5rem;
+  border-radius: 999px; background: var(--color-gold); color: var(--color-dark);
+  font-size: .65rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  vertical-align: middle;
+}
+.lang-ur .mitem__badge, .lang-ps .mitem__badge { letter-spacing: normal; text-transform: none; }
+.mitem__best {
+  display: inline-block; margin-inline-start: .5rem; padding: .1rem .5rem;
+  border-radius: 999px; background: var(--color-gold); color: var(--color-dark);
+  font-size: .65rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  vertical-align: middle;
+}
+.lang-ur .mitem__best, .lang-ps .mitem__best { letter-spacing: normal; text-transform: none; }
+.mitem__desc { color: var(--muted-dark); font-size: var(--step--1); margin: .35rem 0 0; }
+.mitem__tag { font-size: var(--step--1); color: var(--gold-deep); letter-spacing: .1em; margin: .35rem 0 0; }
+.mitem.is-out { opacity: .5; }
+.mitem.is-out .mitem__price { color: var(--muted-dark); font-style: italic; }
+.menu__manual {
+  max-width: var(--shell); margin: clamp(3rem, 6vw, 5rem) auto 0;
+  padding: 2.5rem var(--gutter); border-block-start: 1px solid var(--ivory-2);
+}
+.menu__manual h2 { font-size: var(--step-2); }
+.menu__manual img { margin-block-start: 1.5rem; }
+
+/* ----------------------------------------------------------------- footer */
+
+.footer { background: var(--color-darkest); color: var(--color-ivory); padding: clamp(1.75rem, 3.5vw, 3rem) var(--gutter) 1.5rem; }
+.footer__inner {
+  max-width: var(--shell); margin-inline: auto;
+  display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+.footer__brand img {
+  width: 108px; height: auto; margin-block-end: 1.25rem;
+  transition: transform .4s var(--ease), filter .4s var(--ease);
+}
+/* Same header-scaled pop as the header mark — big enough to notice, sized
+   so it doesn't crash into the tagline sitting right underneath it. */
+.footer__brand img:hover, .footer__brand img:active {
+  transform: scale(1.3);
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,.5));
+  position: relative; z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer__brand img { transition: none; }
+  .footer__brand img:hover, .footer__brand img:active { transform: none; }
+}
+.footer__tagline {
+  font-family: var(--display); font-size: var(--step-1); color: var(--color-ivory);
+  max-width: 22ch; margin-block-end: .8rem; line-height: 1.4;
+}
+.lang-ur .footer__tagline, .lang-ps .footer__tagline { font-family: inherit; }
+.footer__name {
+  font-size: var(--step--1); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--color-gold); margin: 0 0 .35rem;
+}
+.footer__strap { color: var(--color-muted); font-size: var(--step--1); max-width: 32ch; }
+.lang-ur .footer__name, .lang-ps .footer__name { letter-spacing: normal; text-transform: none; }
+.footer h2 {
+  font-size: var(--step-0); letter-spacing: .14em; color: var(--gold);
+  font-family: var(--body); font-weight: 600; margin-block-end: .9rem;
+}
+.lang-ur .footer h2, .lang-ps .footer h2 { font-family: inherit; }
+.footer li { font-size: var(--step--1); padding-block: .3rem; color: var(--color-muted); }
+.footer a { color: inherit; text-decoration: none; }
+.footer a:hover { color: var(--gold-bright); }
+.footer__hours li { display: flex; justify-content: space-between; gap: 1rem; }
+.footer__social { display: flex; gap: .75rem; margin-block-start: 1.25rem; }
+.footer__social a {
+  display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  border: 1px solid var(--ink-line); color: var(--gold);
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.footer__social a:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.footer__social svg { width: 1.15rem; height: 1.15rem; }
+.footer__legal {
+  max-width: var(--shell); margin: 1.75rem auto 0; padding-block-start: 1.1rem;
+  border-block-start: 1px solid rgba(201,163,91,.14); color: var(--color-muted);
+  font-size: var(--step--1); opacity: .75;
+}
+
+/* ------------------------------------------------------------------ offer
+
+   Admin-controlled promo popup. Hidden by default in markup; site.js flips
+   [hidden] off and adds .is-visible once it has checked the schedule. */
+.offer {
+  position: fixed; inset: 0; z-index: 80;
+  display: grid; place-items: center; padding: 1.5rem;
+}
+.offer[hidden] { display: none; }
+.offer__backdrop {
+  position: absolute; inset: 0; background: rgba(11,9,7,.62);
+  opacity: 0; transition: opacity .4s var(--ease);
+}
+.offer.is-visible .offer__backdrop { opacity: 1; }
+.offer__card {
+  position: relative; z-index: 1; max-width: 25rem; width: 100%;
+  background: var(--color-ivory); border-radius: var(--radius-card);
+  overflow: hidden; box-shadow: 0 30px 70px rgba(11,9,7,.45);
+  opacity: 0; transform: translateY(16px) scale(.97);
+  transition: opacity .4s var(--ease), transform .4s var(--ease);
+}
+.offer.is-visible .offer__card { opacity: 1; transform: none; }
+.offer__close {
+  position: absolute; inset-block-start: .75rem; inset-inline-end: .75rem; z-index: 2;
+  width: 2.2rem; height: 2.2rem; display: grid; place-items: center;
+  background: rgba(11,9,7,.55); color: var(--color-white);
+  border: none; border-radius: 50%; cursor: pointer;
+  transition: background-color .2s ease;
+}
+.offer__close:hover { background: rgba(11,9,7,.85); }
+.offer__close svg { width: 1.1rem; height: 1.1rem; }
+.offer__image { width: 100%; height: auto; max-height: 20rem; object-fit: cover; display: block; }
+.offer__body { padding: clamp(1.5rem, 4vw, 2.25rem); text-align: center; }
+.offer__body h2 { font-size: var(--step-1); margin: 0 0 .5em; color: var(--color-dark); }
+.offer__body p { color: var(--muted-dark); margin: 0 0 1.25em; }
+.offer__body .btn { width: 100%; justify-content: center; }
+
+/* -------------------------------------------------------------------- fab */
+
+.fab {
+  position: fixed; inset-block-end: 1.25rem; inset-inline-end: 1.25rem; z-index: 60;
+  width: 3.25rem; height: 3.25rem; border-radius: 50%;
+  background: #1F7A50; color: #fff; display: grid; place-items: center;
+  box-shadow: 0 6px 20px rgba(9,8,6,.4);
+  transition: transform .2s ease;
+}
+.fab svg { width: 1.7rem; height: 1.7rem; }
+.fab:hover { transform: scale(1.06); }
+@media (max-width: 40rem) { .fab { width: 3rem; height: 3rem; inset-block-end: 1rem; } }
+
+/* ----------------------------------------------------------------- splash */
+
+.splash {
+  display: grid; place-items: center; min-height: 100dvh;
+  background: var(--ink); color: var(--white); text-align: center; padding: var(--gutter);
+}
+.splash h1 { font-size: var(--step-3); color: var(--gold); }
+.splash p { color: var(--muted); margin-inline: auto; }
+.splash__langs { display: flex; gap: 1.5rem; justify-content: center; margin-block-start: 1.5rem; }
+.splash__langs a { color: var(--gold-bright); }
+
+@media print {
+  .masthead, .fab, .footer, .menu__jump, .menu__search { display: none; }
+  body { background: #fff; color: #000; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  html { scroll-behavior: auto; }
+}
+
+
+/* --------------------------------------------------------------- CTA band
+
+   One red interruption in an otherwise dark-and-ivory page. Deep pomegranate
+   rather than a bright red, so it reads as warm and deliberate next to the
+   antique gold instead of shouting. */
+
+.ctaband {
+  scroll-margin-block-start: calc(var(--header-h) + 1rem);
+  background: var(--color-white);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
+}
+.ctaband__card {
+  position: relative; overflow: hidden;
+  max-width: var(--shell); margin-inline: auto;
+  background: linear-gradient(105deg, var(--color-red-deep), var(--color-red) 55%, #93291B);
+  border: 1px solid rgba(201,163,91,.28); border-radius: 10px;
+  padding: clamp(1.75rem, 4vw, 2.75rem) clamp(1.5rem, 4vw, 3rem);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 1.5rem 2rem; color: var(--color-ivory);
+}
+.ctaband__card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='150' viewBox='0 0 120 150'%3E%3Cpath d='M20 150V60C20 33 38 15 60 15s40 18 40 45v90' fill='none' stroke='%23F6F0E7' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 120px 150px;
+}
+.ctaband__copy { position: relative; z-index: 1; min-width: min(100%, 20rem); flex: 1 1 26rem; }
+.ctaband__card h2 { font-size: var(--step-2); margin-block-end: .4rem; }
+.ctaband__card p { color: rgba(246,240,231,.85); margin: 0; max-width: 46ch; font-size: var(--step--1); }
+.ctaband__actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: .75rem; }
+.btn__icon { display: block; width: 1.05rem; height: 1.05rem; }
+.btn__arrow { margin-inline-start: .55rem; }
+.btn__icon svg { width: 100%; height: 100%; }
+/* Booking and sending a message are the two actions that matter most, so they
+   carry the restaurant's red rather than the gold used everywhere else. */
+.btn--red {
+  background: var(--color-red); border-color: var(--color-red); color: var(--color-white);
+}
+.btn--red:hover { background: var(--color-red-deep); border-color: var(--color-red-deep); color: var(--color-white); }
+.btn--red .btn__icon { color: var(--color-white); }
+/* On the red band itself, red on red would vanish. */
+.ctaband .btn--red { background: var(--color-white); border-color: var(--color-white); color: var(--color-gold-deep); }
+.ctaband .btn--red:hover { background: var(--color-cream); border-color: var(--color-cream); }
+.ctaband .btn--red .btn__icon { color: var(--color-gold-deep); }
+
+/* WhatsApp on the red band: a white button with the WhatsApp green on it.
+   Solid green on the red would only have read at 1.9:1 — near invisible. */
+.btn--wa { background: var(--color-white); border-color: var(--color-white); color: var(--color-gold-deep); }
+.btn--wa:hover { background: var(--color-cream); border-color: var(--color-cream); color: #6B501E; }
+.btn--wa .btn__icon { color: var(--color-gold-deep); }
+
+/* Reserve: white type on gold. Plain #C9A35B would only give white 2.4:1, so
+   this uses a deeper gold that carries white at 5.7:1 and still reads as gold. */
+.btn--reserve {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep);
+  color: var(--color-white);
+}
+.btn--reserve:hover {
+  background: linear-gradient(160deg, var(--color-gold-deep), #6F5320 60%, #5E4519);
+  border-color: #6F5320; color: var(--color-white);
+}
+.btn--reserve .btn__icon { color: var(--color-white); }
+
+/* Ink button: used on the hero, where a second gold button would compete
+   with the reserve action beside it. */
+.btn--ink { background: var(--color-dark); border-color: var(--color-dark); color: var(--color-white); }
+.btn--ink:hover { background: var(--color-darkest); border-color: rgba(246,240,231,.5); color: var(--color-white); }
+.btn--ink .btn__icon, .btn--ink .btn__arrow { color: var(--color-white); }
+/* On the hero, the ink button turns gold on hover instead of just darkening,
+   so it answers the "reserve" button's warmth beside it. */
+.hero__actions .btn--ink:hover {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+
+/* Outline buttons on the dark sections read in white, keeping the gold rule.
+   Elsewhere (the cream banner) the outline stays gold, or it would vanish. */
+.mtabs .btn--ghost {
+  color: var(--color-white); border-color: rgba(201,163,91,.75); font-weight: 700;
+}
+.mtabs .btn--ghost:hover,
+.mtabs .btn--ghost:active {
+  background: linear-gradient(160deg, #A17F35, #8E6B29 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+}
+/* WhatsApp KKR, on the reservation form, is filled gold like the section's
+   other calls to action rather than left as an outline. */
+.reserve .btn--ghost {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white); font-weight: 700;
+}
+.reserve .btn--ghost:hover {
+  background: linear-gradient(160deg, #A17F35, #8E6B29 55%, #6F5320);
+  border-color: var(--color-gold-light); color: var(--color-white);
+}
+
+/* Rounded variant, used on the red band. */
+.btn--round { border-radius: 999px; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+@media (max-width: 40rem) {
+  .ctaband__actions { width: 100%; }
+  .ctaband__actions .btn { flex: 1 1 10rem; }
+}
+
+/* -------------------------------------------------------- phone action bar
+
+   One reachable row at the bottom of a phone screen: reserve, and WhatsApp.
+   The floating bubble is hidden here so the two never stack up. */
+
+.actionbar { display: none; }
+@media (max-width: 48rem) {
+  .actionbar {
+    position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 60;
+    display: flex; gap: .6rem; padding: .6rem var(--gutter)
+      calc(.6rem + env(safe-area-inset-bottom, 0px));
+    background: rgba(9,8,6,.94);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-block-start: 1px solid rgba(201,163,91,.2);
+  }
+  .actionbar__cta {
+    flex: 1; display: grid; place-items: center; min-height: 3rem;
+    background: var(--color-gold-deep); color: var(--color-white); text-decoration: none;
+    border-radius: var(--radius); font-weight: 600; font-size: var(--step--1);
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  .lang-ur .actionbar__cta, .lang-ps .actionbar__cta { letter-spacing: normal; text-transform: none; }
+  .actionbar__wa {
+    flex: none; width: 3rem; min-height: 3rem; display: grid; place-items: center;
+    border: 1px solid rgba(201,163,91,.4); border-radius: var(--radius);
+    color: #25D366;
+  }
+  .actionbar__wa svg { width: 1.5rem; height: 1.5rem; }
+  .fab { display: none; }
+  body { padding-block-end: 4.2rem; }
+}
+
+/* --------------------------------------------- Peshawari architectural trace
+
+   A pointed-arch arcade, drawn once and tiled at very low opacity. Used only
+   on the two dark editorial sections so it reads as texture, never pattern. */
+
+.film::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='150' viewBox='0 0 120 150'%3E%3Cpath d='M20 150V60C20 33 38 15 60 15s40 18 40 45v90' fill='none' stroke='%23C9A35B' stroke-width='1.5'/%3E%3Cpath d='M60 15V0' stroke='%23C9A35B' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 120px 150px;
+}
+.film, .reserve { position: relative; }
+.film > *, .reserve > * { position: relative; z-index: 1; }
+
+/* ------------------------------------------------------------ scroll reveal */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  [data-reveal].is-visible { opacity: 1; transform: none; }
+}
+
+/* ===================================================================
+   ONLINE ORDERING — STAGE 1: global cart
+   Shared by the "Add to cart" control on every dish card, the header
+   toggle, and the slide-out drawer. Kept in its own block since it is a
+   genuinely separate system from the rest of the page rather than a
+   visual tweak to something that already existed.
+   =================================================================== */
+
+/* ---- header cart toggle ------------------------------------------- */
+.cart-toggle {
+  position: relative; flex: none;
+  order: 5;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.6rem; height: 2.6rem; border-radius: 999px;
+  border: 1px solid rgba(11,9,7,.15); background: transparent; color: var(--color-dark);
+  cursor: pointer;
+  transition: background-color .25s var(--ease), border-color .25s var(--ease),
+              transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.cart-toggle__icon { width: 1.3rem; height: 1.3rem; }
+.cart-toggle__icon svg { width: 100%; height: 100%; }
+.cart-toggle__count {
+  position: absolute; inset-block-start: -.3rem; inset-inline-end: -.3rem;
+  min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem; border-radius: 999px;
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  color: var(--color-white); font-size: .65rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--color-white);
+}
+.cart-toggle:hover, .cart-toggle:focus-visible, .cart-toggle:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  border-color: var(--color-gold-deep); color: var(--color-white);
+  transform: scale(1.15);
+  box-shadow: 0 12px 26px -8px rgba(0,0,0,.4);
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-toggle { transition: background-color .25s var(--ease), border-color .25s var(--ease); }
+  .cart-toggle:hover, .cart-toggle:focus-visible, .cart-toggle:active { transform: none; }
+}
+/* The little bump when a flying item lands, giving the icon itself a
+   beat of "something just arrived" instead of only the badge number
+   quietly changing. */
+.cart-toggle--bump { animation: cartTogglePop .4s var(--ease); }
+@keyframes cartTogglePop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-toggle--bump { animation: none; }
+}
+
+/* The flying photo itself — starts at the clicked dish's exact size and
+   position, then the left/top/width/height/opacity transition carries it
+   to the cart icon. Fixed positioning means scroll position never throws
+   it off mid-flight. */
+.cart-flyer {
+  position: fixed; z-index: 500;
+  border-radius: 10px; object-fit: cover;
+  pointer-events: none;
+  box-shadow: 0 14px 30px rgba(0,0,0,.35);
+  transition: left .55s cubic-bezier(.3,.6,.25,1), top .55s cubic-bezier(.3,.6,.25,1),
+              width .55s cubic-bezier(.3,.6,.25,1), height .55s cubic-bezier(.3,.6,.25,1),
+              opacity .3s ease .3s, border-radius .55s var(--ease);
+}
+.cart-flyer.is-flying { border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+  .cart-flyer { display: none; }
+}
+.masthead.is-stuck .cart-toggle,
+[data-header]:not(.is-stuck) .hero ~ * .cart-toggle { color: var(--color-dark); }
+
+/* ---- "Add to cart" control on a dish card -------------------------- */
+.cart-add {
+  margin-block-start: .65rem;
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+}
+.cart-add__tier {
+  font: inherit; font-size: .78rem; color: var(--color-dark);
+  border: 1px solid rgba(128,97,38,.4); border-radius: 999px;
+  padding: .4rem .8rem; background: var(--color-white);
+  max-width: 100%;
+}
+.cart-add__btn {
+  padding: .5rem 1.1rem; font-size: .72rem; gap: .45rem;
+}
+/* Always explicitly gold, regardless of which section this card happens to
+   sit in — .mtabs .btn--ghost (written for buttons on the section's dark
+   gold background) was also catching this button, leaving it white text
+   on the light menucard and effectively invisible. Specificity matched
+   and raised on purpose so it wins over that rule wherever this appears. */
+.cart-add .cart-add__btn,
+.mtabs .cart-add .cart-add__btn {
+  color: var(--color-gold-deep); border-color: var(--color-gold-deep); background: var(--color-white);
+  font-weight: 700;
+}
+.cart-add .cart-add__btn:hover,
+.mtabs .cart-add .cart-add__btn:hover,
+.cart-add .cart-add__btn:active,
+.mtabs .cart-add .cart-add__btn:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  color: var(--color-white); border-color: var(--color-gold-deep);
+}
+.cart-add__icon { width: 1rem; height: 1rem; }
+.cart-add__icon svg { width: 100%; height: 100%; }
+.cart-add__btn.is-added {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  color: var(--color-white); border-color: var(--color-gold-deep);
+  animation: cartAddPulse .4s var(--ease);
+}
+@keyframes cartAddPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-add__btn.is-added { animation: none; }
+}
+/* The platters carousel sits on a near-black card — the deep gold used
+   elsewhere would be low-contrast there, so it gets the lighter gold
+   instead while every other rule (fill gold on hover, etc.) stays shared. */
+.dish .cart-add .cart-add__btn {
+  color: var(--color-gold-light); border-color: var(--color-gold); background: transparent;
+}
+.cart-add--unavailable .cart-add__btn { opacity: .55; cursor: not-allowed; }
+.cart-add--unavailable .cart-add__btn:hover { transform: none; box-shadow: none; }
+
+/* ---- toast ----------------------------------------------------------- */
+.cart-toast {
+  position: fixed; inset-inline: 0; inset-block-end: 1.25rem; z-index: 200;
+  margin-inline: auto; width: max-content; max-width: calc(100vw - 2rem);
+  padding: .75rem 1.3rem; border-radius: 999px;
+  background: var(--color-dark); color: var(--color-ivory);
+  font-size: .85rem; font-weight: 600;
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+  opacity: 0; transform: translateY(.6rem); pointer-events: none;
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.cart-toast.is-visible { opacity: 1; transform: none; }
+
+/* ---- drawer ------------------------------------------------------- */
+.cart-drawer { position: fixed; inset: 0; z-index: 300; }
+.cart-drawer[hidden] { display: none; }
+.cart-drawer__scrim {
+  position: absolute; inset: 0; background: rgba(11,9,7,.55);
+  opacity: 0; transition: opacity .32s var(--ease);
+}
+.cart-drawer__panel {
+  position: absolute; inset-block: 0; inset-inline-end: 0;
+  width: min(26rem, 100vw);
+  background: var(--color-ivory);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .32s var(--ease);
+  box-shadow: -20px 0 50px rgba(0,0,0,.25);
+}
+/* inset-inline-end already resolves to the correct physical side for RTL
+   on its own — it means "right" in an LTR document and "left" in an RTL
+   one, automatically. The only thing that still needs a manual flip is
+   the closed-state transform, since translateX moves along the physical
+   X axis regardless of writing direction. */
+[dir="rtl"] .cart-drawer__panel { transform: translateX(-100%); }
+.cart-drawer.is-open .cart-drawer__scrim { opacity: 1; }
+.cart-drawer.is-open .cart-drawer__panel { transform: none; }
+body.cart-drawer-open { overflow: hidden; }
+
+.cart-drawer__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem; border-block-end: 1px solid rgba(128,97,38,.25);
+}
+.cart-drawer__head h2 { margin: 0; font-size: var(--step-1); }
+.cart-drawer__close {
+  width: 2.25rem; height: 2.25rem; border-radius: 999px; border: 1px solid rgba(11,9,7,.15);
+  background: transparent; color: var(--color-dark); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+.cart-drawer__close svg { width: 1rem; height: 1rem; }
+.cart-drawer__close:hover { background: var(--color-dark); color: var(--color-ivory); }
+
+.cart-drawer__body { flex: 1; overflow-y: auto; padding: 1.25rem 1.5rem; }
+.cart-drawer__empty { text-align: center; padding-block: 3rem 1rem; }
+.cart-drawer__empty-title { font-family: var(--display); font-size: var(--step-1); color: var(--color-dark); margin: 0 0 .4rem; }
+.cart-drawer__empty-hint { color: var(--muted-dark); font-size: var(--step--1); margin: 0; }
+
+.cart-drawer__items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1rem; }
+.cart-line { display: flex; gap: .85rem; align-items: flex-start; padding-block-end: 1rem; border-block-end: 1px solid rgba(128,97,38,.18); }
+.cart-line:last-child { border-block-end: none; padding-block-end: 0; }
+.cart-line__img { width: 3.75rem; height: 3.75rem; border-radius: 10px; object-fit: cover; flex: none; border: 1px solid rgba(128,97,38,.25); }
+/* If a photo ever fails to load for any reason, this replaces the
+   browser's default broken-image icon (which renders small, off-centre,
+   with the alt text spilling out next to it) with a plain, deliberate
+   placeholder that at least looks intentional. */
+.cart-line__img--fallback {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-ivory);
+}
+.cart-line__img--fallback::before {
+  content: ""; width: 1.6rem; height: 1.6rem;
+  background: var(--muted-dark);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: .5;
+}
+.cart-line__body { flex: 1 1 auto; min-width: 0; }
+.cart-line__name { margin: 0; font-family: var(--display); font-size: .95rem; color: var(--color-dark); }
+.cart-line__price { margin: .2rem 0 .5rem; color: var(--color-gold-deep); font-weight: 700; font-size: .85rem; }
+.cart-line__each { color: var(--muted-dark); font-weight: 400; font-size: .75rem; }
+.cart-line__qty { display: inline-flex; align-items: center; gap: .6rem; border: 1px solid rgba(128,97,38,.35); border-radius: 999px; padding: .2rem .6rem; }
+.cart-line__step {
+  width: 1.5rem; height: 1.5rem; border-radius: 999px; border: 0; background: transparent;
+  color: var(--color-gold-deep); font-size: 1.1rem; line-height: 1; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.cart-line__step:hover { background: rgba(128,97,38,.12); }
+.cart-line__qty-value { min-width: 1.2rem; text-align: center; font-weight: 700; font-size: .85rem; }
+.cart-line__remove {
+  flex: none; width: 2rem; height: 2rem; border-radius: 999px; border: 0; background: transparent;
+  color: var(--muted-dark); cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  transition: color .2s var(--ease), background-color .2s var(--ease);
+}
+.cart-line__remove svg { width: 1rem; height: 1rem; }
+.cart-line__remove:hover { color: var(--color-red); background: rgba(123,30,20,.08); }
+
+.cart-drawer__foot { padding: 1.25rem 1.5rem; border-block-start: 1px solid rgba(128,97,38,.25); }
+.cart-drawer__row { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--step--1); color: var(--muted-dark); margin-block-end: .35rem; }
+.cart-drawer__row span:last-child { font-weight: 700; color: var(--color-dark); }
+.cart-drawer__row--total {
+  font-size: var(--step-0); color: var(--color-dark); font-weight: 700;
+  padding-block-start: .5rem; margin-block-start: .15rem; border-block-start: 1px solid rgba(128,97,38,.25);
+}
+.cart-drawer__row--total span:last-child { font-weight: 800; color: var(--color-gold-deep); font-size: var(--step-1); }
+.cart-drawer__delivery-note { margin: 0 0 1rem; font-size: .78rem; color: var(--muted-dark); }
+.cart-drawer__checkout { display: flex; width: 100%; }
+
+@media (max-width: 26rem) {
+  .cart-drawer__panel { width: 100vw; }
+}
+
+/* ===================================================================
+   KKR FAVOURITES — static grid (no auto-scroll), redesigned to a
+   photo-top / dark-card layout: badge overlay on the image, bold title,
+   short blurb, then a price + View Menu row with Add to cart underneath.
+   =================================================================== */
+.favgrid {
+  max-width: var(--shell); margin-inline: auto; padding-inline: var(--gutter);
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+}
+/* Special Platters specifically (not Favourites) reads as one continuous
+   row you scroll left and right through, rather than wrapping to new
+   rows the way Favourites' shorter list does. */
+#signature .favgrid {
+  display: flex; flex-wrap: nowrap; overflow-x: auto;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  padding-block-end: .5rem;
+}
+#signature .favgrid::-webkit-scrollbar { display: none; }
+#signature .favcard { flex: 0 0 16rem; }
+@media (min-width: 40rem) { #signature .favcard { flex-basis: 17.5rem; } }
+.favcard {
+  background: linear-gradient(180deg, rgba(32,25,15,.96), rgba(12,10,7,.98));
+  border: 1px solid rgba(201,163,91,.25); border-radius: 14px;
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+}
+.favcard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 50px -12px rgba(0,0,0,.5);
+  border-color: rgba(201,163,91,.55);
+}
+@media (prefers-reduced-motion: reduce) { .favcard:hover { transform: none; } }
+.favcard__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--color-dark); }
+.favcard__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.favcard__badges {
+  position: absolute; inset-block-start: .75rem; inset-inline-end: .75rem;
+  display: flex; flex-direction: column; gap: .4rem; align-items: flex-end;
+}
+.favcard__badge {
+  padding: .3rem .65rem; border-radius: 999px; font-size: .66rem; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--color-white);
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+}
+.favcard__badge--best { background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320); }
+.favcard__badge--tag { background: rgba(123,30,20,.92); }
+.favcard__body { padding: 1.15rem 1.25rem 1.35rem; flex: 1; display: flex; flex-direction: column; }
+.favcard__body h3 {
+  margin: 0 0 .45rem; font-family: var(--display); font-size: 1.05rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .02em; color: var(--color-ivory);
+}
+.favcard__body p { margin: 0 0 1rem; color: rgba(246,240,231,.62); font-size: .85rem; line-height: 1.5; }
+.favcard__foot {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .6rem;
+  margin-block-start: auto; padding-block-start: .25rem;
+}
+.favcard__price { margin: 0; font-family: var(--display); font-size: 1.05rem; font-weight: 700; color: var(--color-gold-light); }
+.favcard__price s { color: rgba(246,240,231,.5); font-size: .7em; margin-inline-end: .25em; }
+/* Styled as a solid button (matching the reference), not a plain link —
+   and pushed to the end of the row with margin-inline-start: auto, so it
+   lands in the card's lower-right corner regardless of how much (or how
+   little) space the price and Add to cart control next to it take up. */
+.favcard__viewmenu {
+  display: inline-flex; align-items: center; gap: .3rem; flex: none;
+  margin-inline-start: auto;
+  padding: .45rem .85rem; border-radius: 999px;
+  background: rgba(123,30,20,.92); color: var(--color-white);
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color .25s var(--ease), transform .25s var(--ease);
+}
+.favcard__viewmenu:hover, .favcard__viewmenu:focus-visible { background: rgba(154,42,29,.95); transform: translateX(2px); }
+/* Add to cart used to be its own full-width row underneath — now it's
+   part of the same compact line as the price and View Menu, so both the
+   outer wrapper and the button itself size to their content instead of
+   stretching. */
+.favcard .cart-add { margin: 0; flex: 1 1 auto; gap: .4rem; min-width: 0; }
+.favcard .cart-add__tier { padding: .3rem .5rem; font-size: .68rem; max-width: 9rem; min-width: 0; flex: 1 1 auto; }
+.favcard .cart-add .cart-add__btn {
+  width: auto; justify-content: center; padding: .45rem .7rem; font-size: .66rem; flex: none;
+  color: var(--color-gold-light); border-color: rgba(201,163,91,.4); background: transparent;
+}
+.favcard .cart-add .cart-add__btn:hover, .favcard .cart-add .cart-add__btn:active {
+  background: linear-gradient(160deg, #8E6B29, var(--color-gold-deep) 55%, #6F5320);
+  color: var(--color-white); border-color: var(--color-gold-deep);
+}
+
+/* ---- checkout: payment method step ------------------------------- */
+.cart-checkout {
+  margin-block-start: .85rem; padding-block-start: .85rem;
+  border-block-start: 1px solid rgba(128,97,38,.2);
+}
+.cart-checkout__label { margin: 0 0 .6rem; font-weight: 700; font-size: .9rem; color: var(--color-dark); }
+.cart-checkout__methods { display: flex; flex-direction: column; gap: .6rem; margin-block-end: 1rem; }
+.cart-checkout__method {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .75rem .9rem; border: 1px solid rgba(128,97,38,.3); border-radius: 10px;
+  cursor: pointer; transition: border-color .2s var(--ease), background-color .2s var(--ease);
+}
+.cart-checkout__method:has(input:checked) { border-color: var(--color-gold-deep); background: rgba(201,163,91,.08); }
+.cart-checkout__method input { accent-color: var(--color-gold-deep); width: 1.1rem; height: 1.1rem; flex: none; }
+.cart-checkout__method span { font-size: .9rem; font-weight: 600; color: var(--color-dark); }
+.cart-checkout__note { font-size: .78rem; color: var(--muted-dark); line-height: 1.5; margin: 0 0 .85rem; }
+
+.cart-input {
+  display: block; width: 100%; margin-block-end: .6rem;
+  padding: .7rem .85rem; border: 1px solid rgba(128,97,38,.3); border-radius: 10px;
+  background: #fff; color: var(--color-dark); font: inherit; font-size: .9rem;
+}
+.cart-input:focus-visible { outline: 2px solid var(--color-gold-deep); outline-offset: 1px; }
+textarea.cart-input { resize: vertical; min-height: 3rem; }
+
+.cart-checkout__authbtns { display: flex; flex-direction: column; gap: .6rem; margin-block-end: .5rem; }
+.cart-checkout__wide { display: flex; width: 100%; margin-block-end: .4rem; }
+
+.cart-checkout__confirm {
+  display: flex; align-items: flex-start; gap: .55rem; cursor: pointer;
+  font-size: .78rem; color: var(--muted-dark); line-height: 1.4; margin-block-end: .85rem;
+}
+.cart-checkout__confirm input { accent-color: var(--color-gold-deep); flex: none; margin-block-start: .15rem; }
+
+.cart-checkout__error {
+  font-size: .78rem; color: #b3261e; background: rgba(179,38,30,.08);
+  border: 1px solid rgba(179,38,30,.25); border-radius: 8px;
+  padding: .55rem .7rem; margin: 0 0 .7rem;
+}
+
+/* ---- order sent confirmation --------------------------------------- */
+.cart-sent { text-align: center; padding-block: 3rem 1rem; }
+.cart-sent__title { font-family: var(--display); font-size: var(--step-1); color: var(--color-dark); margin: 0 0 .5rem; }
+.cart-sent__note { color: var(--muted-dark); font-size: var(--step--1); margin: 0; line-height: 1.5; }
+
+/* ---- footer button states ------------------------------------------- */
+.cart-drawer__send { display: flex; width: 100%; margin-block-start: .6rem; }
+.cart-drawer__back {
+  display: block; width: 100%; text-align: center; margin-block-start: .6rem;
+  background: none; border: 0; color: var(--muted-dark); font-size: .8rem; font-weight: 600;
+  text-decoration: underline; cursor: pointer; padding: .4rem;
+}
+.cart-drawer__back:hover { color: var(--color-dark); }
+
+
+/* ------------------------------------------------ platter card footer
+
+   The price sat in the same row as the two buttons, so the row wrapped and
+   the controls drifted. The price now takes its own line above, and Add to
+   cart and View Menu share the line beneath — add on the left, view menu
+   pushed to the right edge. */
+
+.favcard__price { flex: 1 0 100% !important; margin-block-end: .2rem !important; }
+.favcard .cart-add { flex: 0 1 auto !important; min-width: 0; }
+.favcard .cart-add__btn { white-space: nowrap; padding-inline: .9rem; }
+.favcard__viewmenu { flex: none !important; margin-inline-start: auto !important; white-space: nowrap; }
+
+@media (max-width: 26rem) {
+  /* Too narrow for both: let them stack rather than squeeze. */
+  .favcard .cart-add, .favcard__viewmenu { flex: 1 1 100% !important; justify-content: center; }
+  .favcard__viewmenu { margin-inline-start: 0 !important; }
+}
+
+
+/* ------------------------------------- platter + favourites card footer
+
+   Add to cart and View Menu sit on the same line but are different elements
+   with different padding, so their centres did not line up. Matching their
+   height and vertical padding settles them onto one baseline, and the row is
+   centre-aligned rather than stretched. */
+
+.favcard__foot { align-items: center !important; row-gap: .4rem; }
+.favcard .cart-add { align-items: center; }
+.favcard .cart-add__btn,
+.favcard__viewmenu {
+  min-height: 2.35rem;
+  padding-block: .42rem;
+  display: inline-flex; align-items: center;
+  line-height: 1.1;
+}
+
+/* The favourites grid runs four across, so its cards are narrower than the
+   platters. Pull the controls in a little rather than let them wrap. */
+.signature--favourites .favcard__foot { gap: .35rem .45rem; }
+.signature--favourites .favcard .cart-add__btn { padding-inline: .7rem; font-size: .78rem; }
+.signature--favourites .favcard__viewmenu { padding-inline: .7rem; font-size: .78rem; }
+.signature--favourites .favcard__price { font-size: 1rem; }
+
+@media (max-width: 72rem) {
+  /* Tighter still where the column narrows before it wraps. */
+  .signature--favourites .favcard .cart-add__btn,
+  .signature--favourites .favcard__viewmenu { padding-inline: .55rem; font-size: .74rem; }
+}
+
+
+/* ------------------------------------------------------- reservation page
+
+   This page has no hero, so its opening lines sat immediately under the fixed
+   bar and read as crammed against it rather than centred on the page. */
+
+.reservepage { padding-block-start: calc(var(--header-h) + clamp(1rem, 3vw, 2.5rem)); }
+.reservepage .reserve { justify-items: center; text-align: center; }
+.reservepage .reserve__copy { margin-inline: auto; }
+.reservepage .reserve__copy .kicker,
+.reservepage .reserve__copy h2,
+.reservepage .reserve__headline { text-align: center; }
+/* The form beneath stays left-aligned — centred labels are hard to scan. */
+.reservepage .reserve__form, .reservepage form { text-align: start; }
+
+
+/* ----------------------------------------------------- moments spacing
+
+   Two gaps were stacking: the heading block's own margin, and the padding the
+   reel carries so an enlarged clip is not clipped on hover. Both trimmed —
+   the reel keeps enough room above and below for the pop, and no more. */
+
+.moments__head { margin-block-end: clamp(1rem, 2vw, 1.5rem) !important; }
+.moments .marquee { padding-block: 2.5rem !important; }
+/* The caption sat a little low under each clip. */
+.moment h3 { margin-block-start: .55rem !important; }
+
+
+/* ------------------------------------------------- share your moments (tag us)
+
+   A dark interruption between the red CTA band and the white contact block.
+   Guests are being asked to hand us their photos, so it has to read as an
+   invitation, not a form. The masthead's mark sits at the top — brightened,
+   because the file is the deep gold cut for a white bar and would go muddy on
+   near-black — so the hashtag is unmistakably ours. */
+
+.sharemoments {
+  background: #FFFFFF;
+  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
+}
+.sharemoments__card {
+  position: relative; overflow: hidden;
+  max-width: var(--shell); margin-inline: auto;
+  background: var(--color-dark-surface);
+  border: 1px solid rgba(201, 163, 91, .24);
+  border-radius: var(--radius-card);
+  padding: clamp(2rem, 4.5vw, 3.25rem) clamp(1.25rem, 4vw, 3rem);
+  color: var(--color-ivory);
+  text-align: center;
+}
+/* The same ivan arch that runs under the CTA band, kept faint. */
+.sharemoments__card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='150' viewBox='0 0 120 150'%3E%3Cpath d='M20 150V60C20 33 38 15 60 15s40 18 40 45v90' fill='none' stroke='%23F6F0E7' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: 120px 150px;
+}
+.sharemoments__inner { position: relative; z-index: 1; }
+
+.sharemoments__mark {
+  width: clamp(132px, 15vw, 178px); height: auto;
+  margin: 0 auto clamp(1rem, 2.5vw, 1.5rem);
+  filter: brightness(1.5) saturate(1.06);
+}
+
+.sharemoments p { max-width: none; }
+.sharemoments .kicker { color: var(--color-gold); margin: 0 0 .5rem; }
+.sharemoments h2 {
+  font-size: var(--step-2); color: var(--color-white);
+  margin: 0 0 .55rem;
+}
+.sharemoments__lead {
+  margin: 0 auto; max-width: 48ch;
+  color: rgba(246, 240, 231, .78); font-size: var(--step--1);
+}
+
+/* The hashtag doubles as a copy button — on a phone, retyping it into
+   Instagram is the step people give up on. */
+.sharemoments__tag {
+  display: inline-flex; align-items: center; gap: .55rem;
+  margin-block: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 1.75rem);
+  padding: .72rem 1.6rem;
+  background: rgba(201, 163, 91, .12);
+  border: 1px solid rgba(201, 163, 91, .38);
+  border-radius: 999px;
+  color: var(--color-gold-light);
+  font-family: var(--body); font-weight: 600; font-size: var(--step-1);
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: background-color .3s var(--ease), border-color .3s var(--ease),
+              transform .3s var(--ease);
+}
+.sharemoments__tag:hover,
+.sharemoments__tag:focus-visible {
+  background: rgba(201, 163, 91, .2);
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+}
+.sharemoments__tag svg { width: 1.05rem; height: 1.05rem; flex: none; opacity: .7; }
+.sharemoments__tag.is-copied { border-color: var(--color-gold); }
+.sharemoments__tag.is-copied svg { opacity: 1; }
+
+.sharemoments__links {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem;
+}
+.sharemoments__link {
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: .6rem 1rem .6rem .6rem;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(201, 163, 91, .18);
+  border-radius: 12px;
+  color: var(--color-ivory); text-decoration: none;
+  font-weight: 600; font-size: var(--step--1);
+  transition: background-color .3s var(--ease), border-color .3s var(--ease),
+              transform .3s var(--ease);
+}
+.sharemoments__link:hover,
+.sharemoments__link:focus-visible {
+  background: rgba(201, 163, 91, .1);
+  border-color: rgba(201, 163, 91, .5);
+  transform: translateY(-2px);
+}
+/* Each platform keeps its own badge colour — it is how people find the icon
+   they are looking for without reading the label. */
+.sharemoments__badge {
+  display: grid; place-items: center; flex: none;
+  width: 2.35rem; height: 2.35rem; border-radius: 9px;
+  color: #FFF;
+}
+.sharemoments__badge svg { width: 1.3rem; height: 1.3rem; }
+.sharemoments__badge--fb { background: #1877F2; }
+.sharemoments__badge--ig { background: radial-gradient(circle at 30% 107%, #FDCB5C 0%, #F7714A 45%, #DD2A7B 62%, #8134AF 80%, #515BD4 100%); }
+.sharemoments__badge--tt { background: #101010; border: 1px solid rgba(255,255,255,.18); }
+.sharemoments__badge--wa { background: #25D366; }
+
+.sharemoments__prize {
+  display: flex; align-items: center; justify-content: center; gap: .6rem;
+  max-width: 52rem; margin: clamp(1.5rem, 3vw, 2rem) auto 0;
+  padding: .85rem 1.25rem;
+  background: rgba(201, 163, 91, .1);
+  border: 1px solid rgba(201, 163, 91, .22);
+  border-radius: 10px;
+  color: var(--color-gold-light); font-size: var(--step--1);
+}
+.sharemoments__prize svg { width: 1.15rem; height: 1.15rem; flex: none; }
+.sharemoments__prize span { max-width: none; }
+
+@media (max-width: 30rem) {
+  .sharemoments__links { gap: .55rem; }
+  .sharemoments__link { padding: .5rem .8rem .5rem .5rem; }
+  .sharemoments__badge { width: 2.1rem; height: 2.1rem; }
+}
+
+/* --------------------------------------------------- Urdu and Pashto fixes
+
+   Arabic script has no capitals, and letter-spacing breaks the joins between
+   letters — so tracked-out uppercase, which reads as elegant in Latin, comes
+   out as broken and shouty here. These components were added after the
+   original RTL pass and had been missed. */
+
+.lang-ur .delivery__label, .lang-ps .delivery__label,
+.lang-ur .delivery__lead,  .lang-ps .delivery__lead,
+.lang-ur .menucard__foot,  .lang-ps .menucard__foot,
+.lang-ur .favcard__badge,  .lang-ps .favcard__badge,
+.lang-ur .favcard__body h3, .lang-ps .favcard__body h3,
+.lang-ur .favcard__viewmenu, .lang-ps .favcard__viewmenu,
+.lang-ur .cart-checkout__label, .lang-ps .cart-checkout__label,
+.lang-ur .cart-add__label, .lang-ps .cart-add__label,
+.lang-ur .sharemoments .kicker, .lang-ps .sharemoments .kicker,
+.lang-ur .sharemoments__link, .lang-ps .sharemoments__link {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Prices and quantities are Latin digits inside an Urdu sentence. Without
+   isolation the bidi algorithm can reorder them — "Rs 2,890" arriving as
+   "2,890 Rs" or worse across a line break. */
+[dir="rtl"] .favcard__price,
+[dir="rtl"] .cart-line__price,
+[dir="rtl"] [data-cart-subtotal],
+[dir="rtl"] [data-cart-tax],
+[dir="rtl"] [data-cart-delivery],
+[dir="rtl"] [data-cart-total],
+[dir="rtl"] .cart-add__tier,
+[dir="rtl"] .delivery__phone,
+[dir="rtl"] .sharemoments__tag {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+/* Keep those figures on the side the reader expects. */
+[dir="rtl"] .favcard__price, [dir="rtl"] .cart-line__price { text-align: right; }
+
+
+/* --------------------------------------------------- anchor landing offset
+
+   The header is fixed, so a section jumped to by its anchor would otherwise
+   start underneath it. scroll-padding on <html> covers in-page clicks; giving
+   the targets their own scroll-margin also covers arriving from another page
+   with the hash already in the URL. */
+
+#about, #moments, #signature, #favourites, #ourmenu,
+#events, #share, #connect, #reserve, #gallery {
+  scroll-margin-block-start: calc(var(--header-h) + 1.5rem);
+}

@@ -1,0 +1,6 @@
+# The QR code points at /menu — keep that URL stable forever.
+/menu   /en/menu/   302
+/qr     /en/menu/   302
+/en/menu   /en/menu/   301
+/ur/menu   /ur/menu/   301
+/ps/menu   /ps/menu/   301

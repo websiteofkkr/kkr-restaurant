@@ -1,0 +1,311 @@
+/**
+ * Logic for the dedicated checkout page (en/checkout/). Reads the shared
+ * cart (window.KKRCart, from cart.js) and the shared session
+ * (window.KKRAuth, from auth.js) — this file just lays them out and
+ * submits the order.
+ */
+(() => {
+  "use strict";
+
+  const $ = (sel, root = document) => (root || document).querySelector(sel);
+  const $$ = (sel, root = document) => Array.from((root || document).querySelectorAll(sel));
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+
+  // Mutable defaults, overwritten by fetchSettings() below as soon as it
+  // resolves — these three values are admin-configurable (see
+  // functions/api/admin/settings.js) so they can't be hardcoded constants.
+  let FREE_DELIVERY_THRESHOLD = 1000;
+  let STANDARD_DELIVERY = 200;
+  let SALES_TAX_RATE = 0.05;
+  let REWARD_RATE = 0.01;
+
+  const fetchSettings = async () => {
+    try {
+      const { url, anonKey } = window.KKR_SUPABASE || {};
+      const res = await fetch(`${url}/rest/v1/settings?select=key,value`, {
+        headers: { apikey: anonKey },
+      });
+      const rows = await res.json();
+      const map = Object.fromEntries(rows.map((r) => [r.key, Number(r.value)]));
+      if (map.tax_rate != null) SALES_TAX_RATE = map.tax_rate;
+      if (map.delivery_fee != null) STANDARD_DELIVERY = map.delivery_fee;
+      if (map.free_delivery_threshold != null) FREE_DELIVERY_THRESHOLD = map.free_delivery_threshold;
+      if (map.reward_rate != null) REWARD_RATE = map.reward_rate;
+      renderSummary();
+    } catch {
+      // Settings fetch failing just means the estimate shown here uses the
+      // defaults above until reload — the server (functions/api/order.js)
+      // is the actual source of truth regardless, so nothing is at risk.
+    }
+  };
+
+  const computeTotals = () => {
+    const sub = window.KKRCart.getSubtotal();
+    const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
+    const delivery = orderType === "pickup" ? 0 : sub > FREE_DELIVERY_THRESHOLD ? 0 : STANDARD_DELIVERY;
+    const tax = Math.round(sub * SALES_TAX_RATE);
+    return { sub, delivery, tax, total: sub + delivery + tax };
+  };
+
+  const renderSummary = () => {
+    const items = window.KKRCart.getItems();
+    const list = $("[data-summary-items]");
+    if (list) {
+      list.innerHTML = items
+        .map(
+          (it) =>
+            `<li class="checkout__summary-item"><span>${it.qty} × ${esc(it.name)}</span><span>${fmt(it.price * it.qty)}</span></li>`
+        )
+        .join("");
+    }
+    const { sub, delivery, tax, total } = computeTotals();
+    setText("[data-cart-subtotal]", fmt(sub));
+    setText("[data-cart-tax]", fmt(tax));
+    setText("[data-tax-label]", SALES_TAX_RATE > 0 ? `Tax (${Math.round(SALES_TAX_RATE * 1000) / 10}%)` : "Tax");
+    setText("[data-cart-delivery]", delivery === 0 ? "Free" : fmt(delivery));
+    setText(
+      "[data-delivery-note]",
+      `Free delivery on orders over Rs. ${fmt(FREE_DELIVERY_THRESHOLD)} — otherwise a flat Rs. ${fmt(STANDARD_DELIVERY)}.`
+    );
+    renderRewardEstimate();
+    setText("[data-cart-total]", fmt(total));
+
+    const amountEl = $("[data-easypaisa-amount]");
+    if (amountEl) amountEl.textContent = `Rs. ${fmt(total)}`;
+
+    const empty = $("[data-checkout-empty]");
+    const layout = $("[data-checkout-layout]");
+    const hasItems = window.KKRCart.getCount() > 0;
+    const sent = $("[data-checkout-sent]");
+    const orderPlaced = sent && !sent.hidden;
+    if (empty) empty.hidden = hasItems || orderPlaced;
+    if (layout) layout.hidden = orderPlaced || !hasItems;
+  };
+
+  const esc = (s) =>
+    String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const setText = (sel, text) => {
+    const el = $(sel);
+    if (el) el.textContent = text;
+  };
+
+  const setError = (sel, message) => {
+    const el = $(sel);
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = !message;
+  };
+
+  /* ---------------------------------------------------- panel switching */
+  const showAuthPanel = (name) => {
+    $$("[data-auth-panel]").forEach((el) => {
+      el.hidden = el.dataset.authPanel !== name;
+    });
+    $$("[data-login-error],[data-register-error]").forEach((el) => {
+      el.hidden = true;
+      el.textContent = "";
+    });
+    const customerPanel = $("[data-customer-panel]");
+    if (customerPanel) customerPanel.hidden = !(name === "session" || name === "guest");
+  };
+
+  const prefill = (profile) => {
+    const set = (sel, val) => {
+      const el = $(sel);
+      if (el && val) el.value = val;
+    };
+    if (profile) {
+      set("[data-cf-name]", profile.full_name);
+      set("[data-cf-phone]", profile.phone);
+      set("[data-cf-email]", profile.email);
+      set("[data-cf-address]", profile.default_address);
+    }
+  };
+
+  const renderAuthState = () => {
+    const session = window.KKRAuth?.getSession();
+    if (session) {
+      setText("[data-session-name]", session.profile?.full_name || session.user?.email || "you");
+      setText("[data-session-points]", String(session.profile?.reward_points ?? 0));
+      showAuthPanel("session");
+      prefill(session.profile);
+      renderRewardEstimate();
+    } else {
+      showAuthPanel("choice");
+    }
+  };
+
+  const renderRewardEstimate = () => {
+    const el = $("[data-reward-estimate]");
+    if (!el || !window.KKRAuth?.getSession()) return;
+    const sub = window.KKRCart.getSubtotal();
+    const points = Math.floor(sub * REWARD_RATE);
+    el.hidden = points <= 0;
+    el.textContent = `You'll earn ~${points} reward point${points === 1 ? "" : "s"} once this order is confirmed.`;
+  };
+
+  const renderPaymentPanel = () => {
+    const method = document.querySelector('input[name="kkr-payment"]:checked')?.value || "cash";
+    const cashNote = $("[data-cash-note]");
+    const epPanel = $("[data-easypaisa-panel]");
+    if (cashNote) cashNote.hidden = method !== "cash";
+    if (epPanel) epPanel.hidden = method !== "easypaisa";
+  };
+
+  const renderOrderTypePanel = () => {
+    const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
+    const addressField = $("[data-address-field]");
+    if (addressField) addressField.hidden = orderType !== "delivery";
+  };
+
+  /* -------------------------------------------------------- place order */
+  const placeOrder = async () => {
+    setError("[data-order-error]", "");
+
+    const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
+    const paymentMethod = document.querySelector('input[name="kkr-payment"]:checked')?.value || "cash";
+    const name = $("[data-cf-name]")?.value.trim();
+    const phone = $("[data-cf-phone]")?.value.trim();
+    const email = $("[data-cf-email]")?.value.trim();
+    const address = $("[data-cf-address]")?.value.trim();
+    const addressLat = $("[data-cf-address-lat]")?.value;
+    const addressLng = $("[data-cf-address-lng]")?.value;
+    const notes = $("[data-cf-notes]")?.value.trim();
+    const paymentReference = $("[data-cf-payment-ref]")?.value.trim();
+    const paymentConfirmed = $("[data-cf-payment-confirm]")?.checked;
+
+    if (!name || !phone) {
+      setError("[data-order-error]", "Please enter your name and phone number.");
+      return;
+    }
+    if (orderType === "delivery" && !address) {
+      setError("[data-order-error]", "Please enter a delivery address.");
+      return;
+    }
+    if (paymentMethod === "easypaisa" && (!paymentReference || !paymentConfirmed)) {
+      setError(
+        "[data-order-error]",
+        "Please enter your Easypaisa transaction number and confirm you've sent the payment."
+      );
+      return;
+    }
+
+    const items = window.KKRCart.getItems().map((it) => ({
+      id: it.menuItemId || it.id,
+      variantId: it.variantId || null,
+      quantity: it.qty,
+    }));
+
+    const sendBtn = $("[data-cart-send]");
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Placing order…";
+    }
+
+    try {
+      const session = window.KKRAuth?.getSession();
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items,
+          orderType,
+          paymentMethod,
+          paymentReference: paymentMethod === "easypaisa" ? paymentReference : undefined,
+          customer: { name, phone, email, address, notes },
+          deliveryLat: addressLat || undefined,
+          deliveryLng: addressLng || undefined,
+          accessToken: session?.access_token,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not place order.");
+
+      setText("[data-sent-order-number]", data.orderNumber);
+      setText("[data-sent-total]", `Rs. ${fmt(data.total)}`);
+      window.KKRCart.clear();
+      $("[data-checkout-layout]").hidden = true;
+      $("[data-checkout-empty]").hidden = true;
+      $("[data-checkout-sent]").hidden = false;
+    } catch (err) {
+      setError("[data-order-error]", err.message || "Could not place order. Please try again.");
+    } finally {
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Place order";
+      }
+    }
+  };
+
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-cart-send]")) {
+      placeOrder();
+      return;
+    }
+    const authShowBtn = e.target.closest("[data-auth-show]");
+    if (authShowBtn) {
+      if (authShowBtn.dataset.authShow === "guest") {
+        showAuthPanel("guest");
+      } else {
+        showAuthPanel(authShowBtn.dataset.authShow);
+      }
+      return;
+    }
+    if (e.target.closest("[data-logout-inline]")) {
+      window.KKRAuth?.logout();
+      renderAuthState();
+      return;
+    }
+    if (e.target.closest("[data-login-submit]")) {
+      const email = $("[data-login-email]")?.value.trim();
+      const password = $("[data-login-password]")?.value;
+      if (!email || !password) {
+        setError("[data-login-error]", "Please enter your email and password.");
+        return;
+      }
+      window.KKRAuth.login(email, password)
+        .then(renderAuthState)
+        .catch((err) => setError("[data-login-error]", err.message));
+      return;
+    }
+    if (e.target.closest("[data-register-submit]")) {
+      const name = $("[data-register-name]")?.value.trim();
+      const phone = $("[data-register-phone]")?.value.trim();
+      const email = $("[data-register-email]")?.value.trim();
+      const password = $("[data-register-password]")?.value;
+      if (!name || !phone || !email || !password) {
+        setError("[data-register-error]", "Please fill in every field.");
+        return;
+      }
+      if (password.length < 6) {
+        setError("[data-register-error]", "Password must be at least 6 characters.");
+        return;
+      }
+      window.KKRAuth.register(name, phone, email, password)
+        .then(() => window.KKRAuth.login(email, password))
+        .then(renderAuthState)
+        .catch((err) => setError("[data-register-error]", err.message));
+      return;
+    }
+  });
+
+  document.addEventListener("change", (e) => {
+    if (e.target.matches('input[name="kkr-order-type"]')) {
+      renderOrderTypePanel();
+      renderSummary();
+    }
+    if (e.target.matches('input[name="kkr-payment"]')) renderPaymentPanel();
+  });
+
+  if (window.KKRAuth) window.KKRAuth.onChange(renderAuthState);
+  if (window.KKRCart) window.KKRCart.onChange(renderSummary);
+
+  window.addEventListener("DOMContentLoaded", () => {
+    renderSummary();
+    renderAuthState();
+    renderPaymentPanel();
+    renderOrderTypePanel();
+    fetchSettings();
+  });
+})();

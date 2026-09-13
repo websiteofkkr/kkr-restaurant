@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KKR — video test</title>
+<style>
+  body { margin: 0; padding: 24px; background: #0B0907; color: #F6F0E7;
+         font: 15px/1.6 system-ui, sans-serif; }
+  h1 { font-size: 1.2rem; margin: 0 0 4px; }
+  p.lead { color: #B8AB96; margin: 0 0 20px; }
+  .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  video { width: 260px; background: #000; border: 1px solid #806126; border-radius: 6px; }
+  #log { flex: 1 1 380px; min-width: 320px; background: #15110C; border: 1px solid #2C2519;
+         border-radius: 6px; padding: 16px; font: 13px/1.7 ui-monospace, Menlo, Consolas, monospace;
+         white-space: pre-wrap; }
+  .ok { color: #7BC47F; } .bad { color: #E9857A; } .warn { color: #E7C982; }
+  button { margin-top: 14px; padding: .7rem 1.2rem; background: #C9A35B; color: #0B0907;
+           border: 0; border-radius: 3px; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>KKR hero video test</h1>
+<p class="lead">This page loads the same file the website uses. Send me a photo of the readout below.</p>
+
+<div class="row">
+  <video id="v" autoplay muted loop playsinline controls>
+    <source src="hero.mp4" type="video/mp4">
+    <source src="hero.webm" type="video/webm">
+  </video>
+  <div id="log">starting…</div>
+</div>
+<button id="force">Press to play manually</button>
+
+<script>
+(function () {
+  var v = document.getElementById("v");
+  var log = document.getElementById("log");
+  var started = 0;
+
+  var NET = ["EMPTY", "IDLE", "LOADING", "NO_SOURCE"];
+  var READY = ["NOTHING", "METADATA", "CURRENT_DATA", "FUTURE_DATA", "ENOUGH_DATA"];
+  var ERR = { 1: "ABORTED", 2: "NETWORK", 3: "DECODE", 4: "SRC_NOT_SUPPORTED" };
+
+  function line(label, value, cls) {
+    return label.padEnd(20) + (cls ? '<span class="' + cls + '">' + value + "</span>" : value);
+  }
+
+  function render() {
+    var moving = v.currentTime > 0.25;
+    var out = [
+      line("file", v.currentSrc ? v.currentSrc.split("/").pop() : "(none loaded)",
+           v.currentSrc ? "ok" : "bad"),
+      line("network state", NET[v.networkState] || v.networkState,
+           v.networkState === 3 ? "bad" : "ok"),
+      line("ready state", READY[v.readyState] || v.readyState,
+           v.readyState >= 3 ? "ok" : v.readyState === 0 ? "bad" : "warn"),
+      line("error", v.error ? ERR[v.error.code] + " — " + (v.error.message || "") : "none",
+           v.error ? "bad" : "ok"),
+      line("paused", String(v.paused), v.paused ? "bad" : "ok"),
+      line("muted", String(v.muted)),
+      line("currentTime", v.currentTime.toFixed(2) + "s"),
+      line("duration", isNaN(v.duration) ? "unknown" : v.duration.toFixed(1) + "s"),
+      line("size", v.videoWidth + " x " + v.videoHeight,
+           v.videoWidth ? "ok" : "bad"),
+      line("time advancing", moving ? "YES — it is playing" : "no",
+           moving ? "ok" : "bad"),
+      "",
+      line("can play mp4/h264", v.canPlayType('video/mp4; codecs="avc1.640028"') || "NO — this is the problem",
+           v.canPlayType('video/mp4; codecs="avc1.640028"') ? "ok" : "bad"),
+      line("can play webm/vp9", v.canPlayType('video/webm; codecs="vp9"') || "no",
+           v.canPlayType('video/webm; codecs="vp9"') ? "ok" : "warn"),
+      line("reduced motion", String(matchMedia("(prefers-reduced-motion: reduce)").matches)),
+      line("save data", String((navigator.connection || {}).saveData)),
+      line("effectiveType", String((navigator.connection || {}).effectiveType)),
+      line("protocol", location.protocol, location.protocol === "file:" ? "warn" : "ok"),
+      line("autoplay attempt", started === 1 ? "allowed" : started === -1 ? "BLOCKED by browser" : "pending",
+           started === 1 ? "ok" : started === -1 ? "bad" : "warn")
+    ];
+    log.innerHTML = out.join("\n");
+  }
+
+  ["loadedmetadata", "canplay", "playing", "pause", "error", "stalled", "waiting", "timeupdate"]
+    .forEach(function (e) { v.addEventListener(e, render); });
+
+  var p = v.play();
+  if (p && p.then) {
+    p.then(function () { started = 1; render(); })
+     .catch(function (err) { started = -1; render(); log.innerHTML += "\n\nplay() rejected: " + err.name + " — " + err.message; });
+  }
+  document.getElementById("force").addEventListener("click", function () {
+    v.play().then(function () { started = 1; render(); })
+            .catch(function (err) { log.innerHTML += "\n\nmanual play failed: " + err.message; });
+  });
+  setInterval(render, 500);
+  render();
+})();
+</script>
+</body>
+</html>

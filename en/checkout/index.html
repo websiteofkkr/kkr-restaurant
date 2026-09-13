@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout — KKR Khalid Khan Restaurant</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../../assets/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="../../assets/img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Marcellus&family=Karla:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap">
+<link rel="stylesheet" href="../../styles/site.css?v=eb54d886a6">
+<link rel="stylesheet" href="../../styles/menu-tabs.css?v=eb54d886a6">
+<link rel="stylesheet" href="../../assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="../../styles/checkout.css?v=1">
+</head>
+<body class="lang-en page-checkout">
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead" data-header>
+  <div class="delivery">
+    <div class="delivery__inner">
+      <span class="delivery__badge" aria-hidden="true">
+        <span class="delivery__scooter"><svg viewBox="0 0 40 26" fill="currentColor" aria-hidden="true" focusable="false"><rect x="0" y="5.6" width="8" height="1.9" rx=".95"/><rect x="2.4" y="10.2" width="5.8" height="1.9" rx=".95"/><rect x="0.8" y="14.8" width="4.8" height="1.9" rx=".95"/><rect x="9.6" y="2.4" width="9.2" height="9.2" rx="2.2"/><rect x="11.2" y="11.2" width="10.5" height="2.8" rx="1.4"/><rect x="13.5" y="13.6" width="6.5" height="3.4" rx=".8"/><rect x="10.5" y="16.4" width="13" height="2.6" rx="1.3"/><path d="M21.2 13h4.8l3.3 6h-4.8z"/><rect x="25.4" y="4.6" width="7.2" height="2.2" rx="1.1"/><path d="M25.9 6.4h2.3l1 6.8h-2.3z"/><circle cx="13.4" cy="20.6" r="3.9" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="27.8" cy="20.6" r="3.9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M14.6 2.2A13.6 13.6 0 0 1 31.6 8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></svg></span>
+      </span>
+      <span class="delivery__words">
+        <span class="delivery__label">Fast &amp; free home delivery</span>
+        <span class="delivery__lead">Across Peshawar</span>
+      </span>
+      <a class="delivery__phone" href="tel:0915850009">
+        <span class="delivery__phone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.5 3h-3A1.5 1.5 0 0 0 2 4.6C2 13.1 8.9 20 17.4 20a1.5 1.5 0 0 0 1.6-1.5v-3l-4-1.5-1.8 2.2a13.6 13.6 0 0 1-6.4-6.4L9 8z"/></svg></span>
+        <span>091 5850009</span>
+      </a>
+    </div>
+  </div>
+  <div class="masthead__inner">
+    <a class="brand" href="../../en/index.html">
+      <img src="../../assets/img/kkr-wordmark-dark.webp" alt="KKR Khalid Khan Restaurant" width="680" height="276" decoding="async">
+    </a>
+    <button type="button" class="cart-toggle" data-account-toggle aria-label="Account">
+      <span class="cart-toggle__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20c1.4-3.8 4.5-5.8 7.5-5.8s6.1 2 7.5 5.8"/></svg></span>
+    </button>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="sitenav" data-burger>
+      <span class="burger__bars" aria-hidden="true"><span></span><span></span></span>
+      <span class="sr-only">Open navigation</span>
+    </button>
+    <nav class="sitenav" id="sitenav" aria-label="Main navigation">
+      <ul class="sitenav__list"><li><a href="../../en/index.html">Home</a></li><li><a href="../../en/index.html#about">Our story</a></li><li><a href="../../en/index.html#signature">Our special platters</a></li><li><a href="../../en/menu/index.html">Menu</a></li><li><a href="../../en/index.html#events">Events</a></li><li><a href="../../en/index.html#connect">Contact</a></li></ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="checkoutpage">
+  <div class="checkout__head">
+    <h1>Checkout</h1>
+    <a class="checkout__backlink" href="../../en/menu/index.html">&larr; Back to menu</a>
+  </div>
+
+  <div data-checkout-empty class="checkout__empty" hidden>
+    <p class="checkout__empty-title">Your cart is empty.</p>
+    <p>Add something from the menu before checking out.</p>
+    <a class="btn btn--reserve" href="../../en/menu/index.html">Browse the menu</a>
+  </div>
+
+  <div class="checkout__layout" data-checkout-layout>
+    <section class="checkout__form">
+
+      <div class="checkout__block">
+        <h2 class="checkout__block-title">1. Delivery or pickup?</h2>
+        <div class="cart-checkout__methods" role="radiogroup" aria-label="Order type">
+          <label class="cart-checkout__method">
+            <input type="radio" name="kkr-order-type" value="delivery" checked data-order-type-input>
+            <span>Delivery</span>
+          </label>
+          <label class="cart-checkout__method">
+            <input type="radio" name="kkr-order-type" value="pickup" data-order-type-input>
+            <span>Pickup</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="checkout__block">
+        <h2 class="checkout__block-title">2. How would you like to continue?</h2>
+
+        <div data-auth-panel="choice">
+          <div class="cart-checkout__authbtns cart-checkout__authbtns--row">
+            <button type="button" class="btn btn--ghost" data-auth-show="login">Log in / Register</button>
+            <button type="button" class="btn btn--reserve" data-auth-show="guest">Continue as guest</button>
+          </div>
+        </div>
+
+        <div data-auth-panel="login" hidden class="checkout__narrow">
+          <input type="email" class="cart-input" placeholder="Email" data-login-email autocomplete="email">
+          <input type="password" class="cart-input" placeholder="Password" data-login-password autocomplete="current-password">
+          <p class="cart-checkout__error" data-login-error hidden></p>
+          <button type="button" class="btn btn--reserve cart-checkout__wide" data-login-submit>Log in</button>
+          <button type="button" class="cart-drawer__back" data-auth-show="register">New here? Register instead</button>
+          <button type="button" class="cart-drawer__back" data-auth-show="choice">&larr; Back</button>
+        </div>
+
+        <div data-auth-panel="register" hidden class="checkout__narrow">
+          <input type="text" class="cart-input" placeholder="Full name" data-register-name autocomplete="name">
+          <input type="tel" class="cart-input" placeholder="Phone number" data-register-phone autocomplete="tel">
+          <input type="email" class="cart-input" placeholder="Email" data-register-email autocomplete="email">
+          <input type="password" class="cart-input" placeholder="Password (min. 6 characters)" data-register-password autocomplete="new-password">
+          <p class="cart-checkout__error" data-register-error hidden></p>
+          <button type="button" class="btn btn--reserve cart-checkout__wide" data-register-submit>Register</button>
+          <button type="button" class="cart-drawer__back" data-auth-show="login">&larr; Back to log in</button>
+        </div>
+
+        <div data-auth-panel="session" hidden>
+          <p class="cart-checkout__note">Logged in as <strong data-session-name></strong> (<span data-session-points>0</span> reward points). <button type="button" class="cart-drawer__back" data-logout-inline">Log out</button></p>
+          <p class="cart-checkout__note" data-reward-estimate hidden></p>
+        </div>
+      </div>
+
+      <div class="checkout__block" data-customer-panel hidden>
+        <h2 class="checkout__block-title">3. Your details</h2>
+        <div class="checkout__grid2">
+          <input type="text" class="cart-input" placeholder="Full name" data-cf-name autocomplete="name">
+          <input type="tel" class="cart-input" placeholder="Phone number" data-cf-phone autocomplete="tel">
+          <input type="email" class="cart-input" placeholder="Email (optional)" data-cf-email autocomplete="email">
+          <div class="checkout__address-field">
+            <input type="text" class="cart-input" placeholder="Delivery address" data-cf-address autocomplete="street-address" data-address-field>
+            <button type="button" class="checkout__map-btn" data-open-map-picker aria-label="Pick address on map">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+              <span>Pick on map</span>
+            </button>
+            <input type="hidden" data-cf-address-lat>
+            <input type="hidden" data-cf-address-lng>
+          </div>
+        </div>
+        <textarea class="cart-input" placeholder="Notes for the restaurant (optional)" data-cf-notes rows="2"></textarea>
+
+        <h2 class="checkout__block-title">4. Payment method</h2>
+        <div class="cart-checkout__methods cart-checkout__methods--row" role="radiogroup" aria-label="Payment method">
+          <label class="cart-checkout__method">
+            <input type="radio" name="kkr-payment" value="cash" checked data-payment-input>
+            <span>Cash</span>
+          </label>
+          <label class="cart-checkout__method">
+            <input type="radio" name="kkr-payment" value="easypaisa" data-payment-input>
+            <span>Easypaisa</span>
+          </label>
+        </div>
+
+        <p class="cart-checkout__note" data-cash-note>For cash orders, our restaurant team will call you to confirm your order before preparation.</p>
+
+        <div data-easypaisa-panel hidden class="checkout__narrow">
+          <p class="cart-checkout__note">Send the exact total, <strong data-easypaisa-amount>Rs. 0</strong>, to Easypaisa account <strong data-easypaisa-number>[Easypaisa number to be provided]</strong>, then enter your transaction number below.</p>
+          <input type="text" class="cart-input" placeholder="Easypaisa transaction / reference number" data-cf-payment-ref>
+          <label class="cart-checkout__confirm">
+            <input type="checkbox" data-cf-payment-confirm>
+            <span>I have sent the payment and entered the correct transaction/reference number.</span>
+          </label>
+        </div>
+
+        <p class="cart-checkout__error" data-order-error hidden></p>
+        <button type="button" class="btn btn--reserve cart-drawer__send" data-cart-send>Place order</button>
+      </div>
+    </section>
+
+    <aside class="checkout__summary">
+      <h2 class="checkout__block-title">Order summary</h2>
+      <ul class="checkout__summary-items" data-summary-items></ul>
+      <div class="cart-drawer__row">
+        <span>Subtotal</span>
+        <span data-cart-subtotal>0</span>
+      </div>
+      <div class="cart-drawer__row">
+        <span data-tax-label>Tax</span>
+        <span data-cart-tax>0</span>
+      </div>
+      <div class="cart-drawer__row">
+        <span>Delivery</span>
+        <span data-cart-delivery>0</span>
+      </div>
+      <div class="cart-drawer__row cart-drawer__row--total">
+        <span>Total</span>
+        <span data-cart-total>0</span>
+      </div>
+      <p class="cart-drawer__delivery-note" data-delivery-note>Free delivery on orders over Rs. 1,000 — otherwise a flat Rs. 200.</p>
+    </aside>
+  </div>
+
+  <div class="checkout__sent" data-checkout-sent hidden>
+    <p class="cart-sent__title">Order placed!</p>
+    <p class="cart-sent__note">Order number <strong data-sent-order-number>—</strong>. Total: <strong data-sent-total>—</strong>. We&#39;ll be in touch to confirm it.</p>
+    <a class="btn btn--reserve" href="../../en/menu/index.html">Back to menu</a>
+  </div>
+</main>
+
+<div class="map-picker" data-map-picker hidden>
+  <div class="map-picker__panel">
+    <div class="map-picker__head">
+      <h2>Pick your delivery address</h2>
+      <button type="button" class="cart-drawer__close" data-map-close aria-label="Close map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="map-picker__search">
+      <input type="text" class="cart-input" placeholder="Search for an area, road, or landmark in Peshawar" data-map-search>
+      <ul class="map-picker__results" data-map-search-results></ul>
+    </div>
+    <div class="map-picker__map-wrap">
+      <div id="map-picker-map"></div>
+      <div class="map-picker__pin" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="var(--color-red)" stroke="#fff" stroke-width="1"><path d="M12 22s7-6.9 7-12.5A7 7 0 0 0 5 9.5C5 15.1 12 22 12 22Z"/><circle cx="12" cy="9.3" r="2.6" fill="#fff"/></svg>
+      </div>
+    </div>
+    <div class="map-picker__foot">
+      <p class="cart-checkout__note" data-map-address-preview>Move the map so the pin points at your address.</p>
+      <button type="button" class="btn btn--reserve cart-checkout__wide" data-map-confirm>Use this location</button>
+    </div>
+  </div>
+</div>
+<div class="cart-drawer" data-account-modal hidden>
+  <div class="cart-drawer__scrim" data-account-close></div>
+  <aside class="cart-drawer__panel" role="dialog" aria-modal="true" aria-label="Your account">
+    <div class="cart-drawer__head">
+      <h2>Your account</h2>
+      <button type="button" class="cart-drawer__close" data-account-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body">
+      <div data-account-panel="login">
+        <p class="cart-checkout__label">Log in</p>
+        <input type="email" class="cart-input" placeholder="Email" data-acc-login-email autocomplete="email">
+        <input type="password" class="cart-input" placeholder="Password" data-acc-login-password autocomplete="current-password">
+        <p class="cart-checkout__error" data-acc-login-error hidden></p>
+        <button type="button" class="btn btn--reserve cart-checkout__wide" data-acc-login-submit>Log in</button>
+        <button type="button" class="cart-drawer__back" data-account-show="register">New here? Register instead</button>
+      </div>
+      <div data-account-panel="register" hidden>
+        <p class="cart-checkout__label">Create an account</p>
+        <input type="text" class="cart-input" placeholder="Full name" data-acc-register-name autocomplete="name">
+        <input type="tel" class="cart-input" placeholder="Phone number" data-acc-register-phone autocomplete="tel">
+        <input type="email" class="cart-input" placeholder="Email" data-acc-register-email autocomplete="email">
+        <input type="password" class="cart-input" placeholder="Password (min. 6 characters)" data-acc-register-password autocomplete="new-password">
+        <p class="cart-checkout__error" data-acc-register-error hidden></p>
+        <button type="button" class="btn btn--reserve cart-checkout__wide" data-acc-register-submit>Register</button>
+        <button type="button" class="cart-drawer__back" data-account-show="login">&larr; Back to log in</button>
+      </div>
+      <div data-account-panel="session" hidden>
+        <p class="cart-checkout__label">Welcome back, <span data-acc-name>you</span></p>
+        <p class="cart-checkout__note"><strong data-acc-points>0</strong> KKR Reward Points</p>
+        <button type="button" class="cart-drawer__back" data-acc-logout>Log out</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <img src="../../assets/img/kkr-logo.webp" alt="KKR Khalid Khan Restaurant" width="900" height="365" loading="lazy" decoding="async">
+      <p class="footer__tagline">The taste of Peshawar, served with heart.</p>
+      <p class="footer__name">KKR Khalid Khan Restaurant</p>
+      <p class="footer__strap">Peshawari Cuisine · Live Fire · Timeless Hospitality</p>
+      <ul class="footer__social"><li><a href="https://www.facebook.com/khalidkhanrestaurant" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M14 8.5V7c0-.8.2-1.2 1.3-1.2H17V3h-2.5C11.7 3 11 4.4 11 6.5v2H9v3h2V21h3v-9.5h2.3l.4-3H14Z"/></svg></a></li><li><a href="https://www.instagram.com/khalidkhan_restaurant" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a></li><li><a href="https://www.tiktok.com/@khalid_khan_restaurant" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16.5 3h-2.8v12.1a2.6 2.6 0 1 1-2.1-2.6v-2.9a5.5 5.5 0 1 0 4.9 5.5V9.3a6.4 6.4 0 0 0 3.7 1.2V7.6a3.7 3.7 0 0 1-3.7-3.7V3Z"/></svg></a></li></ul>
+    </div>
+    <nav class="footer__col" aria-label="Quick links">
+      <h2>Quick links</h2>
+      <ul><li><a href="../../en/index.html#about">Our story</a></li><li><a href="../../en/index.html#signature">Our special platters</a></li><li><a href="../../en/menu/index.html">Menu</a></li><li><a href="../../en/index.html#events">Events</a></li><li><a href="../../en/reserve/index.html">Reservations</a></li></ul>
+    </nav>
+    <div class="footer__col">
+      <h2>Contact</h2>
+      <ul class="footer__contact">
+        <li><a href="tel:0915850009">091 5850009</a></li><li><a href="tel:0915840009">091 5840009</a></li><li><a href="tel:+923355850009">+92 335 5850009</a></li><li><a href="tel:+923195840009">+92 319 5840009</a></li>
+        <li><a href="https://wa.me/923355850009?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20KKR%20Restaurant." rel="noopener">+92 335 5850009</a></li>
+        <li>Khalil Plaza, opposite Runway Tambwan Stop, University Road, Peshawar</li>
+      </ul>
+    </div>
+    <div class="footer__col"><h2>Opening hours</h2><ul class="footer__hours"><li><span>Monday – Thursday</span><span>12:00 – 23:30</span></li><li><span>Friday</span><span>14:00 – 00:00</span></li><li><span>Saturday – Sunday</span><span>12:00 – 00:00</span></li></ul></div>
+  </div>
+  <p class="footer__legal">© <span data-year>2026</span> KKR Khalid Khan Restaurant. All rights reserved.</p>
+</footer>
+<script src="../../scripts/supabase-config.js" defer></script>
+<script src="../../scripts/auth.js" defer></script>
+<script src="../../scripts/account-modal.js" defer></script>
+<script src="../../scripts/cart.js?v=eb54d886a6" defer></script>
+<script src="../../assets/vendor/leaflet/leaflet.js"></script>
+<script src="../../scripts/map-picker.js" defer></script>
+<script src="../../scripts/checkout.js" defer></script>
+<script src="../../scripts/site.js?v=eb54d886a6" defer></script>
+</body>
+</html>

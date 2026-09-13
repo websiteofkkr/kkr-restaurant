@@ -1,0 +1,128 @@
+/**
+ * Header "Account" modal — lets a customer log in, register, or see their
+ * reward points at any time, completely independent of the cart or
+ * checkout. Uses the shared session from scripts/auth.js (window.KKRAuth),
+ * so logging in here means checkout already recognizes them afterwards,
+ * and vice versa.
+ */
+(() => {
+  "use strict";
+
+  const $ = (sel, root = document) => (root || document).querySelector(sel);
+  const $$ = (sel, root = document) => Array.from((root || document).querySelectorAll(sel));
+
+  const modal = () => $("[data-account-modal]");
+
+  const openModal = () => {
+    const m = modal();
+    if (!m) return;
+    m.hidden = false;
+    requestAnimationFrame(() => m.classList.add("is-open"));
+    document.body.classList.add("cart-drawer-open");
+    render();
+  };
+  const closeModal = () => {
+    const m = modal();
+    if (!m) return;
+    m.classList.remove("is-open");
+    document.body.classList.remove("cart-drawer-open");
+    setTimeout(() => {
+      m.hidden = true;
+    }, 250);
+  };
+
+  const showPanel = (name) => {
+    $$("[data-account-panel]", modal()).forEach((el) => {
+      el.hidden = el.dataset.accountPanel !== name;
+    });
+    $$("[data-acc-login-error],[data-acc-register-error]", modal()).forEach((el) => {
+      el.hidden = true;
+      el.textContent = "";
+    });
+  };
+
+  const setError = (sel, message) => {
+    const el = $(sel, modal());
+    if (!el) return;
+    el.textContent = message;
+    el.hidden = !message;
+  };
+
+  const render = () => {
+    if (!window.KKRAuth) return;
+    const session = window.KKRAuth.getSession();
+    if (session) {
+      const nameEl = $("[data-acc-name]", modal());
+      const pointsEl = $("[data-acc-points]", modal());
+      if (nameEl) nameEl.textContent = session.profile?.full_name || session.user?.email || "you";
+      if (pointsEl) pointsEl.textContent = String(session.profile?.reward_points ?? 0);
+      showPanel("session");
+    } else {
+      showPanel("login");
+    }
+  };
+
+  if (window.KKRAuth) window.KKRAuth.onChange(render);
+
+  document.addEventListener("click", async (e) => {
+    if (e.target.closest("[data-account-toggle]")) {
+      openModal();
+      return;
+    }
+    if (e.target.closest("[data-account-close]")) {
+      closeModal();
+      return;
+    }
+    const showBtn = e.target.closest("[data-account-show]");
+    if (showBtn) {
+      showPanel(showBtn.dataset.accountShow);
+      return;
+    }
+    if (e.target.closest("[data-acc-logout]")) {
+      window.KKRAuth.logout();
+      showPanel("login");
+      return;
+    }
+    if (e.target.closest("[data-acc-login-submit]")) {
+      const email = $("[data-acc-login-email]", modal())?.value.trim();
+      const password = $("[data-acc-login-password]", modal())?.value;
+      if (!email || !password) {
+        setError("[data-acc-login-error]", "Please enter your email and password.");
+        return;
+      }
+      try {
+        await window.KKRAuth.login(email, password);
+        render();
+      } catch (err) {
+        setError("[data-acc-login-error]", err.message);
+      }
+      return;
+    }
+    if (e.target.closest("[data-acc-register-submit]")) {
+      const name = $("[data-acc-register-name]", modal())?.value.trim();
+      const phone = $("[data-acc-register-phone]", modal())?.value.trim();
+      const email = $("[data-acc-register-email]", modal())?.value.trim();
+      const password = $("[data-acc-register-password]", modal())?.value;
+      if (!name || !phone || !email || !password) {
+        setError("[data-acc-register-error]", "Please fill in every field.");
+        return;
+      }
+      if (password.length < 6) {
+        setError("[data-acc-register-error]", "Password must be at least 6 characters.");
+        return;
+      }
+      try {
+        await window.KKRAuth.register(name, phone, email, password);
+        await window.KKRAuth.login(email, password);
+        render();
+      } catch (err) {
+        setError("[data-acc-register-error]", err.message);
+      }
+      return;
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+})();
