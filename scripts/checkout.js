@@ -158,7 +158,7 @@
       el.textContent = "";
     });
     const customerPanel = $("[data-customer-panel]");
-    if (customerPanel) customerPanel.hidden = !(name === "session" || name === "guest");
+    if (customerPanel) customerPanel.hidden = name !== "session";
   };
 
   const prefill = (profile) => {
@@ -183,7 +183,7 @@
       prefill(session.profile);
       renderRewardEstimate();
     } else {
-      showAuthPanel("choice");
+      showAuthPanel("login");
     }
   };
 
@@ -259,6 +259,13 @@
   const placeOrder = async () => {
     setError("[data-order-error]", "");
 
+    const session = window.KKRAuth?.getSession();
+    if (!session?.access_token) {
+      setError("[data-order-error]", "Please log in or create an account to place an order.");
+      showAuthPanel("login");
+      return;
+    }
+
     const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
     const paymentMethod = document.querySelector('input[name="kkr-payment"]:checked')?.value || "cash";
     const name = $("[data-cf-name]")?.value.trim();
@@ -302,7 +309,6 @@
     }
 
     try {
-      const session = window.KKRAuth?.getSession();
       const res = await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -348,11 +354,7 @@
     }
     const authShowBtn = e.target.closest("[data-auth-show]");
     if (authShowBtn) {
-      if (authShowBtn.dataset.authShow === "guest") {
-        showAuthPanel("guest");
-      } else {
-        showAuthPanel(authShowBtn.dataset.authShow);
-      }
+      showAuthPanel(authShowBtn.dataset.authShow);
       return;
     }
     if (e.target.closest("[data-logout-inline]")) {

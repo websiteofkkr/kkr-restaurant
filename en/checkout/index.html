@@ -86,22 +86,15 @@
       </div>
 
       <div class="checkout__block">
-        <h2 class="checkout__block-title">2. How would you like to continue?</h2>
+        <h2 class="checkout__block-title">2. Log in to continue</h2>
+        <p class="cart-checkout__note">An account is required to place an order — this lets you track your order status and earn reward points.</p>
 
-        <div data-auth-panel="choice">
-          <div class="cart-checkout__authbtns cart-checkout__authbtns--row">
-            <button type="button" class="btn btn--ghost" data-auth-show="login">Log in / Register</button>
-            <button type="button" class="btn btn--reserve" data-auth-show="guest">Continue as guest</button>
-          </div>
-        </div>
-
-        <div data-auth-panel="login" hidden class="checkout__narrow">
+        <div data-auth-panel="login" class="checkout__narrow">
           <input type="email" class="cart-input" placeholder="Email" data-login-email autocomplete="email">
           <input type="password" class="cart-input" placeholder="Password" data-login-password autocomplete="current-password">
           <p class="cart-checkout__error" data-login-error hidden></p>
           <button type="button" class="btn btn--reserve cart-checkout__wide" data-login-submit>Log in</button>
           <button type="button" class="cart-drawer__back" data-auth-show="register">New here? Register instead</button>
-          <button type="button" class="cart-drawer__back" data-auth-show="choice">&larr; Back</button>
         </div>
 
         <div data-auth-panel="register" hidden class="checkout__narrow">

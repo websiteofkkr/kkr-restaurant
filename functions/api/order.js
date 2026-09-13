@@ -144,16 +144,18 @@ async function handleOrder({ request, env }) {
   }
 
   // ---------------------------------------------- who is placing the order
-  // NEVER trust a customer_id sent from the browser. Either derive it from
-  // a verified access token, or leave it null (guest order).
-  let customerId = null;
-  if (accessToken) {
-    const user = await getAuthUser(env, accessToken);
-    if (!user || !user.id) {
-      return jsonResponse({ error: "Your session has expired. Please log in again." }, 401);
-    }
-    customerId = user.id;
+  // NEVER trust a customer_id sent from the browser — always derive it from
+  // a verified access token. Guest ordering has been removed: every order
+  // now requires a real logged-in account, enforced here regardless of
+  // whether the frontend's own guard was somehow bypassed.
+  if (!accessToken) {
+    return jsonResponse({ error: "Please log in or create an account to place an order." }, 401);
   }
+  const user = await getAuthUser(env, accessToken);
+  if (!user || !user.id) {
+    return jsonResponse({ error: "Your session has expired. Please log in again." }, 401);
+  }
+  const customerId = user.id;
 
   // ------------------------------------------- authoritative menu lookup
   const menuRes = await fetch(new URL("/menu.json", request.url));
