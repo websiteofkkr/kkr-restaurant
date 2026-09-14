@@ -67,6 +67,7 @@
       if (name === "discounts") renderDiscountList();
       if (name === "coupons") renderCouponList();
       if (name === "featured") renderFeaturedList();
+      if (name === "moments") renderMomentsList();
     });
   });
 
@@ -786,6 +787,102 @@
     } catch (err) {
       errEl.hidden = false;
       errEl.textContent = err.message;
+    }
+  });
+
+  /* ------------------------------------------------------------ moments */
+  const formatBytes = (bytes) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  };
+
+  const renderMomentsList = async () => {
+    const listEl = $("[data-oa-moment-list]");
+    const storageEl = $("[data-oa-moment-storage]");
+    try {
+      const data = await authedFetch("/api/admin/moments");
+      const moments = data.moments || [];
+      const totalBytes = moments.reduce((sum, m) => sum + (m.file_size_bytes || 0), 0);
+      storageEl.textContent = `${moments.length} moment${moments.length === 1 ? "" : "s"} · ${formatBytes(totalBytes)} used`;
+      if (moments.length === 0) {
+        listEl.innerHTML = `<p class="oa-muted">No moments uploaded yet — the homepage shows its built-in default clips until you add some here.</p>`;
+        return;
+      }
+      listEl.innerHTML = moments
+        .map(
+          (m) => `<div class="oa-toggle-row">
+            <span>
+              <strong>${esc(m.title)}</strong>
+              <small>${esc(m.subtitle || "")}${m.subtitle ? " · " : ""}${formatBytes(m.file_size_bytes || 0)}</small>
+            </span>
+            <button type="button" class="cart-drawer__back" data-oa-moment-remove="${esc(m.id)}">Delete</button>
+          </div>`
+        )
+        .join("");
+    } catch {
+      listEl.innerHTML = `<p class="oa-muted">Could not load moments.</p>`;
+    }
+  };
+
+  $("[data-oa-moment-upload]")?.addEventListener("click", async () => {
+    const errEl = $("[data-oa-moment-error]");
+    const okEl = $("[data-oa-moment-success]");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    const title = $("[data-oa-moment-title]").value.trim();
+    const subtitle = $("[data-oa-moment-subtitle]").value.trim();
+    const duration = $("[data-oa-moment-duration]").value.trim();
+    const videoFile = $("[data-oa-moment-video]").files?.[0];
+    const posterFile = $("[data-oa-moment-poster]").files?.[0];
+    if (!title || !videoFile) {
+      errEl.hidden = false;
+      errEl.textContent = "Title and a video file are required.";
+      return;
+    }
+    const uploadBtn = $("[data-oa-moment-upload]");
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = "Uploading…";
+    try {
+      const form = new FormData();
+      form.append("title", title);
+      form.append("subtitle", subtitle);
+      form.append("durationLabel", duration);
+      form.append("video", videoFile);
+      if (posterFile) form.append("poster", posterFile);
+      const session = window.KKRAuth?.getSession();
+      const res = await fetch("/api/admin/upload-moment", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      okEl.hidden = false;
+      okEl.textContent = "Moment added — live on the homepage immediately.";
+      $("[data-oa-moment-title]").value = "";
+      $("[data-oa-moment-subtitle]").value = "";
+      $("[data-oa-moment-duration]").value = "";
+      $("[data-oa-moment-video]").value = "";
+      $("[data-oa-moment-poster]").value = "";
+      renderMomentsList();
+    } catch (err) {
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    } finally {
+      uploadBtn.disabled = false;
+      uploadBtn.textContent = "Upload moment";
+    }
+  });
+
+  document.addEventListener("click", async (e) => {
+    const remove = e.target.closest("[data-oa-moment-remove]");
+    if (!remove) return;
+    try {
+      await authedFetch(`/api/admin/moments?id=${encodeURIComponent(remove.dataset.oaMomentRemove)}`, { method: "DELETE" });
+      renderMomentsList();
+    } catch (err) {
+      console.error(err);
     }
   });
 

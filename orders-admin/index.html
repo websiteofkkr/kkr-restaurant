@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260914121514">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914121514">
+<link rel="stylesheet" href="../styles/site.css?v=20260914122356">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914122356">
 </head>
 <body class="orders-admin">
 
@@ -37,6 +37,7 @@
     <button type="button" class="oa-tab" data-oa-tab="discounts">Menu discounts</button>
     <button type="button" class="oa-tab" data-oa-tab="coupons">Coupons</button>
     <button type="button" class="oa-tab" data-oa-tab="featured">Featured items</button>
+    <button type="button" class="oa-tab" data-oa-tab="moments">Moments</button>
     <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
   </nav>
 
@@ -287,6 +288,44 @@
     </div>
   </section>
 
+  <!-- ---------------------------------------------------------- moments -->
+  <section class="oa-panel" data-oa-panel="moments" hidden>
+    <div class="oa-block oa-block--narrow">
+      <h2>Add a moment</h2>
+      <p class="oa-muted">Short clips for the "Moments from KKR" homepage reel. Keep videos short and compressed — under 15MB each — since storage on the free tier is limited.</p>
+
+      <label class="oa-field">
+        <span>Title</span>
+        <input type="text" class="cart-input" placeholder="e.g. Traditional seating" data-oa-moment-title>
+      </label>
+      <label class="oa-field">
+        <span>Subtitle (optional)</span>
+        <input type="text" class="cart-input" placeholder="e.g. The Peshawari way" data-oa-moment-subtitle>
+      </label>
+      <label class="oa-field">
+        <span>Duration label (optional)</span>
+        <input type="text" class="cart-input" placeholder="e.g. 0:06" data-oa-moment-duration>
+      </label>
+      <label class="oa-field">
+        <span>Video file (MP4/WebM/MOV, under 15MB)</span>
+        <input type="file" accept="video/mp4,video/webm,video/quicktime" data-oa-moment-video>
+      </label>
+      <label class="oa-field">
+        <span>Poster image (optional — shown before the video plays)</span>
+        <input type="file" accept="image/jpeg,image/png,image/webp" data-oa-moment-poster>
+      </label>
+      <p class="cart-checkout__error" data-oa-moment-error hidden></p>
+      <p class="cart-checkout__note" data-oa-moment-success hidden></p>
+      <button type="button" class="btn btn--reserve" data-oa-moment-upload>Upload moment</button>
+    </div>
+
+    <div class="oa-block oa-block--narrow">
+      <h2>Current moments</h2>
+      <p class="oa-muted" data-oa-moment-storage></p>
+      <div data-oa-moment-list></div>
+    </div>
+  </section>
+
   <!-- ---------------------------------------------------------- settings -->
   <section class="oa-panel" data-oa-panel="settings" hidden>
     <div class="oa-block oa-block--narrow">
@@ -321,8 +360,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260914121514" defer></script>
-<script src="../scripts/auth.js?v=20260914121514" defer></script>
-<script src="../scripts/orders-admin.js?v=20260914121514" defer></script>
+<script src="../scripts/supabase-config.js?v=20260914122356" defer></script>
+<script src="../scripts/auth.js?v=20260914122356" defer></script>
+<script src="../scripts/orders-admin.js?v=20260914122356" defer></script>
 </body>
 </html>

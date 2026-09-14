@@ -1595,6 +1595,12 @@ body { padding-block-start: var(--header-h); }
   position: relative;
   transition: transform .4s var(--ease);
 }
+/* Exactly 4 clips visible in the frame at once on wider screens — the
+   rest keep auto-scrolling through continuously behind that fixed
+   window, rather than an inconsistent "however many happen to fit". */
+@media (min-width: 60rem) {
+  .moments .moment { flex-basis: calc(25% - .95rem); }
+}
 /* Same big, deliberate pop as the platters — the whole clip lifts and
    enlarges in place, then eases straight back once the cursor moves on. */
 .moment:hover, .moment:focus-within, .moment:active {
