@@ -2654,8 +2654,8 @@ body { padding-block-start: var(--header-h); }
    document flow to begin with. */
 .mitem .cart-add {
   position: absolute; inset-inline: 0; inset-block-start: 100%;
-  z-index: 6; margin-block-start: .4rem; padding: .5rem .75rem;
-  background: var(--color-ivory); border-radius: 10px;
+  z-index: 6; padding: .65rem .75rem .5rem;
+  background: var(--color-ivory); border-radius: 0 0 10px 10px;
   box-shadow: 0 16px 32px -8px rgba(11,9,7,.35);
   opacity: 0; visibility: hidden; pointer-events: none;
   transition: opacity .2s ease, visibility .2s ease;
