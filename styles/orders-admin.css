@@ -66,6 +66,38 @@
 }
 .oa-status-btn:hover { background: var(--color-gold-deep); color: #fff; border-color: var(--color-gold-deep); }
 
+.oa-contest-summary {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: .75rem; margin-block: 1rem;
+}
+.oa-contest-summary__item {
+  background: var(--page, #f7f3ea); border-radius: 8px; padding: .75rem 1rem; text-align: center;
+}
+.oa-contest-summary__item strong { display: block; font-size: 1.3rem; color: var(--color-dark); }
+.oa-contest-summary__item span { font-size: .72rem; color: var(--muted-dark); text-transform: uppercase; letter-spacing: .03em; }
+
+.oa-contest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
+.oa-contest-card {
+  border: 1px solid rgba(128,97,38,.18); border-radius: 10px; overflow: hidden; background: #fff;
+  display: flex; flex-direction: column;
+}
+.oa-contest-card__photo { width: 100%; aspect-ratio: 4/5; object-fit: cover; background: #eee; }
+.oa-contest-card__body { padding: .85rem; display: flex; flex-direction: column; gap: .4rem; flex: 1; }
+.oa-contest-card__badge {
+  display: inline-block; align-self: flex-start; padding: .15rem .55rem; border-radius: 999px;
+  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .02em;
+}
+.oa-contest-card__badge--SUBMITTED, .oa-contest-card__badge--VALID { background: #e8e2d3; color: #6b5a2e; }
+.oa-contest-card__badge--SHORTLISTED { background: #dbe9f5; color: #2a5c85; }
+.oa-contest-card__badge--FINALIST { background: #f3ddb0; color: #8a6216; }
+.oa-contest-card__badge--WINNER { background: #c0392b; color: #fff; }
+.oa-contest-card__badge--NOT_SELECTED, .oa-contest-card__badge--REJECTED { background: #eee; color: #888; }
+.oa-contest-card__score { font-size: .85rem; color: var(--color-dark); }
+.oa-contest-card__ai { font-size: .78rem; color: var(--muted-dark); line-height: 1.4; }
+.oa-contest-card__actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-block-start: auto; padding-block-start: .5rem; }
+.oa-contest-card__actions select { font-size: .75rem; padding: .3rem .4rem; }
+.oa-contest-card__actions button { font-size: .72rem; padding: .35rem .6rem; }
+
 .oa-toggle-row {
   display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
   padding: .9rem 0; border-bottom: 1px solid rgba(128,97,38,.12); cursor: pointer;

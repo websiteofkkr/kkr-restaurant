@@ -3182,7 +3182,78 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 .sharemoments__badge--fb { background: #1877F2; }
 .sharemoments__badge--ig { background: radial-gradient(circle at 30% 107%, #FDCB5C 0%, #F7714A 45%, #DD2A7B 62%, #8134AF 80%, #515BD4 100%); }
 .sharemoments__badge--tt { background: #101010; border: 1px solid rgba(255,255,255,.18); }
+.sharemoments__badge--sc { background: #FFFC00; color: #000; }
+.sharemoments__badge--x { background: #000; border: 1px solid rgba(255,255,255,.18); }
+.sharemoments__badge--yt { background: #FF0000; }
 .sharemoments__badge--wa { background: #25D366; }
+
+.contest-prize {
+  max-width: 30rem; margin: clamp(1.5rem, 3vw, 2rem) auto 0;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(150deg, rgba(201,163,91,.14), rgba(201,163,91,.05));
+  border: 1px solid rgba(201,163,91,.3); border-radius: 14px;
+  text-align: center;
+}
+.contest-prize__label {
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  margin: 0 0 .4rem; color: var(--color-gold-light); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; font-size: .78rem;
+}
+.contest-prize__label svg { width: 1.1rem; height: 1.1rem; }
+.contest-prize__amount {
+  margin: 0 0 .5rem; font-family: var(--poster); font-weight: 400;
+  font-size: var(--step-1); color: #fff; letter-spacing: .01em;
+}
+.contest-prize__note { margin: 0; color: rgba(246,240,231,.7); font-size: .82rem; line-height: 1.5; }
+
+.contest-cta {
+  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+  margin: clamp(1.5rem, 3vw, 2rem) 0 1.5rem;
+}
+.contest-howitworks-link {
+  background: none; border: none; color: var(--color-gold-light);
+  font-size: .82rem; text-decoration: underline; cursor: pointer; padding: 0;
+}
+
+.contest-steps { margin: 0 0 1.25rem; padding-inline-start: 1.3rem; color: var(--muted-dark); line-height: 1.8; list-style: decimal; }
+.contest-steps li { padding-inline-start: .3rem; }
+
+.contest-consent {
+  grid-column: 1 / -1; display: flex; align-items: flex-start; gap: .5rem;
+  font-size: .82rem; color: var(--muted-dark); line-height: 1.4;
+}
+.contest-consent input { margin-block-start: .2rem; flex: none; }
+
+.contest-winner-section {
+  background: var(--color-dark); color: var(--color-ivory);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter); text-align: center;
+}
+.contest-winner-section__inner { max-width: var(--shell); margin-inline: auto; }
+.contest-winner-section__grid {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: clamp(1.5rem, 4vw, 3rem); margin-block-start: 1.5rem; text-align: start;
+}
+.contest-winner-section__photo {
+  width: min(100%, 22rem); aspect-ratio: 4/5; object-fit: cover;
+  border-radius: 16px; border: 2px solid rgba(201,163,91,.4);
+}
+.contest-winner-section__username { font-family: var(--poster); font-weight: 400; font-size: var(--step-2); color: #fff; margin: 0 0 .3em; }
+.contest-winner-section__month { color: var(--color-gold-light); font-size: .9rem; margin: 0 0 .8em; }
+.contest-winner-section__prize {
+  display: inline-block; padding: .5rem 1rem; border-radius: 999px;
+  background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.3);
+  color: var(--color-gold-light); font-weight: 700; font-size: .85rem; margin: 0;
+}
+.contest-previous-winners { margin-block-start: 3rem; text-align: center; }
+.contest-previous-winners h3 { font-family: var(--poster); font-weight: 400; font-size: var(--step-0); color: rgba(246,240,231,.8); margin: 0 0 1.25rem; }
+.contest-previous-winners__grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1rem; max-width: 46rem; margin-inline: auto;
+}
+.contest-previous-winners__grid figure { margin: 0; }
+.contest-previous-winners__grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; display: block; margin-block-end: .5rem; }
+.contest-previous-winners__grid figcaption { font-size: .78rem; color: rgba(246,240,231,.7); }
+.contest-previous-winners__grid figcaption span { color: rgba(246,240,231,.45); }
 
 .sharemoments__prize {
   display: flex; align-items: center; justify-content: center; gap: .6rem;

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260914171522">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914171522">
+<link rel="stylesheet" href="../styles/site.css?v=20260914173554">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914173554">
 </head>
 <body class="orders-admin">
 
@@ -39,6 +39,7 @@
     <button type="button" class="oa-tab" data-oa-tab="coupons">Coupons</button>
     <button type="button" class="oa-tab" data-oa-tab="featured">Featured items</button>
     <button type="button" class="oa-tab" data-oa-tab="moments">Moments</button>
+    <button type="button" class="oa-tab" data-oa-tab="contest">Photo Contest</button>
     <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
   </nav>
 
@@ -345,6 +346,55 @@
     </div>
   </section>
 
+  <!-- ------------------------------------------------------- contest -->
+  <section class="oa-panel" data-oa-panel="contest" hidden>
+    <div class="oa-block">
+      <h2>Photo Contest — <span data-oa-contest-month-label></span></h2>
+      <div class="oa-toolbar" style="flex-wrap:wrap;">
+        <label>Month <input type="month" class="cart-input" data-oa-contest-month style="width:auto;display:inline-block;"></label>
+        <label>Status
+          <select class="cart-input" data-oa-contest-status-filter style="width:auto;display:inline-block;">
+            <option value="">All</option>
+            <option value="SUBMITTED">Submitted</option>
+            <option value="VALID">Valid</option>
+            <option value="SHORTLISTED">Shortlisted</option>
+            <option value="FINALIST">Finalist</option>
+            <option value="WINNER">Winner</option>
+            <option value="NOT_SELECTED">Not selected</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </label>
+        <label>Platform
+          <select class="cart-input" data-oa-contest-platform-filter style="width:auto;display:inline-block;">
+            <option value="">All</option>
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="facebook">Facebook</option>
+            <option value="snapchat">Snapchat</option>
+            <option value="x">X</option>
+            <option value="youtube">YouTube</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <button type="button" class="btn btn--ghost" data-oa-contest-refresh>Refresh</button>
+      </div>
+
+      <div class="oa-contest-summary" data-oa-contest-summary></div>
+
+      <div class="oa-toolbar" style="margin-block-start:1rem;">
+        <button type="button" class="btn btn--reserve" data-oa-contest-shortlist>Run AI Shortlist</button>
+        <button type="button" class="btn btn--reserve" data-oa-contest-compare>Compare Finalists</button>
+        <span class="oa-muted" data-oa-contest-ai-status></span>
+      </div>
+      <p class="cart-checkout__error" data-oa-contest-error hidden></p>
+    </div>
+
+    <div class="oa-block">
+      <h2>Entries</h2>
+      <div class="oa-contest-grid" data-oa-contest-grid></div>
+    </div>
+  </section>
+
   <!-- ---------------------------------------------------------- settings -->
   <section class="oa-panel" data-oa-panel="settings" hidden>
     <div class="oa-block oa-block--narrow">
@@ -379,8 +429,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260914171522" defer></script>
-<script src="../scripts/auth.js?v=20260914171522" defer></script>
-<script src="../scripts/orders-admin.js?v=20260914171522" defer></script>
+<script src="../scripts/supabase-config.js?v=20260914173554" defer></script>
+<script src="../scripts/auth.js?v=20260914173554" defer></script>
+<script src="../scripts/orders-admin.js?v=20260914173554" defer></script>
 </body>
 </html>

@@ -21,8 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Marcellus&family=Karla:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap">
-<link rel="stylesheet" href="../styles/site.css?v=20260914172242">
-<link rel="stylesheet" href="../styles/menu-tabs.css?v=20260914172242">
+<link rel="stylesheet" href="../styles/site.css?v=20260914173554">
+<link rel="stylesheet" href="../styles/menu-tabs.css?v=20260914173554">
 <link rel="stylesheet" href="../assets/vendor/leaflet/leaflet.css">
 </head>
 <body class="lang-en page-home">
@@ -696,13 +696,24 @@
   <div class="sharemoments__card">
     <div class="sharemoments__inner">
       <img class="sharemoments__mark" src="../assets/img/kkr-wordmark-dark.webp" alt="KKR Khalid Khan Restaurant" width="680" height="276" loading="lazy" decoding="async">
-      <p class="kicker">Tag us</p>
-      <h2 id="share-title">Share Your Moments</h2>
-      <p class="sharemoments__lead">Capture your KKR experience and share it with our hashtag.</p>
+      <p class="kicker">Tag us from the table</p>
+      <h2 id="share-title">Share Your KKR Moment</h2>
+      <p class="sharemoments__lead">Take a photo of your food, your table, your friends, or your KKR experience and enter our monthly photo contest.</p>
 
-      <button type="button" class="sharemoments__tag" data-copy-tag="#KKRRestaurant" data-copied-label="Copied" aria-label="Copy the hashtag">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M5.5 15H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v.5"/></svg><span data-copy-text>#KKRRestaurant</span>
+      <button type="button" class="sharemoments__tag" data-copy-tag="#KKRPeshawar" data-copied-label="Copied" aria-label="Copy the hashtag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M5.5 15H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v.5"/></svg><span data-copy-text>@KKRPeshawar · #KKRPeshawar</span>
       </button>
+
+      <div class="contest-prize">
+        <p class="contest-prize__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4.6v1.2A3.4 3.4 0 0 0 7.6 10"/><path d="M17 5.5h2.4v1.2A3.4 3.4 0 0 1 16.4 10"/><path d="M12 14v3.2"/><path d="M8.6 20h6.8l-.7-2.8H9.3z"/></svg>Photo of the Month</p>
+        <p class="contest-prize__amount" data-contest-prize-amount>WIN PKR 5,000 KKR DINING CREDIT</p>
+        <p class="contest-prize__note">Every month, the KKR team selects one standout guest photo. The winning photo is featured on the KKR website and social media.</p>
+      </div>
+
+      <div class="contest-cta">
+        <button type="button" class="btn btn--reserve" data-contest-open>📸 Share Your KKR Moment</button>
+        <button type="button" class="contest-howitworks-link" data-contest-howitworks>How it works</button>
+      </div>
 
       <ul class="sharemoments__links">
         <li><a class="sharemoments__link" href="https://www.facebook.com/khalidkhanrestaurant" target="_blank" rel="noopener">
@@ -711,15 +722,96 @@
           <span class="sharemoments__badge sharemoments__badge--ig" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></span>Instagram
         </a></li><li><a class="sharemoments__link" href="https://www.tiktok.com/@khalid_khan_restaurant" target="_blank" rel="noopener">
           <span class="sharemoments__badge sharemoments__badge--tt" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16.5 3h-2.8v12.1a2.6 2.6 0 1 1-2.1-2.6v-2.9a5.5 5.5 0 1 0 4.9 5.5V9.3a6.4 6.4 0 0 0 3.7 1.2V7.6a3.7 3.7 0 0 1-3.7-3.7V3Z"/></svg></span>TikTok
-        </a></li><li><a class="sharemoments__link" href="https://wa.me/923355850009?text=Hello%2C%20I%27d%20like%20to%20share%20my%20KKR%20moments.%20%23KKRRestaurant" target="_blank" rel="noopener">
-          <span class="sharemoments__badge sharemoments__badge--wa" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.13a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.22 8.22 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.21-8.24 8.21Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.22.25-.85.84-.85 2.04s.87 2.37.99 2.53c.12.17 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28Z"/></svg></span>WhatsApp
+        </a></li><li><a class="sharemoments__link" href="https://www.snapchat.com/add/khalidkhanrest" target="_blank" rel="noopener">
+          <span class="sharemoments__badge sharemoments__badge--sc" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 3c2.8 0 4.6 2 4.7 4.3l.1 2c0 .3.1.4.5.5.5 0 1.2-.4 1.6-.4.4 0 1 .2 1 .8 0 .5-.5.8-1.1 1-.4.2-.9.3-1 .6-.1.3.1.7.4 1.2.7 1.2 1.9 2 3.3 2.3.2 0 .4.2.3.5 0 .6-1.4 1-2.3 1.1-.2 0-.3.1-.3.3 0 .2.1.6 0 .9-.1.3-.5.3-.9.3-.7 0-1.2-.2-2-.2-.9 0-1.5.4-2.2.9-.9.6-1.9 1.3-3.1 1.3s-2.2-.7-3.1-1.3c-.7-.5-1.3-.9-2.2-.9-.8 0-1.3.2-2 .2-.4 0-.8 0-.9-.3-.1-.3 0-.7 0-.9 0-.2-.1-.3-.3-.3-.9-.1-2.3-.5-2.3-1.1 0-.3.1-.5.3-.5 1.4-.3 2.6-1.1 3.3-2.3.3-.5.5-.9.4-1.2-.1-.3-.6-.4-1-.6-.6-.2-1.1-.5-1.1-1 0-.6.6-.8 1-.8.4 0 1.1.4 1.6.4.4-.1.5-.2.5-.5l.1-2C7.4 5 9.2 3 12 3Z"/></svg></span>Snapchat
+        </a></li><li><a class="sharemoments__link" href="https://x.com/khalidkhanrest" target="_blank" rel="noopener">
+          <span class="sharemoments__badge sharemoments__badge--x" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18.3 3h3l-6.7 7.6L22.5 21h-6.4l-5-6.5L5 21H2l7.1-8.1L1.8 3h6.5l4.5 6z"/></svg></span>X
+        </a></li><li><a class="sharemoments__link" href="https://www.youtube.com/@khalidkhanrestaurant" target="_blank" rel="noopener">
+          <span class="sharemoments__badge sharemoments__badge--yt" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12s0-3.3-.4-4.8a2.8 2.8 0 0 0-2-2C17.9 5 12 5 12 5s-5.9 0-7.6.2a2.8 2.8 0 0 0-2 2C2 8.7 2 12 2 12s0 3.3.4 4.8a2.8 2.8 0 0 0 2 2C6.1 19 12 19 12 19s5.9 0 7.6-.2a2.8 2.8 0 0 0 2-2c.4-1.5.4-4.8.4-4.8Z"/><path fill="#fff" d="M10 15.2V8.8L16 12z"/></svg></span>YouTube
         </a></li>
       </ul>
-
-      <p class="sharemoments__prize"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4.6v1.2A3.4 3.4 0 0 0 7.6 10"/><path d="M17 5.5h2.4v1.2A3.4 3.4 0 0 1 16.4 10"/><path d="M12 14v3.2"/><path d="M8.6 20h6.8l-.7-2.8H9.3z"/></svg><span>Best photos and videos win special KKR rewards — share yours now.</span></p>
     </div>
   </div>
 </section>
+
+<section class="contest-winner-section" id="photo-of-the-month" data-contest-winner-section hidden>
+  <div class="contest-winner-section__inner">
+    <p class="kicker">🏆 KKR Guest Photo of the Month</p>
+    <div class="contest-winner-section__grid">
+      <img class="contest-winner-section__photo" data-contest-winner-photo src="" alt="">
+      <div>
+        <p class="contest-winner-section__username" data-contest-winner-username></p>
+        <p class="contest-winner-section__month" data-contest-winner-month></p>
+        <p class="contest-winner-section__prize" data-contest-winner-amount></p>
+      </div>
+    </div>
+    <div class="contest-previous-winners" data-contest-previous-winners></div>
+  </div>
+</section>
+
+<!-- ---------------------------------------------------- contest modals -->
+<div class="cart-drawer" data-contest-howitworks-modal hidden>
+  <div class="cart-drawer__scrim" data-contest-howitworks-close></div>
+  <aside class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="contest-howitworks-title">
+    <div class="cart-drawer__head">
+      <h2 id="contest-howitworks-title">How it works</h2>
+      <button type="button" class="cart-drawer__close" data-contest-howitworks-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body">
+      <ol class="contest-steps">
+        <li>Visit KKR</li>
+        <li>Take a photo</li>
+        <li>Post it on Instagram, TikTok, Facebook, or another supported platform</li>
+        <li>Tag @KKRPeshawar</li>
+        <li>Use #KKRPeshawar</li>
+        <li>Submit the entry through the website</li>
+        <li>KKR reviews entries every month</li>
+        <li>One winner receives PKR 5,000 KKR Dining Credit</li>
+      </ol>
+      <p class="cart-checkout__note">Winner announced at the end of each month.</p>
+    </div>
+  </aside>
+</div>
+
+<div class="cart-drawer" data-contest-modal hidden>
+  <div class="cart-drawer__scrim" data-contest-close></div>
+  <aside class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="contest-modal-title">
+    <div class="cart-drawer__head">
+      <h2 id="contest-modal-title">Share Your KKR Moment</h2>
+      <button type="button" class="cart-drawer__close" data-contest-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="cart-drawer__body">
+      <form data-contest-form class="form" novalidate>
+        <div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
+        <div class="field"><label for="contest-name">Name</label><input id="contest-name" name="name" type="text" required maxlength="100"></div>
+        <div class="field"><label for="contest-email">Email</label><input id="contest-email" name="email" type="email" required maxlength="120"></div>
+        <div class="field"><label for="contest-username">Social media username</label><input id="contest-username" name="socialUsername" type="text" placeholder="@yourhandle" required maxlength="60"></div>
+        <div class="field"><label for="contest-platform">Social platform</label>
+          <select id="contest-platform" name="socialPlatform" required>
+            <option value="">Choose one</option>
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="facebook">Facebook</option>
+            <option value="snapchat">Snapchat</option>
+            <option value="x">X</option>
+            <option value="youtube">YouTube</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label for="contest-posturl">Social post URL (optional)</label><input id="contest-posturl" name="postUrl" type="url" maxlength="300"></div>
+        <div class="field"><label for="contest-photo">Upload photo</label><input id="contest-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required></div>
+        <div class="field"><label for="contest-caption">Caption (optional)</label><textarea id="contest-caption" name="caption" rows="3" maxlength="500"></textarea></div>
+        <label class="contest-consent"><input type="checkbox" name="consent" required> I give KKR permission to repost my submitted photo with credit to my social media account.</label>
+        <p class="form__status" data-contest-status role="status" aria-live="polite"></p>
+        <button class="btn btn--solid cart-checkout__wide" type="submit">Submit Entry</button>
+      </form>
+    </div>
+  </aside>
+</div>
 <section class="ctaband" id="cta" aria-labelledby="ctaband-title">
   <div class="ctaband__card">
     <div class="ctaband__copy">
@@ -808,17 +900,18 @@
     <div class="footer__col"><h2>Opening hours</h2><ul class="footer__hours"><li><span>Monday – Thursday</span><span>12:00 – 23:30</span></li><li><span>Friday</span><span>14:00 – 00:00</span></li><li><span>Saturday – Sunday</span><span>12:00 – 00:00</span></li></ul></div>
   </div>
   <p class="footer__legal">© <span data-year>2026</span> KKR Khalid Khan Restaurant. All rights reserved.</p>
-</footer><script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"KKR Khalid Khan Restaurant","description":"Peshawari cuisine cooked over live fire on University Road, Peshawar. Family dinners, weddings, celebrations and private dining at KKR Khalid Khan Restaurant.","url":"https://kkr-restaurant-esv.pages.dev/en/","image":"https://kkr-restaurant-esv.pages.dev/assets/img/og-cover.jpg","telephone":"091 5850009","servesCuisine":"Pakistani, Peshawari, Barbecue","priceRange":"$$","menu":"https://kkr-restaurant-esv.pages.dev/en/menu/","address":{"@type":"PostalAddress","streetAddress":"Khalil Plaza, opposite Runway Tambwan Stop, University Road, Peshawar","addressLocality":"Peshawar","addressCountry":"PK"},"hasMap":"https://www.google.com/maps/search/Khalil+Plaza+University+Road+Peshawar/@34.0128612,71.540616,14z?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D","geo":{"@type":"GeoCoordinates","latitude":34.0128612,"longitude":71.540616},"openingHours":["Monday – Thursday 12:00 – 23:30","Friday 14:00 – 00:00","Saturday – Sunday 12:00 – 00:00"],"sameAs":["https://www.facebook.com/khalidkhanrestaurant","https://www.instagram.com/khalidkhan_restaurant","https://www.tiktok.com/@khalid_khan_restaurant"]}</script><script src="../scripts/supabase-config.js?v=20260914172242" defer></script>
-<script src="../scripts/auth.js?v=20260914172242" defer></script>
-<script src="../scripts/account-modal.js?v=20260914172242" defer></script>
+</footer><script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"KKR Khalid Khan Restaurant","description":"Peshawari cuisine cooked over live fire on University Road, Peshawar. Family dinners, weddings, celebrations and private dining at KKR Khalid Khan Restaurant.","url":"https://kkr-restaurant-esv.pages.dev/en/","image":"https://kkr-restaurant-esv.pages.dev/assets/img/og-cover.jpg","telephone":"091 5850009","servesCuisine":"Pakistani, Peshawari, Barbecue","priceRange":"$$","menu":"https://kkr-restaurant-esv.pages.dev/en/menu/","address":{"@type":"PostalAddress","streetAddress":"Khalil Plaza, opposite Runway Tambwan Stop, University Road, Peshawar","addressLocality":"Peshawar","addressCountry":"PK"},"hasMap":"https://www.google.com/maps/search/Khalil+Plaza+University+Road+Peshawar/@34.0128612,71.540616,14z?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D","geo":{"@type":"GeoCoordinates","latitude":34.0128612,"longitude":71.540616},"openingHours":["Monday – Thursday 12:00 – 23:30","Friday 14:00 – 00:00","Saturday – Sunday 12:00 – 00:00"],"sameAs":["https://www.facebook.com/khalidkhanrestaurant","https://www.instagram.com/khalidkhan_restaurant","https://www.tiktok.com/@khalid_khan_restaurant"]}</script><script src="../scripts/supabase-config.js?v=20260914173554" defer></script>
+<script src="../scripts/auth.js?v=20260914173554" defer></script>
+<script src="../scripts/account-modal.js?v=20260914173554" defer></script>
 <script src="../assets/vendor/leaflet/leaflet.js" defer></script>
-<script src="../scripts/map-picker.js?v=20260914172242" defer></script>
-<script src="../scripts/cart.js?v=20260914172242" defer></script>
-<script src="../scripts/cart-reminder.js?v=20260914172242" defer></script>
-<script src="../scripts/menu-discounts.js?v=20260914172242" defer></script>
-<script src="../scripts/featured-items.js?v=20260914172242" defer></script>
-<script src="../scripts/moments.js?v=20260914172242" defer></script>
-<script src="../scripts/site.js?v=20260914172242" defer></script>
-<script src="../scripts/promo-banner.js?v=20260914172242" defer></script>
+<script src="../scripts/map-picker.js?v=20260914173554" defer></script>
+<script src="../scripts/cart.js?v=20260914173554" defer></script>
+<script src="../scripts/cart-reminder.js?v=20260914173554" defer></script>
+<script src="../scripts/menu-discounts.js?v=20260914173554" defer></script>
+<script src="../scripts/featured-items.js?v=20260914173554" defer></script>
+<script src="../scripts/moments.js?v=20260914173554" defer></script>
+<script src="../scripts/contest.js?v=20260914173554" defer></script>
+<script src="../scripts/site.js?v=20260914173554" defer></script>
+<script src="../scripts/promo-banner.js?v=20260914173554" defer></script>
 </body>
 </html>

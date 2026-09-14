@@ -70,6 +70,7 @@
       if (name === "featured") renderFeaturedList();
       if (name === "moments") renderMomentsList();
       if (name === "reservations") loadReservations();
+      if (name === "contest") loadContestEntries();
     });
   });
 
@@ -789,6 +790,196 @@
     } catch (err) {
       errEl.hidden = false;
       errEl.textContent = err.message;
+    }
+  });
+
+  /* -------------------------------------------------------------- contest */
+  const currentMonthValue = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  };
+  // Set a sensible default the first time the tab is opened.
+  const monthInput = $("[data-oa-contest-month]");
+  if (monthInput && !monthInput.value) monthInput.value = currentMonthValue();
+
+  const PLATFORM_LABEL = { instagram: "Instagram", tiktok: "TikTok", facebook: "Facebook", snapchat: "Snapchat", x: "X", youtube: "YouTube", other: "Other" };
+
+  const renderContestCard = (e) => {
+    const badge = `<span class="oa-contest-card__badge oa-contest-card__badge--${e.status}">${e.status.replace("_", " ")}</span>`;
+    const scoreLine = e.ai_score != null
+      ? `<p class="oa-contest-card__score">AI score: <strong>${e.ai_score}</strong>/100 ${e.ai_recommendation ? `· ${esc(e.ai_recommendation)}` : ""}</p>`
+      : `<p class="oa-contest-card__score oa-muted">Not yet AI-evaluated</p>`;
+    const aiDetail = e.ai_reason
+      ? `<p class="oa-contest-card__ai"><strong>Why:</strong> ${esc(e.ai_reason)}</p>`
+      : "";
+
+    const statusOptions = ["SUBMITTED","VALIDATING","VALID","SHORTLISTED","FINALIST","WINNER","NOT_SELECTED","REJECTED"]
+      .map((s) => `<option value="${s}" ${e.status === s ? "selected" : ""}>${s.replace("_", " ")}</option>`)
+      .join("");
+
+    let rewardControls = "";
+    if (e.status === "WINNER") {
+      rewardControls = `<div class="oa-contest-card__actions">
+        <span class="oa-muted">Reward: ${esc(e.reward_status || "PENDING")}</span>
+        ${e.reward_status === "PENDING" ? `<button type="button" data-oa-contest-reward="${esc(e.id)}" data-value="ISSUED" class="cart-drawer__back">Issue Reward</button>` : ""}
+        ${e.reward_status === "ISSUED" ? `<button type="button" data-oa-contest-reward="${esc(e.id)}" data-value="REDEEMED" class="cart-drawer__back">Mark Redeemed</button>` : ""}
+      </div>`;
+    }
+
+    const winnerBtn = e.status === "FINALIST"
+      ? `<button type="button" data-oa-contest-select-winner="${esc(e.id)}" class="btn btn--reserve" style="font-size:.72rem;padding:.35rem .6rem;">Select Winner</button>`
+      : "";
+
+    return `<div class="oa-contest-card" data-oa-contest-card="${esc(e.id)}">
+      <img class="oa-contest-card__photo" src="${esc(e.photo_url)}" alt="Entry by @${esc(e.social_username)}" loading="lazy">
+      <div class="oa-contest-card__body">
+        ${badge}
+        <strong>@${esc(e.social_username)}</strong>
+        <span class="oa-muted">${esc(PLATFORM_LABEL[e.social_platform] || e.social_platform)} · ${new Date(e.submitted_at).toLocaleDateString()}</span>
+        ${scoreLine}
+        ${aiDetail}
+        <div class="oa-contest-card__actions">
+          <select data-oa-contest-status="${esc(e.id)}">${statusOptions}</select>
+          <button type="button" data-oa-contest-reevaluate="${esc(e.id)}" class="cart-drawer__back">${e.ai_evaluated_at ? "Re-evaluate" : "Evaluate"}</button>
+          ${winnerBtn}
+        </div>
+        ${rewardControls}
+      </div>
+    </div>`;
+  };
+
+  const loadContestEntries = async () => {
+    const month = $("[data-oa-contest-month]").value || currentMonthValue();
+    const status = $("[data-oa-contest-status-filter]").value;
+    const platform = $("[data-oa-contest-platform-filter]").value;
+    $("[data-oa-contest-month-label]").textContent = month;
+    $("[data-oa-contest-error]").hidden = true;
+
+    const params = new URLSearchParams({ month });
+    if (status) params.set("status", status);
+    if (platform) params.set("platform", platform);
+
+    try {
+      const data = await authedFetch(`/api/admin/contest?${params.toString()}`);
+      const entries = data.entries || [];
+      const s = data.summary || {};
+      $("[data-oa-contest-summary]").innerHTML = `
+        <div class="oa-contest-summary__item"><strong>${s.totalEntries ?? 0}</strong><span>Total entries</span></div>
+        <div class="oa-contest-summary__item"><strong>${s.validEntries ?? 0}</strong><span>Valid</span></div>
+        <div class="oa-contest-summary__item"><strong>${s.aiEvaluated ?? 0}</strong><span>AI evaluated</span></div>
+        <div class="oa-contest-summary__item"><strong>${s.shortlisted ?? 0}</strong><span>Shortlisted</span></div>
+        <div class="oa-contest-summary__item"><strong>${s.finalists ?? 0}</strong><span>Finalists</span></div>
+        <div class="oa-contest-summary__item"><strong>${s.winner ? "✓" : "—"}</strong><span>${s.winner ? esc(s.winner) : "No winner yet"}</span></div>
+      `;
+      const grid = $("[data-oa-contest-grid]");
+      grid.innerHTML = entries.length
+        ? entries.map(renderContestCard).join("")
+        : `<p class="oa-muted">No entries match these filters.</p>`;
+    } catch (err) {
+      $("[data-oa-contest-error]").hidden = false;
+      $("[data-oa-contest-error]").textContent = err.message;
+    }
+  };
+
+  $("[data-oa-contest-refresh]")?.addEventListener("click", loadContestEntries);
+  $("[data-oa-contest-month]")?.addEventListener("change", loadContestEntries);
+  $("[data-oa-contest-status-filter]")?.addEventListener("change", loadContestEntries);
+  $("[data-oa-contest-platform-filter]")?.addEventListener("change", loadContestEntries);
+
+  $("[data-oa-contest-shortlist]")?.addEventListener("click", async () => {
+    const month = $("[data-oa-contest-month]").value || currentMonthValue();
+    const statusEl = $("[data-oa-contest-ai-status]");
+    const errEl = $("[data-oa-contest-error]");
+    errEl.hidden = true;
+    statusEl.textContent = "Running AI shortlist — this can take a minute…";
+    try {
+      const data = await authedFetch("/api/admin/contest-ai-shortlist", { method: "POST", body: JSON.stringify({ month }) });
+      statusEl.textContent = `Evaluated ${data.evaluatedCount ?? 0}, shortlisted ${data.shortlistedCount ?? 0}.`;
+      loadContestEntries();
+    } catch (err) {
+      statusEl.textContent = "";
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
+
+  $("[data-oa-contest-compare]")?.addEventListener("click", async () => {
+    const month = $("[data-oa-contest-month]").value || currentMonthValue();
+    const statusEl = $("[data-oa-contest-ai-status]");
+    const errEl = $("[data-oa-contest-error]");
+    errEl.hidden = true;
+    statusEl.textContent = "Comparing finalists…";
+    try {
+      const data = await authedFetch("/api/admin/contest-ai-compare", { method: "POST", body: JSON.stringify({ month }) });
+      statusEl.textContent = `Top 3 finalists selected. ${data.note || ""}`;
+      loadContestEntries();
+    } catch (err) {
+      statusEl.textContent = "";
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
+
+  document.addEventListener("change", async (e) => {
+    const statusSelect = e.target.closest("[data-oa-contest-status]");
+    if (statusSelect) {
+      try {
+        await authedFetch("/api/admin/contest", {
+          method: "PATCH",
+          body: JSON.stringify({ id: statusSelect.dataset.oaContestStatus, status: statusSelect.value }),
+        });
+        loadContestEntries();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+  });
+
+  document.addEventListener("click", async (e) => {
+    const reeval = e.target.closest("[data-oa-contest-reevaluate]");
+    if (reeval) {
+      reeval.disabled = true;
+      reeval.textContent = "Evaluating…";
+      try {
+        await authedFetch("/api/admin/contest-ai-shortlist", {
+          method: "POST",
+          body: JSON.stringify({ entryId: reeval.dataset.oaContestReevaluate }),
+        });
+        loadContestEntries();
+      } catch (err) {
+        alert(err.message);
+        reeval.disabled = false;
+        reeval.textContent = "Evaluate";
+      }
+      return;
+    }
+
+    const selectWinner = e.target.closest("[data-oa-contest-select-winner]");
+    if (selectWinner) {
+      if (!confirm("Are you sure you want to select this entry as the Photo of the Month winner?")) return;
+      try {
+        await authedFetch("/api/admin/contest", {
+          method: "PATCH",
+          body: JSON.stringify({ id: selectWinner.dataset.oaContestSelectWinner, selectWinner: true }),
+        });
+        loadContestEntries();
+      } catch (err) {
+        alert(err.message);
+      }
+      return;
+    }
+
+    const rewardBtn = e.target.closest("[data-oa-contest-reward]");
+    if (rewardBtn) {
+      try {
+        await authedFetch("/api/admin/contest", {
+          method: "PATCH",
+          body: JSON.stringify({ id: rewardBtn.dataset.oaContestReward, rewardStatus: rewardBtn.dataset.value }),
+        });
+        loadContestEntries();
+      } catch (err) {
+        alert(err.message);
+      }
     }
   });
 
