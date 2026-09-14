@@ -45,11 +45,15 @@
     return data;
   };
 
-  const register = (name, phone, email, password) =>
-    authFetch("/auth/v1/signup", {
+  const register = (name, phone, email, password) => {
+    if (!String(phone || "").trim()) {
+      return Promise.reject(new Error("A phone number is required to register."));
+    }
+    return authFetch("/auth/v1/signup", {
       method: "POST",
       body: JSON.stringify({ email, password, data: { full_name: name, phone } }),
     });
+  };
 
   const refreshProfile = async () => {
     if (!session) return null;

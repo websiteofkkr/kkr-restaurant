@@ -264,7 +264,11 @@
           return;
         }
         const textInput = $(`[data-oa-setting-text="${s.key}"]`);
-        if (textInput) textInput.value = s.value ?? "";
+        if (textInput) {
+          textInput.value = s.value ?? "";
+          return;
+        }
+        if (s.key === "promo_banner_image" && s.value) renderPromoImagePreview(s.value);
       });
     } catch (err) {
       console.error(err);
@@ -315,6 +319,52 @@
     } catch (err) {
       errEl.hidden = false;
       errEl.textContent = err.message;
+    }
+  });
+
+  const renderPromoImagePreview = (url) => {
+    const el = $("[data-oa-promo-image-preview]");
+    if (!el) return;
+    if (!url) {
+      el.innerHTML = "";
+      return;
+    }
+    el.innerHTML = `<img src="${esc(url)}" alt="" style="max-width:240px;max-height:120px;border-radius:8px;display:block;margin-block-end:.5rem;">
+      <button type="button" class="cart-drawer__back" data-oa-promo-image-remove>Remove image</button>`;
+  };
+
+  $("[data-oa-promo-image-file]")?.addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const errEl = $("[data-oa-promo-image-error]");
+    errEl.hidden = true;
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const session = window.KKRAuth?.getSession();
+      const res = await fetch("/api/admin/upload-image", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key: "promo_banner_image", value: data.url }) });
+      renderPromoImagePreview(data.url);
+    } catch (err) {
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
+
+  document.addEventListener("click", async (e) => {
+    if (e.target.closest("[data-oa-promo-image-remove]")) {
+      try {
+        await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key: "promo_banner_image", value: "" }) });
+        renderPromoImagePreview("");
+      } catch (err) {
+        console.error(err);
+      }
     }
   });
 

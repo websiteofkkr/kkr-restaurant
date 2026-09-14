@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260913b">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260913b">
+<link rel="stylesheet" href="../styles/site.css?v=20260913d">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260913d">
 </head>
 <body class="orders-admin">
 
@@ -142,6 +142,12 @@
         <span>Banner link (optional)</span>
         <input type="text" class="cart-input" placeholder="e.g. ../menu/index.html" data-oa-setting-text="promo_banner_link">
       </label>
+      <label class="oa-field">
+        <span>Banner image (optional — shown instead of text if set)</span>
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-oa-promo-image-file>
+      </label>
+      <div data-oa-promo-image-preview style="margin-block-end:1rem;"></div>
+      <p class="cart-checkout__error" data-oa-promo-image-error hidden></p>
       <button type="button" class="btn btn--reserve" data-oa-promo-save>Save banner text</button>
 
       <p class="cart-checkout__error" data-oa-features-error hidden></p>
@@ -218,8 +224,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260913b" defer></script>
-<script src="../scripts/auth.js?v=20260913b" defer></script>
-<script src="../scripts/orders-admin.js?v=20260913b" defer></script>
+<script src="../scripts/supabase-config.js?v=20260913d" defer></script>
+<script src="../scripts/auth.js?v=20260913d" defer></script>
+<script src="../scripts/orders-admin.js?v=20260913d" defer></script>
 </body>
 </html>

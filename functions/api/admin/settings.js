@@ -11,7 +11,7 @@ const BOOLEAN_KEYS = [
   "reservations_enabled",
   "promo_banner_enabled",
 ];
-const STRING_KEYS = ["easypaisa_number", "promo_banner_text", "promo_banner_link"];
+const STRING_KEYS = ["easypaisa_number", "promo_banner_text", "promo_banner_link", "promo_banner_image"];
 
 export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
