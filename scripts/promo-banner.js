@@ -2,6 +2,7 @@
   "use strict";
 
   const DISMISS_KEY = "kkr-promo-banner-dismissed";
+  const DISMISS_HOURS = 6;
 
   window.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -18,11 +19,20 @@
       const image = (map.promo_banner_image || "").trim();
       if (!enabled || (!text && !image)) return;
 
-      // Dismissing is remembered per-message/image: a new/changed banner
-      // shows again even if an earlier one was closed.
+      // Dismissing only lasts a few hours (not "forever in this tab") —
+      // both so a real visitor isn't shown the exact same promo every
+      // single page load, and so it re-appears the next time you check
+      // rather than looking "stuck off" after one earlier test dismissal.
       const dismissKey = image || text;
-      const dismissedKey = sessionStorage.getItem(DISMISS_KEY);
-      if (dismissedKey === dismissKey) return;
+      let dismissed = null;
+      try {
+        dismissed = JSON.parse(localStorage.getItem(DISMISS_KEY) || "null");
+      } catch {
+        /* ignore */
+      }
+      const stillDismissed =
+        dismissed && dismissed.key === dismissKey && Date.now() - dismissed.at < DISMISS_HOURS * 60 * 60 * 1000;
+      if (stillDismissed) return;
 
       const link = (map.promo_banner_link || "").trim();
 
@@ -60,7 +70,7 @@
       const dismiss = () => {
         overlay.remove();
         try {
-          sessionStorage.setItem(DISMISS_KEY, dismissKey);
+          localStorage.setItem(DISMISS_KEY, JSON.stringify({ key: dismissKey, at: Date.now() }));
         } catch {
           /* non-fatal */
         }
