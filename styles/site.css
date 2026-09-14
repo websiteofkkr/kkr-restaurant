@@ -319,7 +319,7 @@ body { padding-block-start: var(--header-h); }
    links further right than intended, opening up a large gap next to the
    logo. Only these three pages need the fix; every other page's header is
    unaffected. */
-.page-checkout .sitenav { margin-inline-start: 2.5rem; }
+.page-checkout .sitenav { margin-inline-start: 1.85rem; }
 .sitenav__list { display: flex; gap: clamp(.15rem, .5vw, .5rem); flex-wrap: nowrap; }
 .sitenav__list a {
   text-decoration: none; font-size: 1rem; font-weight: 600; letter-spacing: .02em;
