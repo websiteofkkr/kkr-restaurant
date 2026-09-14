@@ -140,8 +140,9 @@
       const phone = $("[data-acc-register-phone]", modal())?.value.trim();
       const email = $("[data-acc-register-email]", modal())?.value.trim();
       const password = $("[data-acc-register-password]", modal())?.value;
-      if (!name || !phone || !email || !password) {
-        setError("[data-acc-register-error]", "Please fill in every field.");
+      const address = $("[data-acc-register-address]", modal())?.value.trim();
+      if (!name || !phone || !email || !password || !address) {
+        setError("[data-acc-register-error]", "Please fill in every field, including your address.");
         return;
       }
       if (password.length < 6) {
@@ -151,6 +152,33 @@
       try {
         await window.KKRAuth.register(name, phone, email, password);
         await window.KKRAuth.login(email, password);
+        // Registration itself only captures name/phone (via Supabase auth
+        // metadata) — the address goes into the profile as a normal
+        // update, the same path My Account uses to change it later.
+        const session = window.KKRAuth.getSession();
+        if (session) {
+          try {
+            const { url, anonKey } = window.KKR_SUPABASE || {};
+            const res = await fetch(`${url}/rest/v1/profiles?id=eq.${session.user.id}`, {
+              method: "PATCH",
+              headers: {
+                apikey: anonKey,
+                Authorization: `Bearer ${session.access_token}`,
+                "Content-Type": "application/json",
+                Prefer: "return=representation",
+              },
+              body: JSON.stringify({ default_address: address }),
+            });
+            const rows = await res.json();
+            if (res.ok && rows[0]) {
+              session.profile = rows[0];
+              localStorage.setItem("kkr-session-v1", JSON.stringify(session));
+            }
+          } catch {
+            // Non-fatal — the account exists either way; the address can
+            // still be added later from My Account.
+          }
+        }
         render();
       } catch (err) {
         setError("[data-acc-register-error]", err.message);

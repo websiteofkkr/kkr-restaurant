@@ -83,6 +83,29 @@ async function handleOrder({ request, env }) {
     return jsonResponse({ error: "Delivery address is required." }, 400);
   }
 
+  // Restrict deliveries to a reasonable radius around the restaurant, when
+  // the address was picked on the map (so we actually have coordinates to
+  // check). A manually-typed address with no pin has nothing to validate
+  // here — that's still allowed through, same as before.
+  if (orderType === "delivery" && deliveryLat != null && deliveryLng != null) {
+    const RESTAURANT_LAT = 34.0128612;
+    const RESTAURANT_LNG = 71.540616;
+    const MAX_DELIVERY_KM = 25;
+    const R = 6371; // Earth's radius in km
+    const dLat = ((deliveryLat - RESTAURANT_LAT) * Math.PI) / 180;
+    const dLng = ((deliveryLng - RESTAURANT_LNG) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((RESTAURANT_LAT * Math.PI) / 180) * Math.cos((deliveryLat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+    const distanceKm = 2 * R * Math.asin(Math.sqrt(a));
+    if (distanceKm > MAX_DELIVERY_KM) {
+      return jsonResponse(
+        { error: "This address is outside our delivery area. Please choose pickup, or a closer address." },
+        400
+      );
+    }
+  }
+
   // ----------------------------------------------------- feature toggles
   // The frontend already hides disabled options, but that's UX only — a
   // request crafted by hand (or a stale page left open before a toggle
@@ -233,9 +256,47 @@ async function handleOrder({ request, env }) {
   }
   subtotal = Math.round(subtotal * 100) / 100;
 
-  const deliveryCharge = orderType === "delivery" ? (subtotal > settings.freeDeliveryThreshold ? 0 : settings.deliveryFee) : 0;
-  const tax = Math.round(subtotal * settings.taxRate * 100) / 100;
-  const total = Math.round((subtotal + deliveryCharge + tax) * 100) / 100;
+  // -------------------------------------------------------------- coupon
+  // Re-validated here from scratch, never trusting a discount amount the
+  // browser might send — this is the actual authoritative check, of
+  // which /api/validate-coupon is only a preview.
+  let couponCode = null;
+  let discount = 0;
+  if (body?.couponCode) {
+    const code = String(body.couponCode).trim().toUpperCase();
+    const couponRes = await fetch(`${env.SUPABASE_URL}/rest/v1/coupons?code=eq.${encodeURIComponent(code)}&select=*`, {
+      headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` },
+    });
+    const couponRows = await couponRes.json();
+    const coupon = couponRows[0];
+    if (!coupon || !coupon.active) {
+      return jsonResponse({ error: "That coupon code isn't valid." }, 400);
+    }
+    if (coupon.expires_at && new Date(coupon.expires_at).getTime() < Date.now()) {
+      return jsonResponse({ error: "That coupon has expired." }, 400);
+    }
+    if (coupon.usage_limit != null && coupon.times_used >= coupon.usage_limit) {
+      return jsonResponse({ error: "That coupon has already been fully redeemed." }, 400);
+    }
+    if (subtotal < Number(coupon.min_order_amount || 0)) {
+      return jsonResponse(
+        { error: `This coupon needs a minimum order of Rs. ${Number(coupon.min_order_amount).toLocaleString()}.` },
+        400
+      );
+    }
+    discount =
+      coupon.discount_type === "percent" ? subtotal * (Number(coupon.discount_value) / 100) : Number(coupon.discount_value);
+    if (coupon.discount_type === "percent" && coupon.max_discount_amount != null) {
+      discount = Math.min(discount, Number(coupon.max_discount_amount));
+    }
+    discount = Math.min(Math.round(discount * 100) / 100, subtotal);
+    couponCode = code;
+  }
+  const discountedSubtotal = Math.round((subtotal - discount) * 100) / 100;
+
+  const deliveryCharge = orderType === "delivery" ? (discountedSubtotal > settings.freeDeliveryThreshold ? 0 : settings.deliveryFee) : 0;
+  const tax = Math.round(discountedSubtotal * settings.taxRate * 100) / 100;
+  const total = Math.round((discountedSubtotal + deliveryCharge + tax) * 100) / 100;
 
   // ------------------------------------------------------- create order
   let order;
@@ -260,6 +321,8 @@ async function handleOrder({ request, env }) {
           tax,
           delivery_charge: deliveryCharge,
           total,
+          coupon_code: couponCode,
+          discount_amount: discount,
           idempotency_key: idempotencyKey || null,
         },
       ],
@@ -312,9 +375,30 @@ async function handleOrder({ request, env }) {
     );
   }
 
+  if (couponCode) {
+    try {
+      await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/increment_coupon_usage`, {
+        method: "POST",
+        headers: {
+          apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ coupon_code: couponCode }),
+      });
+    } catch (err) {
+      // Non-fatal — the order itself is already placed correctly with the
+      // discount applied. Worst case, this specific coupon's usage count
+      // undercounts by one, which is not something the customer's order
+      // should ever fail over.
+      console.error("Coupon usage increment failed [requestId=" + requestId + "]:", err);
+    }
+  }
+
   const response = {
     orderNumber: order.order_number,
     total: order.total,
+    discount: order.discount_amount,
     paymentStatus: order.payment_status,
     orderStatus: order.order_status,
   };

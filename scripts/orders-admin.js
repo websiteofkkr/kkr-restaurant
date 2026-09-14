@@ -65,6 +65,7 @@
       const name = btn.dataset.oaTab;
       $$("[data-oa-panel]").forEach((p) => (p.hidden = p.dataset.oaPanel !== name));
       if (name === "discounts") renderDiscountList();
+      if (name === "coupons") renderCouponList();
     });
   });
 
@@ -550,6 +551,108 @@
       await authedFetch(`/api/admin/menu-discounts?itemId=${encodeURIComponent(selectedDiscountItemId)}`, { method: "DELETE" });
       $("[data-oa-discount-form]").hidden = true;
       renderDiscountList();
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  /* ------------------------------------------------------------ coupons */
+  $("[data-oa-coupon-type]")?.addEventListener("change", (e) => {
+    const label = $("[data-oa-coupon-value-label]");
+    label.textContent = e.target.value === "flat" ? "Amount off (Rs.)" : "Percent off (1–100)";
+  });
+
+  const renderCouponList = async () => {
+    const listEl = $("[data-oa-coupon-list]");
+    try {
+      const data = await authedFetch("/api/admin/coupons");
+      const coupons = data.coupons || [];
+      if (coupons.length === 0) {
+        listEl.innerHTML = `<p class="oa-muted">No coupons created yet.</p>`;
+        return;
+      }
+      listEl.innerHTML = coupons
+        .map((c) => {
+          const valueText = c.discount_type === "percent" ? `${c.discount_value}% off` : `Rs. ${c.discount_value} off`;
+          const usageText = c.usage_limit != null ? `${c.times_used}/${c.usage_limit} used` : `${c.times_used} used`;
+          const expiryText = c.expires_at ? `expires ${new Date(c.expires_at).toLocaleDateString()}` : "no expiry";
+          return `<div class="oa-toggle-row">
+            <span>
+              <strong>${esc(c.code)}</strong>
+              <small>${esc(valueText)} · ${esc(usageText)} · ${esc(expiryText)}${!c.active ? " · OFF" : ""}</small>
+            </span>
+            <span style="display:flex; gap:.5rem; align-items:center;">
+              <span class="oa-toggle"><input type="checkbox" ${c.active ? "checked" : ""} data-oa-coupon-toggle="${esc(c.code)}"><span class="oa-toggle__track"></span></span>
+              <button type="button" class="cart-drawer__back" data-oa-coupon-delete="${esc(c.code)}">Delete</button>
+            </span>
+          </div>`;
+        })
+        .join("");
+    } catch (err) {
+      listEl.innerHTML = `<p class="oa-muted">Could not load coupons.</p>`;
+    }
+  };
+
+  $("[data-oa-coupon-create]")?.addEventListener("click", async () => {
+    const errEl = $("[data-oa-coupon-error]");
+    const okEl = $("[data-oa-coupon-success]");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    const code = $("[data-oa-coupon-code]").value.trim();
+    const discountType = $("[data-oa-coupon-type]").value;
+    const discountValue = Number($("[data-oa-coupon-value]").value);
+    const maxDiscountAmount = $("[data-oa-coupon-max]").value;
+    const minOrderAmount = $("[data-oa-coupon-min]").value;
+    const usageLimit = $("[data-oa-coupon-limit]").value;
+    const expiresAt = $("[data-oa-coupon-expires]").value;
+    try {
+      await authedFetch("/api/admin/coupons", {
+        method: "POST",
+        body: JSON.stringify({
+          code,
+          discountType,
+          discountValue,
+          maxDiscountAmount: maxDiscountAmount || undefined,
+          minOrderAmount: minOrderAmount || undefined,
+          usageLimit: usageLimit || undefined,
+          expiresAt: expiresAt || undefined,
+        }),
+      });
+      okEl.hidden = false;
+      okEl.textContent = `Coupon ${code.toUpperCase()} created.`;
+      $("[data-oa-coupon-code]").value = "";
+      $("[data-oa-coupon-value]").value = "";
+      $("[data-oa-coupon-max]").value = "";
+      $("[data-oa-coupon-min]").value = "";
+      $("[data-oa-coupon-limit]").value = "";
+      $("[data-oa-coupon-expires]").value = "";
+      renderCouponList();
+    } catch (err) {
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+    }
+  });
+
+  document.addEventListener("change", async (e) => {
+    const toggle = e.target.closest("[data-oa-coupon-toggle]");
+    if (!toggle) return;
+    try {
+      await authedFetch("/api/admin/coupons", {
+        method: "PATCH",
+        body: JSON.stringify({ code: toggle.dataset.oaCouponToggle, active: toggle.checked }),
+      });
+      renderCouponList();
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  document.addEventListener("click", async (e) => {
+    const del = e.target.closest("[data-oa-coupon-delete]");
+    if (!del) return;
+    try {
+      await authedFetch(`/api/admin/coupons?code=${encodeURIComponent(del.dataset.oaCouponDelete)}`, { method: "DELETE" });
+      renderCouponList();
     } catch (err) {
       console.error(err);
     }

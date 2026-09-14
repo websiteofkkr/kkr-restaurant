@@ -19,12 +19,19 @@
   let map = null;
   let currentLatLng = { lat: DEFAULT_CENTER[0], lng: DEFAULT_CENTER[1] };
   let reverseGeocodeTimer = null;
+  let activeScope = null;
 
   const modal = () => $("[data-map-picker]");
 
-  const openModal = () => {
+  const openModal = (triggerBtn) => {
     const m = modal();
     if (!m) return;
+    // Each "Pick on map" button lives inside a wrapper carrying
+    // data-map-scope — remembering it here is how the same picker can
+    // serve multiple independent forms (checkout, registration, My
+    // Account) on the same page without them fighting over one hardcoded
+    // target field.
+    activeScope = triggerBtn?.closest("[data-map-scope]") || null;
     m.hidden = false;
     document.body.classList.add("cart-drawer-open");
     // Leaflet needs a visible container to measure, so init/resize only
@@ -123,8 +130,9 @@
   });
 
   document.addEventListener("click", (e) => {
-    if (e.target.closest("[data-open-map-picker]")) {
-      openModal();
+    const trigger = e.target.closest("[data-open-map-picker]");
+    if (trigger) {
+      openModal(trigger);
       return;
     }
     if (e.target.closest("[data-map-close]")) {
@@ -141,13 +149,17 @@
       return;
     }
     if (e.target.closest("[data-map-confirm]")) {
-      const addressField = $("[data-cf-address]");
+      const scope = activeScope || document;
+      const addressField = $("[data-cf-address]", scope) || $("[data-map-address]", scope);
+      const latField = $("[data-cf-address-lat]", scope) || $("[data-map-lat]", scope);
+      const lngField = $("[data-cf-address-lng]", scope) || $("[data-map-lng]", scope);
       const preview = $("[data-map-address-preview]")?.textContent || "";
       if (addressField && preview && preview !== "Finding address…") {
         addressField.value = preview;
+        addressField.dispatchEvent(new Event("input", { bubbles: true }));
       }
-      $("[data-cf-address-lat]").value = currentLatLng.lat;
-      $("[data-cf-address-lng]").value = currentLatLng.lng;
+      if (latField) latField.value = currentLatLng.lat;
+      if (lngField) lngField.value = currentLatLng.lng;
       closeModal();
     }
   });
@@ -160,9 +172,10 @@
   // the coordinates no longer necessarily match — clear them so a stale
   // pin location is never silently sent with a manually-typed address.
   document.addEventListener("input", (e) => {
-    if (e.target.matches("[data-cf-address]")) {
-      const latEl = $("[data-cf-address-lat]");
-      const lngEl = $("[data-cf-address-lng]");
+    if (e.target.matches("[data-cf-address], [data-map-address]")) {
+      const scope = e.target.closest("[data-map-scope]") || document;
+      const latEl = $("[data-cf-address-lat]", scope) || $("[data-map-lat]", scope);
+      const lngEl = $("[data-cf-address-lng]", scope) || $("[data-map-lng]", scope);
       if (latEl) latEl.value = "";
       if (lngEl) lngEl.value = "";
     }

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260914111900">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914111900">
+<link rel="stylesheet" href="../styles/site.css?v=20260914113145">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914113145">
 </head>
 <body class="orders-admin">
 
@@ -35,6 +35,7 @@
     <button type="button" class="oa-tab" data-oa-tab="rewards">Reward points</button>
     <button type="button" class="oa-tab" data-oa-tab="features">Site features</button>
     <button type="button" class="oa-tab" data-oa-tab="discounts">Menu discounts</button>
+    <button type="button" class="oa-tab" data-oa-tab="coupons">Coupons</button>
     <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
   </nav>
 
@@ -202,6 +203,52 @@
     </div>
   </section>
 
+  <!-- --------------------------------------------------------- coupons -->
+  <section class="oa-panel" data-oa-panel="coupons" hidden>
+    <div class="oa-block oa-block--narrow">
+      <h2>Create a coupon</h2>
+      <label class="oa-field">
+        <span>Coupon code</span>
+        <input type="text" class="cart-input" placeholder="e.g. WELCOME10" data-oa-coupon-code style="text-transform:uppercase;">
+      </label>
+      <label class="oa-field">
+        <span>Discount type</span>
+        <select class="cart-input" data-oa-coupon-type>
+          <option value="percent">Percentage off</option>
+          <option value="flat">Flat amount off (Rs.)</option>
+        </select>
+      </label>
+      <label class="oa-field">
+        <span data-oa-coupon-value-label>Percent off (1–100)</span>
+        <input type="number" min="1" step="1" class="cart-input" data-oa-coupon-value>
+      </label>
+      <label class="oa-field">
+        <span>Max discount (Rs., optional — caps a percentage coupon's value)</span>
+        <input type="number" min="0" step="1" class="cart-input" data-oa-coupon-max>
+      </label>
+      <label class="oa-field">
+        <span>Minimum order amount (Rs., optional)</span>
+        <input type="number" min="0" step="1" class="cart-input" data-oa-coupon-min>
+      </label>
+      <label class="oa-field">
+        <span>Usage limit (optional — total redemptions across all customers)</span>
+        <input type="number" min="1" step="1" class="cart-input" data-oa-coupon-limit>
+      </label>
+      <label class="oa-field">
+        <span>Expires (optional)</span>
+        <input type="datetime-local" class="cart-input" data-oa-coupon-expires>
+      </label>
+      <p class="cart-checkout__error" data-oa-coupon-error hidden></p>
+      <p class="cart-checkout__note" data-oa-coupon-success hidden></p>
+      <button type="button" class="btn btn--reserve" data-oa-coupon-create>Create coupon</button>
+    </div>
+
+    <div class="oa-block oa-block--narrow">
+      <h2>Existing coupons</h2>
+      <div data-oa-coupon-list></div>
+    </div>
+  </section>
+
   <!-- ---------------------------------------------------------- settings -->
   <section class="oa-panel" data-oa-panel="settings" hidden>
     <div class="oa-block oa-block--narrow">
@@ -236,8 +283,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260914111900" defer></script>
-<script src="../scripts/auth.js?v=20260914111900" defer></script>
-<script src="../scripts/orders-admin.js?v=20260914111900" defer></script>
+<script src="../scripts/supabase-config.js?v=20260914113145" defer></script>
+<script src="../scripts/auth.js?v=20260914113145" defer></script>
+<script src="../scripts/orders-admin.js?v=20260914113145" defer></script>
 </body>
 </html>

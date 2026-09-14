@@ -17,6 +17,7 @@
   let FREE_DELIVERY_THRESHOLD = 1000;
   let STANDARD_DELIVERY = 200;
   let SALES_TAX_RATE = 0.05;
+  let appliedCoupon = null; // { code, discount } once successfully applied
   let REWARD_RATE = 0.01;
   let FEATURES = {
     ordering_enabled: true,
@@ -91,12 +92,52 @@
     renderPaymentPanel();
   };
 
+  const applyCoupon = async () => {
+    const input = $("[data-coupon-input]");
+    const errEl = $("[data-coupon-error]");
+    const code = input?.value.trim();
+    errEl.hidden = true;
+    if (!code) {
+      errEl.hidden = false;
+      errEl.textContent = "Enter a coupon code.";
+      return;
+    }
+    const applyBtn = $("[data-coupon-apply]");
+    applyBtn.disabled = true;
+    applyBtn.textContent = "Checking…";
+    try {
+      const sub = window.KKRCart.getSubtotal();
+      const res = await fetch("/api/validate-coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, subtotal: sub }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "That coupon code isn't valid.");
+      appliedCoupon = { code: data.code, discount: data.discount };
+      $("[data-coupon-applied-code]").textContent = data.code;
+      $("[data-coupon-applied]").hidden = false;
+      input.value = "";
+      renderSummary();
+    } catch (err) {
+      appliedCoupon = null;
+      errEl.hidden = false;
+      errEl.textContent = err.message;
+      renderSummary();
+    } finally {
+      applyBtn.disabled = false;
+      applyBtn.textContent = "Apply";
+    }
+  };
+
   const computeTotals = () => {
     const sub = window.KKRCart.getSubtotal();
+    const discount = appliedCoupon ? Math.min(appliedCoupon.discount, sub) : 0;
+    const discountedSub = Math.round((sub - discount) * 100) / 100;
     const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
-    const delivery = orderType === "pickup" ? 0 : sub > FREE_DELIVERY_THRESHOLD ? 0 : STANDARD_DELIVERY;
-    const tax = Math.round(sub * SALES_TAX_RATE);
-    return { sub, delivery, tax, total: sub + delivery + tax };
+    const delivery = orderType === "pickup" ? 0 : discountedSub > FREE_DELIVERY_THRESHOLD ? 0 : STANDARD_DELIVERY;
+    const tax = Math.round(discountedSub * SALES_TAX_RATE);
+    return { sub, discount, discountedSub, delivery, tax, total: discountedSub + delivery + tax };
   };
 
   const renderSummary = () => {
@@ -110,8 +151,11 @@
         )
         .join("");
     }
-    const { sub, delivery, tax, total } = computeTotals();
+    const { sub, discount, delivery, tax, total } = computeTotals();
     setText("[data-cart-subtotal]", fmt(sub));
+    const discountRow = $("[data-discount-row]");
+    if (discountRow) discountRow.hidden = discount <= 0;
+    setText("[data-cart-discount]", `\u2212${fmt(discount)}`);
     setText("[data-cart-tax]", fmt(tax));
     setText("[data-tax-label]", SALES_TAX_RATE > 0 ? `Tax (${Math.round(SALES_TAX_RATE * 1000) / 10}%)` : "Tax");
     setText("[data-cart-delivery]", delivery === 0 ? "Free" : fmt(delivery));
@@ -324,6 +368,7 @@
           accessToken: session?.access_token,
           turnstileToken,
           idempotencyKey,
+          couponCode: appliedCoupon?.code,
         }),
       });
       const data = await res.json();
@@ -351,6 +396,18 @@
   document.addEventListener("click", (e) => {
     if (e.target.closest("[data-cart-send]")) {
       placeOrder();
+      return;
+    }
+    if (e.target.closest("[data-coupon-apply]")) {
+      applyCoupon();
+      return;
+    }
+    if (e.target.closest("[data-coupon-remove]")) {
+      appliedCoupon = null;
+      $("[data-coupon-input]").value = "";
+      $("[data-coupon-applied]").hidden = true;
+      $("[data-coupon-error]").hidden = true;
+      renderSummary();
       return;
     }
     const authShowBtn = e.target.closest("[data-auth-show]");

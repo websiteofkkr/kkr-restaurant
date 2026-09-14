@@ -10,9 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Marcellus&family=Karla:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap">
-<link rel="stylesheet" href="../../styles/site.css?v=20260914111900">
-<link rel="stylesheet" href="../../styles/checkout.css?v=20260914111900">
-<link rel="stylesheet" href="../../styles/my-orders.css?v=20260914111900">
+<link rel="stylesheet" href="../../styles/site.css?v=20260914113145">
+<link rel="stylesheet" href="../../assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="../../styles/checkout.css?v=20260914113145">
+<link rel="stylesheet" href="../../styles/my-orders.css?v=20260914113145">
 </head>
 <body class="lang-en page-checkout">
 <a class="skip" href="#main">Skip to content</a>
@@ -75,6 +76,30 @@
   </div>
 </main>
 
+<div class="map-picker" data-map-picker hidden>
+  <div class="map-picker__panel">
+    <div class="map-picker__head">
+      <h2>Pick your address</h2>
+      <button type="button" class="cart-drawer__close" data-map-close aria-label="Close map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="map-picker__search">
+      <input type="text" class="cart-input" placeholder="Search for an area, road, or landmark in Peshawar" data-map-search>
+      <ul class="map-picker__results" data-map-search-results></ul>
+    </div>
+    <div class="map-picker__map-wrap">
+      <div id="map-picker-map"></div>
+      <div class="map-picker__pin" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="var(--color-red)" stroke="#fff" stroke-width="1"><path d="M12 22s7-6.9 7-12.5A7 7 0 0 0 5 9.5C5 15.1 12 22 12 22Z"/><circle cx="12" cy="9.3" r="2.6" fill="#fff"/></svg>
+      </div>
+    </div>
+    <div class="map-picker__foot">
+      <p class="cart-checkout__note" data-map-address-preview>Move the map so the pin points at your address.</p>
+      <button type="button" class="btn btn--reserve cart-checkout__wide" data-map-confirm>Use this location</button>
+    </div>
+  </div>
+</div>
 <div class="cart-drawer" data-account-modal hidden>
   <div class="cart-drawer__scrim" data-account-close></div>
   <aside class="cart-drawer__panel" role="dialog" aria-modal="true" aria-label="Your account">
@@ -99,6 +124,15 @@
         <input type="tel" class="cart-input" placeholder="Phone number" data-acc-register-phone autocomplete="tel">
         <input type="email" class="cart-input" placeholder="Email" data-acc-register-email autocomplete="email">
         <input type="password" class="cart-input" placeholder="Password (min. 6 characters)" data-acc-register-password autocomplete="new-password">
+        <div class="checkout__address-field" data-map-scope>
+          <input type="text" class="cart-input" placeholder="Delivery address" data-acc-register-address data-map-address autocomplete="street-address">
+          <button type="button" class="checkout__map-btn" data-open-map-picker aria-label="Pick address on map">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+            <span>Pick on map</span>
+          </button>
+          <input type="hidden" data-map-lat>
+          <input type="hidden" data-map-lng>
+        </div>
         <p class="cart-checkout__error" data-acc-register-error hidden></p>
         <button type="button" class="btn btn--reserve cart-checkout__wide" data-acc-register-submit>Register</button>
         <button type="button" class="cart-drawer__back" data-account-show="login">&larr; Back to log in</button>
@@ -139,11 +173,13 @@
   </div>
   <p class="footer__legal">© <span data-year>2026</span> KKR Khalid Khan Restaurant. All rights reserved.</p>
 </footer>
-<script src="../../scripts/supabase-config.js?v=20260914111900" defer></script>
-<script src="../../scripts/auth.js?v=20260914111900" defer></script>
-<script src="../../scripts/account-modal.js?v=20260914111900" defer></script>
-<script src="../../scripts/my-account.js?v=20260914111900" defer></script>
-<script src="../../scripts/site.js?v=20260914111900" defer></script>
-<script src="../../scripts/promo-banner.js?v=20260914111900" defer></script>
+<script src="../../scripts/supabase-config.js?v=20260914113145" defer></script>
+<script src="../../scripts/auth.js?v=20260914113145" defer></script>
+<script src="../../scripts/account-modal.js?v=20260914113145" defer></script>
+<script src="../../assets/vendor/leaflet/leaflet.js" defer></script>
+<script src="../../scripts/map-picker.js?v=20260914113145" defer></script>
+<script src="../../scripts/my-account.js?v=20260914113145" defer></script>
+<script src="../../scripts/site.js?v=20260914113145" defer></script>
+<script src="../../scripts/promo-banner.js?v=20260914113145" defer></script>
 </body>
 </html>
