@@ -734,7 +734,7 @@ body { padding-block-start: var(--header-h); }
 .whykkr__head .kicker { color: var(--color-gold); }
 .whykkr__head h2 {
   font-family: var(--poster); font-weight: 400;
-  font-size: var(--step-3); color: var(--color-dark);
+  font-size: var(--step-2); color: var(--color-dark);
   margin: 0 0 .6em; max-width: 20ch;
 }
 .whykkr__gold { color: var(--color-gold-deep); }
