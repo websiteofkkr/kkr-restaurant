@@ -825,4 +825,39 @@
     });
     item.classList.toggle("is-revealed", !alreadyOpen);
   });
+
+  // A click-revealed item on a device that DOES support hover (a mouse)
+  // needs its own cleanup: without this, clicking an item then simply
+  // moving the mouse away — without clicking anything else — left it
+  // stuck open forever, since only another click closed it.
+  //
+  // The removal is debounced: revealing the control changes the item's
+  // layout (it grows taller), and that shift alone was enough to trigger
+  // a spurious mouseleave the instant the class was added — instantly
+  // undoing the very click that just opened it. A short delay, cancelled
+  // if the mouse is still there (or comes back) a moment later, avoids
+  // reacting to that one-frame layout glitch while still closing
+  // promptly on a real, deliberate mouse-away.
+  let leaveTimer = null;
+  document.addEventListener(
+    "mouseleave",
+    (e) => {
+      const item = e.target.closest?.(".mitem.is-revealed, .favcard.is-revealed");
+      if (!item) return;
+      clearTimeout(leaveTimer);
+      leaveTimer = setTimeout(() => {
+        if (!item.matches(":hover")) item.classList.remove("is-revealed");
+      }, 200);
+    },
+    true
+  );
+  document.addEventListener(
+    "mouseenter",
+    (e) => {
+      if (e.target.closest?.(".mitem.is-revealed, .favcard.is-revealed")) {
+        clearTimeout(leaveTimer);
+      }
+    },
+    true
+  );
 })();
