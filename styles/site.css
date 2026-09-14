@@ -125,7 +125,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   letter-spacing: .18em; text-transform: uppercase;
   color: var(--gold); margin: 0 0 1rem;
 }
-/* Arabic script must not be tracked out or forced to uppercase. */
+.whykkr__head .kicker {
+  font-family: var(--poster); font-size: var(--step-3); font-weight: 400;
+  letter-spacing: .02em; color: var(--color-gold-deep); margin: 0 0 .3em;
+}
 [dir="rtl"] .kicker { letter-spacing: normal; text-transform: none; font-weight: 400; }
 
 .section-head {
@@ -734,8 +737,8 @@ body { padding-block-start: var(--header-h); }
 .whykkr__head .kicker { color: var(--color-gold); }
 .whykkr__head h2 {
   font-family: var(--poster); font-weight: 400;
-  font-size: var(--step-2); color: var(--color-dark);
-  margin: 0 0 .6em; max-width: 20ch;
+  font-size: var(--step-0); color: var(--color-dark);
+  margin: 0 0 .6em; white-space: nowrap;
 }
 .whykkr__gold { color: var(--color-gold-deep); }
 .whykkr__lead {
