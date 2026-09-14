@@ -410,6 +410,29 @@
     return MENU_ITEMS_FLAT;
   };
 
+  // Featured Items (unlike Menu Discounts) supports variant items like
+  // Half/Full pricing, so its search includes them — shown with the
+  // first variant's price as a representative figure.
+  let MENU_ITEMS_ALL = [];
+  const loadMenuItemsAll = async () => {
+    if (MENU_ITEMS_ALL.length) return MENU_ITEMS_ALL;
+    try {
+      const res = await fetch("/menu.json");
+      const menu = await res.json();
+      MENU_ITEMS_ALL = (menu.categories || []).flatMap((cat) =>
+        (cat.items || []).map((it) => ({
+          id: it.id,
+          name: it.name,
+          price: it.price ?? it.variants?.[0]?.price ?? 0,
+          category: cat.name,
+        }))
+      );
+    } catch (err) {
+      console.error(err);
+    }
+    return MENU_ITEMS_ALL;
+  };
+
   const renderDiscountSearchResults = async (query) => {
     const resultsEl = $("[data-oa-discount-results]");
     if (!query.trim()) {
@@ -668,7 +691,7 @@
       resultsEl.innerHTML = "";
       return;
     }
-    const items = await loadMenuItemsFlat();
+    const items = await loadMenuItemsAll();
     const q = query.trim().toLowerCase();
     const matches = items.filter((it) => it.name.toLowerCase().includes(q)).slice(0, 8);
     resultsEl.innerHTML = matches
@@ -682,7 +705,7 @@
   };
 
   const selectFeaturedItem = async (itemId) => {
-    const items = await loadMenuItemsFlat();
+    const items = await loadMenuItemsAll();
     const item = items.find((it) => it.id === itemId);
     if (!item) return;
     selectedFeaturedItemId = itemId;
@@ -702,7 +725,7 @@
         listEl.innerHTML = `<p class="oa-muted">No items featured yet.</p>`;
         return;
       }
-      const items = await loadMenuItemsFlat();
+      const items = await loadMenuItemsAll();
       const sectionLabel = { signature: "Our Special Platters", favourites: "Popular Picks" };
       listEl.innerHTML = featured
         .map((f) => {

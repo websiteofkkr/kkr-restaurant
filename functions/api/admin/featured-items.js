@@ -28,6 +28,15 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
 
   if (!itemId) return jsonResponse({ error: "itemId is required." }, 400);
 
+  // New items go to the end of their section, not all piling up at
+  // sort_order 0 — existing items keep their place, this one shows last.
+  const existing = await fetch(
+    `${env.SUPABASE_URL}/rest/v1/featured_items?section=eq.${encodeURIComponent(section)}&select=sort_order&order=sort_order.desc&limit=1`,
+    { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` } }
+  );
+  const existingRows = await existing.json().catch(() => []);
+  const nextSortOrder = existingRows.length > 0 ? Number(existingRows[0].sort_order) + 1 : 0;
+
   const res = await fetch(`${env.SUPABASE_URL}/rest/v1/featured_items`, {
     method: "POST",
     headers: {
@@ -36,7 +45,7 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
       "Content-Type": "application/json",
       Prefer: "resolution=merge-duplicates,return=representation",
     },
-    body: JSON.stringify([{ item_id: itemId, section, blurb }]),
+    body: JSON.stringify([{ item_id: itemId, section, blurb, sort_order: nextSortOrder }]),
   });
   if (!res.ok) {
     const detail = await res.text().catch(() => "");

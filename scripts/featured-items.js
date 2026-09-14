@@ -10,7 +10,15 @@
     String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   const buildCard = (item, blurb) => {
-    const priceText = `Rs ${Number(item.price).toLocaleString()}`;
+    const hasVariants = Array.isArray(item.variants) && item.variants.length > 0;
+    const priceRow = hasVariants
+      ? ""
+      : `<p class="favcard__price">Rs ${Number(item.price).toLocaleString()}</p>`;
+    const tierField = hasVariants
+      ? `<select class="cart-add__tier" aria-label="Quantity">${item.variants
+          .map((v) => `<option value="${v.price}">${escapeHtml(v.name)} — Rs ${Number(v.price).toLocaleString()}</option>`)
+          .join("")}</select>`
+      : `<input type="hidden" class="cart-add__tier" value="${item.price}">`;
     return `<article class="favcard">
       <div class="favcard__media">
         <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.name)}" width="640" height="480" loading="lazy" decoding="async">
@@ -19,9 +27,9 @@
         <h3>${escapeHtml(item.name)}</h3>
         ${blurb ? `<p>${escapeHtml(blurb)}</p>` : ""}
         <div class="favcard__foot">
-          <p class="favcard__price">${priceText}</p>
+          ${priceRow}
           <div class="cart-add" data-item-id="${escapeHtml(item.id)}" data-item-name="${escapeHtml(item.name)}" data-item-image="${escapeHtml(item.image)}" data-item-alt="${escapeHtml(item.alt || item.name)}">
-            <input type="hidden" class="cart-add__tier" value="${item.price}">
+            ${tierField}
             <button type="button" class="btn btn--ghost cart-add__btn">
               <span class="cart-add__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.3l2.2 11.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L20.5 7H6"/></svg></span>
               <span class="cart-add__label">Add to cart</span>
