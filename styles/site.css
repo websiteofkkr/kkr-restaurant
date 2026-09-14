@@ -2380,8 +2380,9 @@ body { padding-block-start: var(--header-h); }
 
 .ctaband {
   scroll-margin-block-start: calc(var(--header-h) + 1rem);
-  background: var(--color-dark);
-  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
+  background: var(--color-white);
+  padding-block: 0 clamp(1.5rem, 3vw, 2.5rem);
+  padding-inline: var(--gutter);
 }
 .ctaband__card {
   position: relative; overflow: hidden;
