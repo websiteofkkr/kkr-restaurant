@@ -12,7 +12,7 @@
  * the server must re-price and re-validate everything at checkout, since a
  * browser can always be tampered with. This is a shopping-list, not a bill.
  *
- * Storage: localStorage under "kkr-cart-v1". Plain JSON, an array of
+ * Storage: sessionStorage under "kkr-cart-v1" (clears when the browser or tab closes, by design). Plain JSON, an array of
  * { id, name, image, alt, price, qty }. No cross-tab sync beyond what the
  * "storage" event gives for free (see below).
  */
@@ -76,12 +76,12 @@
 
   const load = () => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = sessionStorage.getItem(STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
       const arr = Array.isArray(parsed) ? parsed : [];
       /* Carts saved before a page-relative image path bug was fixed can
          still have "../assets/..." or "../../assets/..." stuck in
-         localStorage from an earlier visit — that's what a broken image
+         sessionStorage from earlier in this browser session — that's what a broken image
          in an otherwise-working cart usually is. Repairing it back to a
          root-relative path here means an old cart heals itself the next
          time the page loads, instead of needing the customer to clear
@@ -101,7 +101,7 @@
       });
       if (migrated) {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
         } catch {
           /* Non-fatal — the in-memory copy is already fixed for this
              session even if it couldn't be persisted. */
@@ -119,7 +119,7 @@
 
   const persist = () => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch {
       /* Storage can fail (private browsing, quota) — the cart still works
          for the rest of this page load, it just won't survive a reload. */

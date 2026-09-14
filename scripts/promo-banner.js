@@ -1,15 +1,12 @@
 (() => {
   "use strict";
 
-  const DISMISS_KEY = "kkr-promo-banner-dismissed";
-  const DISMISS_HOURS = 6;
-
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const { url, anonKey } = window.KKR_SUPABASE || {};
       if (!url) return;
       const res = await fetch(
-        `${url}/rest/v1/settings?select=key,value&key=in.(promo_banner_enabled,promo_banner_text,promo_banner_link,promo_banner_image)`,
+        `${url}/rest/v1/settings?select=key,value&key=in.(promo_banner_enabled,promo_banner_text,promo_banner_link,promo_banner_image,promo_banner_start,promo_banner_end)`,
         { headers: { apikey: anonKey } }
       );
       const rows = await res.json();
@@ -19,21 +16,20 @@
       const image = (map.promo_banner_image || "").trim();
       if (!enabled || (!text && !image)) return;
 
-      // Dismissing only lasts a few hours (not "forever in this tab") —
-      // both so a real visitor isn't shown the exact same promo every
-      // single page load, and so it re-appears the next time you check
-      // rather than looking "stuck off" after one earlier test dismissal.
-      const dismissKey = image || text;
-      let dismissed = null;
-      try {
-        dismissed = JSON.parse(localStorage.getItem(DISMISS_KEY) || "null");
-      } catch {
-        /* ignore */
-      }
-      const stillDismissed =
-        dismissed && dismissed.key === dismissKey && Date.now() - dismissed.at < DISMISS_HOURS * 60 * 60 * 1000;
-      if (stillDismissed) return;
+      // Optional scheduling window — if either bound is set and now falls
+      // outside it, the banner simply doesn't show. Blank bounds are
+      // treated as "no limit" on that side.
+      const now = Date.now();
+      const startAt = (map.promo_banner_start || "").trim();
+      const endAt = (map.promo_banner_end || "").trim();
+      if (startAt && now < new Date(startAt).getTime()) return;
+      if (endAt && now > new Date(endAt).getTime()) return;
 
+      // Dismissing only hides it for the current page view — reloading
+      // or visiting another page shows it again. No persistence by
+      // design: this is meant to run for as long as it's turned on, and
+      // an old test-dismissal should never be the reason it looks "stuck
+      // off" on a later visit.
       const link = (map.promo_banner_link || "").trim();
 
       const bar = document.createElement(link ? "a" : "div");
@@ -58,18 +54,10 @@
       closeBtn.setAttribute("aria-label", "Dismiss");
       closeBtn.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-      const dismiss = () => {
-        bar.remove();
-        try {
-          localStorage.setItem(DISMISS_KEY, JSON.stringify({ key: dismissKey, at: Date.now() }));
-        } catch {
-          /* non-fatal */
-        }
-      };
       closeBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        dismiss();
+        wrap.remove();
       });
       bar.appendChild(closeBtn);
 
@@ -88,4 +76,3 @@
     }
   });
 })();
-

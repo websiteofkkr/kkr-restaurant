@@ -374,7 +374,7 @@
     errEl.hidden = true;
     okEl.hidden = true;
     try {
-      for (const key of ["promo_banner_text", "promo_banner_link"]) {
+      for (const key of ["promo_banner_text", "promo_banner_link", "promo_banner_start", "promo_banner_end"]) {
         const input = $(`[data-oa-setting-text="${key}"]`);
         if (!input) continue;
         await authedFetch("/api/admin/settings", { method: "PATCH", body: JSON.stringify({ key, value: input.value.trim() }) });
