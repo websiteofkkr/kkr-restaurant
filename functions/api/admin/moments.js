@@ -26,26 +26,30 @@ export const onRequestDelete = withErrorHandling(async ({ request, env }) => {
   const moment = rows[0];
   if (!moment) return jsonResponse({ error: "Moment not found." }, 404);
 
-  // Best-effort storage cleanup — the DB row is still deleted even if a
-  // file happens to already be gone, so a stuck record can never block
-  // removal from the site.
-  const pathsToDelete = [moment.storage_path];
-  if (moment.poster_url) {
-    const match = moment.poster_url.match(/public-uploads\/(.+)$/);
-    if (match) pathsToDelete.push(match[1]);
-  }
-  try {
-    await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads`, {
-      method: "DELETE",
-      headers: {
-        apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ prefixes: pathsToDelete }),
-    });
-  } catch (err) {
-    console.error("Moment storage cleanup failed:", err);
+  // Best-effort storage cleanup — only applies to videos actually
+  // uploaded to Supabase Storage. A moment with no storage_path is one
+  // of the site's built-in static clips (served for free from Cloudflare
+  // Pages, not Supabase), so there's nothing to reclaim there — deleting
+  // it just removes it from the homepage reel.
+  if (moment.storage_path) {
+    const pathsToDelete = [moment.storage_path];
+    if (moment.poster_url) {
+      const match = moment.poster_url.match(/public-uploads\/(.+)$/);
+      if (match) pathsToDelete.push(match[1]);
+    }
+    try {
+      await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads`, {
+        method: "DELETE",
+        headers: {
+          apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prefixes: pathsToDelete }),
+      });
+    } catch (err) {
+      console.error("Moment storage cleanup failed:", err);
+    }
   }
 
   const res = await fetch(`${env.SUPABASE_URL}/rest/v1/moments?id=eq.${encodeURIComponent(id)}`, {
