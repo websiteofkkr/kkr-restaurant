@@ -21,8 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Marcellus&family=Karla:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
-<link rel="stylesheet" href="../../styles/site.css?v=20260914031126">
-<link rel="stylesheet" href="../../styles/menu-tabs.css?v=20260914031126">
+<link rel="stylesheet" href="../../styles/site.css?v=20260914031749">
+<link rel="stylesheet" href="../../styles/menu-tabs.css?v=20260914031749">
 </head>
 <body class="lang-ps page-reserve">
 <a class="skip" href="#main">منځپانګې ته ورشئ</a><svg class="arch-defs" aria-hidden="true" focusable="false"><defs><clipPath id="arch" clipPathUnits="objectBoundingBox"><path d="M0,1 L0,0.42 C0,0.17 0.22,0 0.5,0 C0.78,0 1,0.17 1,0.42 L1,1 Z"/></clipPath></defs></svg>
@@ -157,7 +157,13 @@
     <div class="field field--half"><label for="rv-type">موقع</label><select id="rv-type" name="type" required><option value="د میز بکنګ">د میز بکنګ</option><option value="ودونه">ودونه</option><option value="کوژدې">کوژدې</option><option value="کلیزې">کلیزې</option><option value="کورنۍ غونډې">کورنۍ غونډې</option><option value="شرکتي غونډې">شرکتي غونډې</option><option value="شخصي ډوډۍ">شخصي ډوډۍ</option><option value="ډله ییزې لمانځنې">ډله ییزې لمانځنې</option><option value="نور">نور</option></select></div>
     <div class="field"><label for="rv-notes">کوم ځانګړی یادښت</label><textarea id="rv-notes" name="notes" rows="4" maxlength="800"></textarea></div>
     <p class="form__status" data-status role="status" aria-live="polite"></p>
-    <button class="btn btn--solid" type="submit">د بکنګ غوښتنه ولېږئ</button>
+    <div class="form__actions">
+      <button class="btn btn--solid" type="submit">د بکنګ غوښتنه ولېږئ</button>
+      <button class="btn btn--ghost" type="button" data-reserve-whatsapp>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="18" height="18" style="margin-inline-end:.4rem;vertical-align:-3px;"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 18.13h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.22 8.22 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.21-8.24 8.21Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.22.25-.85.84-.85 2.04s.87 2.37.99 2.53c.12.17 1.71 2.61 4.15 3.66.58.25 1.03.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.22-.16-.47-.28Z"/></svg>
+        د واټساپ له لارې بکنګ وکړئ
+      </button>
+    </div>
     <p class="form__note">دا یوازې غوښتنه ده، تایید شوی بکنګ نه دی. موږ به د تایید لپاره زنګ ووهو.</p>
   </form>
 </section>
@@ -196,10 +202,11 @@
     <div class="footer__col"><h2>د کار وختونه</h2><ul class="footer__hours"><li><span>دوشنبه – پنجشنبه</span><span>12:00 – 23:30</span></li><li><span>جمعه</span><span>14:00 – 00:00</span></li><li><span>شنبه – یکشنبه</span><span>12:00 – 00:00</span></li></ul></div>
   </div>
   <p class="footer__legal">© <span data-year>2026</span> KKR خالد خان رستوران. ټول حقونه خوندي دي.</p>
-</footer><script src="../../scripts/supabase-config.js?v=20260914031126" defer></script>
-<script src="../../scripts/cart.js?v=20260914031126" defer></script>
-<script src="../../scripts/reservations-toggle.js?v=20260914031126" defer></script>
-<script src="../../scripts/site.js?v=20260914031126" defer></script>
-<script src="../../scripts/promo-banner.js?v=20260914031126" defer></script>
+</footer><script src="../../scripts/supabase-config.js?v=20260914031749" defer></script>
+<script src="../../scripts/cart.js?v=20260914031749" defer></script>
+<script src="../../scripts/reservations-toggle.js?v=20260914031749" defer></script>
+<script src="../../scripts/site.js?v=20260914031749" defer></script>
+<script src="../../scripts/reserve-whatsapp.js?v=20260914031749" defer></script>
+<script src="../../scripts/promo-banner.js?v=20260914031749" defer></script>
 </body>
 </html>

@@ -313,6 +313,13 @@ body { padding-block-start: var(--header-h); }
   .brand:hover, .brand:focus-visible, .brand:active { transform: none; }
 }
 .sitenav { display: flex; align-items: center; gap: clamp(.5rem, 1.2vw, 1.1rem); margin-inline-start: auto; flex-wrap: nowrap; }
+/* Checkout, My Orders, and My Account share a trimmed-down header with no
+   cart icon (there's nothing to add to cart from there) — with one fewer
+   icon claiming space on the right, the auto margin above pushed the nav
+   links further right than intended, opening up a large gap next to the
+   logo. Only these three pages need the fix; every other page's header is
+   unaffected. */
+.page-checkout .sitenav { margin-inline-start: 2.5rem; }
 .sitenav__list { display: flex; gap: clamp(.15rem, .5vw, .5rem); flex-wrap: nowrap; }
 .sitenav__list a {
   text-decoration: none; font-size: 1rem; font-weight: 600; letter-spacing: .02em;
@@ -1848,6 +1855,7 @@ body { padding-block-start: var(--header-h); }
 .form__status.is-ok { color: var(--gold-deep); }
 .form__status.is-error { color: var(--danger); }
 .form__note { grid-column: 1 / -1; font-size: var(--step--1); color: var(--muted); margin: 0; }
+.form__actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .85rem; }
 /* Off-screen via a large negative offset is a classic honeypot trick, but
    "left" is a physical direction: under dir="rtl" it doesn't just sit off
    the visual edge, it can inflate the whole page's scrollable width by
