@@ -33,26 +33,10 @@
     </article>`;
   };
 
-  const setUpMarquee = () => {
-    const track = document.querySelector(SECTION_SELECTORS.signature);
-    if (!track) return;
-    const cards = Array.from(track.children);
-    if (cards.length === 0) return;
-    cards.forEach((card) => {
-      const clone = card.cloneNode(true);
-      clone.setAttribute("aria-hidden", "true");
-      clone.querySelectorAll("a, button, input, select, textarea").forEach((el) => el.setAttribute("tabindex", "-1"));
-      track.appendChild(clone);
-    });
-  };
-
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const { url, anonKey } = window.KKR_SUPABASE || {};
-      if (!url) {
-        setUpMarquee();
-        return;
-      }
+      if (!url) return;
 
       const [featuredRes, menuRes] = await Promise.all([
         fetch(`${url}/rest/v1/featured_items?select=*&order=sort_order.asc`, { headers: { apikey: anonKey } }),
@@ -79,8 +63,6 @@
     } catch {
       // If this fails for any reason, the hardcoded fallback cards already
       // in the HTML just stay as they are — nothing else breaks.
-    } finally {
-      setUpMarquee();
     }
   });
 })();
