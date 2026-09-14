@@ -170,6 +170,10 @@
       <div data-oa-discount-form hidden>
         <p class="cart-checkout__label">Editing: <strong data-oa-discount-item-name></strong> <span data-oa-discount-item-original></span></p>
         <label class="oa-field">
+          <span>Percent off (optional — calculates the price below for you)</span>
+          <input type="number" min="1" max="99" step="1" class="cart-input" placeholder="e.g. 15" data-oa-discount-percent>
+        </label>
+        <label class="oa-field">
           <span>Discounted price (Rs.)</span>
           <input type="number" min="1" step="1" class="cart-input" data-oa-discount-price>
         </label>

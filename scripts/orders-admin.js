@@ -390,6 +390,7 @@
   /* --------------------------------------------------------- discounts */
   let MENU_ITEMS_FLAT = [];
   let selectedDiscountItemId = null;
+  let selectedDiscountOriginalPrice = null;
 
   const loadMenuItemsFlat = async () => {
     if (MENU_ITEMS_FLAT.length) return MENU_ITEMS_FLAT;
@@ -431,9 +432,11 @@
     const item = items.find((it) => it.id === itemId);
     if (!item) return;
     selectedDiscountItemId = itemId;
+    selectedDiscountOriginalPrice = item.price;
     $("[data-oa-discount-form]").hidden = false;
     $("[data-oa-discount-item-name]").textContent = item.name;
     $("[data-oa-discount-item-original]").textContent = `(current price: Rs. ${item.price})`;
+    $("[data-oa-discount-percent]").value = "";
     $("[data-oa-discount-price]").value = "";
     $("[data-oa-discount-badge]").value = "";
     $("[data-oa-discount-remove]").hidden = true;
@@ -479,6 +482,17 @@
       listEl.innerHTML = `<p class="oa-muted">Could not load discounts.</p>`;
     }
   };
+
+  $("[data-oa-discount-percent]")?.addEventListener("input", (e) => {
+    const percent = Number(e.target.value);
+    if (!selectedDiscountOriginalPrice || !Number.isFinite(percent) || percent <= 0 || percent >= 100) return;
+    const newPrice = Math.round(selectedDiscountOriginalPrice * (1 - percent / 100));
+    $("[data-oa-discount-price]").value = newPrice;
+    const badgeInput = $("[data-oa-discount-badge]");
+    if (!badgeInput.value.trim() || /^\d+% off$/i.test(badgeInput.value.trim())) {
+      badgeInput.value = `${percent}% off`;
+    }
+  });
 
   $("[data-oa-discount-search]")?.addEventListener("input", (e) => renderDiscountSearchResults(e.target.value));
 

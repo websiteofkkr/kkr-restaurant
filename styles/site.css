@@ -664,7 +664,7 @@ body { padding-block-start: var(--header-h); }
 .promo-topbar__text { max-width: 60rem; }
 .promo-topbar__close {
   position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
-  width: 1.6rem; height: 1.6rem; display: inline-flex; align-items: center; justify-content: center;
+  width: 2.2rem; height: 2.2rem; display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: none; color: #fff; opacity: .8; cursor: pointer; padding: 0;
 }
 .promo-topbar__close:hover { opacity: 1; }
@@ -674,6 +674,7 @@ body { padding-block-start: var(--header-h); }
 .promo-topbar--image img { width: 100%; height: auto; display: block; }
 .promo-topbar--image .promo-topbar__close {
   background: rgba(0,0,0,.55); border-radius: 50%; top: .5rem; right: .5rem; transform: none;
+  width: 2.4rem; height: 2.4rem; z-index: 2;
 }
 
 .promo-banner { line-height: 0; }
