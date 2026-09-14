@@ -2892,7 +2892,10 @@ body.cart-drawer-open { overflow: hidden; }
   margin: 0 0 .45rem; font-family: var(--display); font-size: 1.05rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: .02em; color: var(--color-ivory);
 }
-.favcard__body p { margin: 0 0 1rem; color: rgba(246,240,231,.62); font-size: .85rem; line-height: 1.5; }
+.favcard__body p {
+  margin: 0 0 1rem; color: rgba(246,240,231,.62); font-size: .85rem; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
 .favcard__foot {
   display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .6rem;
   margin-block-start: auto; padding-block-start: .25rem;
