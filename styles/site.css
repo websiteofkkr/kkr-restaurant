@@ -265,19 +265,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* Locked to the top of every page; the whole site scrolls beneath it. */
 .masthead {
-  position: fixed; inset-inline: 0; inset-block-start: 0; z-index: 100;
+  position: fixed; inset-inline: 0; inset-block-start: var(--promo-banner-h, 0px); z-index: 100;
   background: var(--color-white);
   border-block-end: 1px solid rgba(11,9,7,.10);
   color: var(--color-dark);
   box-shadow: 0 1px 0 rgba(11,9,7,.04);
   transition: background-color .35s var(--ease), border-color .35s var(--ease),
-              padding .35s var(--ease);
+              padding .35s var(--ease), inset-block-start .2s var(--ease);
 }
 /* The bar is opaque on every page, so it always reads and always sits above
    the content — nothing scrolls over it. */
 .masthead.is-stuck { box-shadow: 0 6px 24px rgba(11,9,7,.10); }
 /* Inner pages have no hero behind the bar, so they need the space back. */
-body { padding-block-start: var(--header-h); }
+body { padding-block-start: calc(var(--header-h) + var(--promo-banner-h, 0px)); }
 
 .masthead.is-stuck .masthead__inner { padding-block: .65rem; }
 .masthead__inner {
@@ -425,7 +425,7 @@ body { padding-block-start: var(--header-h); }
 
 .hero {
   position: relative; background: var(--color-dark); color: var(--color-ivory);
-  min-height: calc(100svh - var(--header-h)); display: grid; place-items: end start;
+  min-height: calc(100svh - var(--header-h) - var(--promo-banner-h, 0px)); display: grid; place-items: end start;
   padding: clamp(3rem, 7vw, 5rem) var(--gutter) clamp(4.5rem, 9vw, 7rem);
   overflow: hidden; text-align: center;
 }
@@ -564,7 +564,7 @@ body { padding-block-start: var(--header-h); }
 .hero__scroll:hover { color: var(--color-gold-light); }
 
 @media (max-width: 48rem) {
-  .hero { min-height: calc(92svh - var(--header-h)); place-items: end start; }
+  .hero { min-height: calc(92svh - var(--header-h) - var(--promo-banner-h, 0px)); place-items: end start; }
   .hero__media { filter: brightness(.75); }
   .hero__media img, .hero__video { object-position: 50% 50%; }
   .hero__title { font-size: clamp(1.85rem, 8vw, 2.5rem); }
@@ -655,7 +655,8 @@ body { padding-block-start: var(--header-h); }
 
 .promo-topbar {
   display: flex; align-items: center; justify-content: center; gap: .75rem;
-  position: relative; text-align: center; text-decoration: none;
+  position: fixed; inset-inline: 0; inset-block-start: 0; z-index: 101;
+  text-align: center; text-decoration: none;
   background: linear-gradient(90deg, #c0392b, #e0544a); color: #fff;
   font-weight: 700; font-size: .85rem; letter-spacing: .01em;
   padding: .65rem 2.5rem;

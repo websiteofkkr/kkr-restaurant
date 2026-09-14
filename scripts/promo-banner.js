@@ -52,6 +52,7 @@
         e.preventDefault();
         e.stopPropagation();
         bar.remove();
+        document.documentElement.style.setProperty("--promo-banner-h", "0px");
         try {
           sessionStorage.setItem(DISMISS_KEY, dismissKey);
         } catch {
@@ -61,6 +62,12 @@
       bar.appendChild(closeBtn);
 
       document.body.insertBefore(bar, document.body.firstChild);
+      // Measured after insertion so this works for any text length/wrap —
+      // pushes the fixed header (and page content) down to make room,
+      // since the banner is also fixed and would otherwise sit underneath it.
+      requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--promo-banner-h", bar.offsetHeight + "px");
+      });
     } catch {
       // A failed fetch just means no banner shows — nothing else breaks.
     }
