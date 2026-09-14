@@ -2610,21 +2610,41 @@ body { padding-block-start: var(--header-h); }
    nothing here requires JS to actually add to cart, only to reveal the
    control on touch devices — @media (hover: none) below handles that. */
 .cart-add {
-  margin-block-start: .65rem;
   display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
-  max-height: 0; opacity: 0; overflow: hidden; margin-block-start: 0;
-  transition: max-height .25s ease, opacity .2s ease, margin-block-start .25s ease;
 }
-.mitem:hover .cart-add, .mitem.is-revealed .cart-add,
+/* .mitem items are a long vertical list (up to 84 rows), so collapsing
+   this to zero footprint when not hovered genuinely matters. It's
+   absolutely positioned rather than collapsed via max-height/margin —
+   those layout-affecting properties previously caused a serious bug:
+   revealing the control made the item taller, shifting every item below
+   it upward under the still-stationary mouse cursor, triggering their
+   hover too, revealing them, shifting again, and so on — a cascading
+   flicker down the whole list. An absolutely positioned overlay can
+   never push sibling rows around, since it was never part of the
+   document flow to begin with. */
+.mitem .cart-add {
+  position: absolute; inset-inline: 0; inset-block-start: 100%;
+  z-index: 6; margin-block-start: .4rem; padding: .5rem .75rem;
+  background: var(--color-ivory); border-radius: 10px;
+  box-shadow: 0 16px 32px -8px rgba(11,9,7,.35);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .2s ease, visibility .2s ease;
+}
+.mitem:hover .cart-add, .mitem.is-revealed .cart-add {
+  opacity: 1; visibility: visible; pointer-events: auto;
+}
+/* The homepage's Special Platters/Popular Picks grid is a small, fixed
+   set of cards (not a long list), and its overflow:hidden would clip an
+   absolutely positioned overlay — so it keeps its layout space always
+   reserved and only fades the control's opacity. No risk of the same
+   cascade here since nothing changes size on hover. */
+.favcard .cart-add {
+  margin-block-start: .65rem;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .2s ease, visibility .2s ease;
+}
 .favcard:hover .cart-add, .favcard.is-revealed .cart-add {
-  max-height: 4rem; opacity: 1; margin-block-start: .65rem;
-}
-/* Devices with no real hover (phones/tablets) rely entirely on the tap
-   toggle — without this, a row could get stuck "unrevealable" if a stray
-   :hover state lingered from a previous tap. */
-@media (hover: none) {
-  .cart-add { margin-block-start: 0; }
-  .mitem.is-revealed .cart-add, .favcard.is-revealed .cart-add { margin-block-start: .65rem; }
+  opacity: 1; visibility: visible; pointer-events: auto;
 }
 .cart-add__tier {
   font: inherit; font-size: .78rem; color: var(--color-dark);
