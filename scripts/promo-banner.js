@@ -36,39 +36,30 @@
 
       const link = (map.promo_banner_link || "").trim();
 
-      const overlay = document.createElement("div");
-      overlay.className = "promo-modal";
-      overlay.setAttribute("role", "dialog");
-      overlay.setAttribute("aria-modal", "true");
-
-      const scrim = document.createElement("div");
-      scrim.className = "promo-modal__scrim";
-      overlay.appendChild(scrim);
-
-      const box = document.createElement(link ? "a" : "div");
-      box.className = "promo-modal__box";
-      if (link) box.href = link;
+      const bar = document.createElement(link ? "a" : "div");
+      bar.className = "promo-card";
+      if (link) bar.href = link;
 
       if (image) {
         const img = document.createElement("img");
         img.src = image;
         img.alt = text || "";
-        box.appendChild(img);
+        bar.appendChild(img);
       } else {
         const span = document.createElement("span");
-        span.className = "promo-modal__text";
+        span.className = "promo-card__text";
         span.textContent = text;
-        box.appendChild(span);
+        bar.appendChild(span);
       }
 
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
-      closeBtn.className = "promo-modal__close";
+      closeBtn.className = "promo-card__close";
       closeBtn.setAttribute("aria-label", "Dismiss");
       closeBtn.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
       const dismiss = () => {
-        overlay.remove();
+        bar.remove();
         try {
           localStorage.setItem(DISMISS_KEY, JSON.stringify({ key: dismissKey, at: Date.now() }));
         } catch {
@@ -80,11 +71,18 @@
         e.stopPropagation();
         dismiss();
       });
-      scrim.addEventListener("click", dismiss);
-      box.appendChild(closeBtn);
+      bar.appendChild(closeBtn);
 
-      overlay.appendChild(box);
-      document.body.appendChild(overlay);
+      const wrap = document.createElement("div");
+      wrap.className = "promo-card__wrap";
+      wrap.appendChild(bar);
+
+      const header = document.querySelector(".masthead");
+      if (header && header.nextSibling) {
+        header.parentNode.insertBefore(wrap, header.nextSibling);
+      } else {
+        document.body.insertBefore(wrap, document.body.firstChild);
+      }
     } catch {
       // A failed fetch just means no banner shows — nothing else breaks.
     }
