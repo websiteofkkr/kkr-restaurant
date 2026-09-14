@@ -1,6 +1,8 @@
 (() => {
   "use strict";
 
+  const AUTO_HIDE_SECONDS = 12;
+
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const { url, anonKey } = window.KKR_SUPABASE || {};
@@ -54,10 +56,13 @@
       closeBtn.setAttribute("aria-label", "Dismiss");
       closeBtn.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      const remove = () => {
+        wrap.remove();
+      };
       closeBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        wrap.remove();
+        remove();
       });
       bar.appendChild(closeBtn);
 
@@ -65,12 +70,11 @@
       wrap.className = "promo-card__wrap";
       wrap.appendChild(bar);
 
-      const header = document.querySelector(".masthead");
-      if (header && header.nextSibling) {
-        header.parentNode.insertBefore(wrap, header.nextSibling);
-      } else {
-        document.body.insertBefore(wrap, document.body.firstChild);
-      }
+      document.body.insertBefore(wrap, document.body.firstChild);
+
+      // Auto-closes on its own after a while if nobody dismisses it —
+      // stays up long enough to read/act on, then gets out of the way.
+      setTimeout(remove, AUTO_HIDE_SECONDS * 1000);
     } catch {
       // A failed fetch just means no banner shows — nothing else breaks.
     }

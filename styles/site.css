@@ -660,13 +660,14 @@ body { padding-block-start: var(--header-h); }
 /* ------------------------------------------------------------ why kkr */
 
 .promo-card__wrap {
-  background: var(--page, #fff);
-  padding: 1rem var(--gutter) 0;
+  position: fixed; inset-inline: 0; inset-block-start: 0; z-index: 150;
+  padding: 1rem var(--gutter) 0; pointer-events: none;
 }
+.promo-card { pointer-events: auto; }
 .promo-card {
   position: relative; display: block; text-decoration: none;
   max-width: var(--shell); margin-inline: auto; overflow: hidden;
-  border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,.2);
+  border-radius: 20px; box-shadow: 0 12px 32px rgba(0,0,0,.35);
   background: linear-gradient(120deg, #7a1c12, var(--color-red, #c0392b) 60%, #93291B);
   color: #fff;
 }
