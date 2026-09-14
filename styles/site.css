@@ -2861,17 +2861,28 @@ body.cart-drawer-open { overflow: hidden; }
   display: grid; gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
 }
-/* Special Platters specifically (not Favourites) reads as one continuous
-   row you scroll left and right through, rather than wrapping to new
-   rows the way Favourites' shorter list does. */
+/* Special Platters reads as a continuously auto-scrolling marquee —
+   every card eventually comes into view on its own, nothing is
+   permanently hidden off-screen waiting for a manual scroll. Pauses on
+   hover/focus so a card can actually be read and clicked. */
 #signature .favgrid {
-  display: flex; flex-wrap: nowrap; overflow-x: auto;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  display: flex; flex-wrap: nowrap; overflow: hidden;
   padding-block-end: .5rem;
+  animation: kkr-marquee 32s linear infinite;
+  will-change: transform;
 }
-#signature .favgrid { scroll-snap-type: x mandatory; }
-#signature .favcard { scroll-snap-align: start; }
-#signature .favgrid::-webkit-scrollbar { display: none; }
+#signature .favgrid.is-paused,
+#signature .favgrid:hover,
+#signature .favgrid:focus-within {
+  animation-play-state: paused;
+}
+@keyframes kkr-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #signature .favgrid { animation: none; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
 #signature .favcard { flex: 0 0 16rem; }
 @media (min-width: 40rem) { #signature .favcard { flex-basis: 17.5rem; } }
 .favcard {

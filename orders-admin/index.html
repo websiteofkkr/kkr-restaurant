@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260914113145">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914113145">
+<link rel="stylesheet" href="../styles/site.css?v=20260914120522">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914120522">
 </head>
 <body class="orders-admin">
 
@@ -36,6 +36,7 @@
     <button type="button" class="oa-tab" data-oa-tab="features">Site features</button>
     <button type="button" class="oa-tab" data-oa-tab="discounts">Menu discounts</button>
     <button type="button" class="oa-tab" data-oa-tab="coupons">Coupons</button>
+    <button type="button" class="oa-tab" data-oa-tab="featured">Featured items</button>
     <button type="button" class="oa-tab" data-oa-tab="settings">Settings</button>
   </nav>
 
@@ -249,6 +250,43 @@
     </div>
   </section>
 
+  <!-- --------------------------------------------------------- featured -->
+  <section class="oa-panel" data-oa-panel="featured" hidden>
+    <div class="oa-block oa-block--narrow">
+      <h2>Feature an item on the homepage</h2>
+      <p class="oa-muted">Mark any menu item to automatically show it in "Our Special Platters" or "Popular Picks" on the homepage — no code changes needed.</p>
+
+      <label class="oa-field">
+        <span>Search for an item</span>
+        <input type="text" class="cart-input" placeholder="Start typing a dish name…" data-oa-featured-search>
+      </label>
+      <div data-oa-featured-results style="margin-block-end:1rem;"></div>
+
+      <div data-oa-featured-form hidden>
+        <p class="cart-checkout__label">Featuring: <strong data-oa-featured-item-name></strong></p>
+        <label class="oa-field">
+          <span>Section</span>
+          <select class="cart-input" data-oa-featured-section>
+            <option value="signature">Our Special Platters</option>
+            <option value="favourites">Popular Picks</option>
+          </select>
+        </label>
+        <label class="oa-field">
+          <span>Short description (optional — shown on the card)</span>
+          <textarea class="cart-input" rows="3" data-oa-featured-blurb placeholder="e.g. 1 kg Bukhari dampukh (lamb), 2 pieces chicken seekh kabab..."></textarea>
+        </label>
+        <p class="cart-checkout__error" data-oa-featured-error hidden></p>
+        <p class="cart-checkout__note" data-oa-featured-success hidden></p>
+        <button type="button" class="btn btn--reserve" data-oa-featured-save>Add to section</button>
+      </div>
+    </div>
+
+    <div class="oa-block oa-block--narrow">
+      <h2>Currently featured</h2>
+      <div data-oa-featured-list></div>
+    </div>
+  </section>
+
   <!-- ---------------------------------------------------------- settings -->
   <section class="oa-panel" data-oa-panel="settings" hidden>
     <div class="oa-block oa-block--narrow">
@@ -283,8 +321,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260914113145" defer></script>
-<script src="../scripts/auth.js?v=20260914113145" defer></script>
-<script src="../scripts/orders-admin.js?v=20260914113145" defer></script>
+<script src="../scripts/supabase-config.js?v=20260914120522" defer></script>
+<script src="../scripts/auth.js?v=20260914120522" defer></script>
+<script src="../scripts/orders-admin.js?v=20260914120522" defer></script>
 </body>
 </html>

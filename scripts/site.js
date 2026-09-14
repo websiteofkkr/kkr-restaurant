@@ -799,6 +799,11 @@
   }
 })();
 
+/* Marquee card duplication for Special Platters now lives in
+   featured-items.js, so it runs after that script has finished replacing
+   the section's content (if any items are admin-featured) — duplicating
+   before that would clone stale hardcoded cards. */
+
 /* ---------------------------------------------------- tap-to-reveal cart
    "Add to cart" is hidden by default on every dish card to keep the list
    compact (see .cart-add in site.css) and reveals on hover. Touch devices

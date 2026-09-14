@@ -66,6 +66,7 @@
       $$("[data-oa-panel]").forEach((p) => (p.hidden = p.dataset.oaPanel !== name));
       if (name === "discounts") renderDiscountList();
       if (name === "coupons") renderCouponList();
+      if (name === "featured") renderFeaturedList();
     });
   });
 
@@ -655,6 +656,113 @@
       renderCouponList();
     } catch (err) {
       console.error(err);
+    }
+  });
+
+  /* -------------------------------------------------------- featured items */
+  let selectedFeaturedItemId = null;
+
+  const renderFeaturedSearchResults = async (query) => {
+    const resultsEl = $("[data-oa-featured-results]");
+    if (!query.trim()) {
+      resultsEl.innerHTML = "";
+      return;
+    }
+    const items = await loadMenuItemsFlat();
+    const q = query.trim().toLowerCase();
+    const matches = items.filter((it) => it.name.toLowerCase().includes(q)).slice(0, 8);
+    resultsEl.innerHTML = matches
+      .map(
+        (it) =>
+          `<div data-oa-featured-pick="${esc(it.id)}" style="cursor:pointer;padding:.6rem .8rem;border:1px solid rgba(128,97,38,.18);border-radius:8px;margin-block-end:.4rem;">
+            <strong>${esc(it.name)}</strong> — Rs. ${it.price} <span class="oa-muted">(${esc(it.category)})</span>
+          </div>`
+      )
+      .join("");
+  };
+
+  const selectFeaturedItem = async (itemId) => {
+    const items = await loadMenuItemsFlat();
+    const item = items.find((it) => it.id === itemId);
+    if (!item) return;
+    selectedFeaturedItemId = itemId;
+    $("[data-oa-featured-form]").hidden = false;
+    $("[data-oa-featured-item-name]").textContent = item.name;
+    $("[data-oa-featured-blurb]").value = "";
+    $("[data-oa-featured-error]").hidden = true;
+    $("[data-oa-featured-success]").hidden = true;
+  };
+
+  const renderFeaturedList = async () => {
+    const listEl = $("[data-oa-featured-list]");
+    try {
+      const data = await authedFetch("/api/admin/featured-items");
+      const featured = data.items || [];
+      if (featured.length === 0) {
+        listEl.innerHTML = `<p class="oa-muted">No items featured yet.</p>`;
+        return;
+      }
+      const items = await loadMenuItemsFlat();
+      const sectionLabel = { signature: "Our Special Platters", favourites: "Popular Picks" };
+      listEl.innerHTML = featured
+        .map((f) => {
+          const item = items.find((it) => it.id === f.item_id);
+          return `<div class="oa-toggle-row">
+            <span>
+              <strong>${esc(item?.name || f.item_id)}</strong>
+              <small>${esc(sectionLabel[f.section] || f.section)}</small>
+            </span>
+            <button type="button" class="cart-drawer__back" data-oa-featured-remove="${esc(f.item_id)}" data-oa-featured-remove-section="${esc(f.section)}">Remove</button>
+          </div>`;
+        })
+        .join("");
+    } catch {
+      listEl.innerHTML = `<p class="oa-muted">Could not load featured items.</p>`;
+    }
+  };
+
+  $("[data-oa-featured-search]")?.addEventListener("input", (e) => renderFeaturedSearchResults(e.target.value));
+
+  document.addEventListener("click", async (e) => {
+    const pick = e.target.closest("[data-oa-featured-pick]");
+    if (pick) {
+      selectFeaturedItem(pick.dataset.oaFeaturedPick);
+      $("[data-oa-featured-results]").innerHTML = "";
+      $("[data-oa-featured-search]").value = "";
+      return;
+    }
+    const remove = e.target.closest("[data-oa-featured-remove]");
+    if (remove) {
+      try {
+        await authedFetch(
+          `/api/admin/featured-items?itemId=${encodeURIComponent(remove.dataset.oaFeaturedRemove)}&section=${encodeURIComponent(remove.dataset.oaFeaturedRemoveSection)}`,
+          { method: "DELETE" }
+        );
+        renderFeaturedList();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  });
+
+  $("[data-oa-featured-save]")?.addEventListener("click", async () => {
+    const errEl = $("[data-oa-featured-error]");
+    const okEl = $("[data-oa-featured-success]");
+    errEl.hidden = true;
+    okEl.hidden = true;
+    const section = $("[data-oa-featured-section]").value;
+    const blurb = $("[data-oa-featured-blurb]").value.trim();
+    try {
+      await authedFetch("/api/admin/featured-items", {
+        method: "POST",
+        body: JSON.stringify({ itemId: selectedFeaturedItemId, section, blurb: blurb || null }),
+      });
+      okEl.hidden = false;
+      okEl.textContent = "Added — shows on the homepage immediately.";
+      renderFeaturedList();
+    } catch (err) {
+      errEl.hidden = false;
+      errEl.textContent = err.message;
     }
   });
 
