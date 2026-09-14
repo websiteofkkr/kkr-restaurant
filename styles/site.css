@@ -1959,10 +1959,11 @@ body { padding-block-start: var(--header-h); }
 .serve__ways li:first-child .serve__way-icon svg { width: 2rem; height: 1.3rem; }
 
 /* The photograph, curving in from the right. */
-.serve__figure { position: relative; margin: 0; align-self: stretch; min-height: 13rem; }
+.serve__figure { position: relative; margin: 0; align-self: stretch; min-height: 13rem; overflow: hidden; }
 .serve__figure img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   border-radius: var(--radius-card);
+  transition: transform .3s var(--ease); cursor: zoom-in;
 }
 @media (min-width: 64rem) {
   .serve__figure { margin-block: calc(clamp(1.75rem, 3.5vw, 2.75rem) * -1); }
@@ -2832,11 +2833,6 @@ body.cart-drawer-open { overflow: hidden; }
 #signature .favgrid::-webkit-scrollbar { display: none; }
 #signature .favcard { flex: 0 0 16rem; }
 @media (min-width: 40rem) { #signature .favcard { flex-basis: 17.5rem; } }
-/* Trailing padding on a scrollable flex row isn't reliably respected at
-   the true end of scroll in some browsers — the last card ends up flush
-   against (and visually clipped by) the edge. An explicit margin on the
-   last card itself always works. */
-#signature .favcard:last-child { margin-inline-end: var(--gutter); }
 .favcard {
   background: linear-gradient(180deg, rgba(32,25,15,.96), rgba(12,10,7,.98));
   border: 1px solid rgba(201,163,91,.25); border-radius: 14px;

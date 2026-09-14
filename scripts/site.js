@@ -861,3 +861,25 @@
     true
   );
 })();
+
+/* --------------------------------------------------- image zoom-and-pan
+   The "We're ready to serve you" photo zooms in on hover and pans to
+   follow the cursor within its frame, so the visitor can look around the
+   zoomed image rather than just seeing a static enlarged crop. */
+(() => {
+  "use strict";
+  const figure = document.querySelector(".serve__figure");
+  const img = figure?.querySelector("img");
+  if (!figure || !img) return;
+
+  figure.addEventListener("mousemove", (e) => {
+    const rect = figure.getBoundingClientRect();
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100;
+    const yPct = ((e.clientY - rect.top) / rect.height) * 100;
+    img.style.transformOrigin = `${xPct}% ${yPct}%`;
+    img.style.transform = "scale(1.6)";
+  });
+  figure.addEventListener("mouseleave", () => {
+    img.style.transform = "scale(1)";
+  });
+})();
