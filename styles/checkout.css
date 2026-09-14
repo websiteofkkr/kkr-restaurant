@@ -1,5 +1,5 @@
 .checkoutpage {
-  max-width: 72rem;
+  max-width: var(--shell);
   margin: 0 auto;
   padding: clamp(1.5rem, 4vw, 3rem) var(--gutter) clamp(3rem, 6vw, 5rem);
 }
