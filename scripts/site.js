@@ -798,3 +798,31 @@
     /* Same reasoning as above. */
   }
 })();
+
+/* ---------------------------------------------------- tap-to-reveal cart
+   "Add to cart" is hidden by default on every dish card to keep the list
+   compact (see .cart-add in site.css) and reveals on hover. Touch devices
+   have no hover, so a tap on the card itself reveals it there instead —
+   tapping a different card swaps which one is revealed, and tapping
+   anywhere else closes it. */
+(() => {
+  "use strict";
+  document.addEventListener("click", (e) => {
+    const item = e.target.closest(".mitem, .favcard");
+    const revealed = document.querySelectorAll(".mitem.is-revealed, .favcard.is-revealed");
+
+    if (!item) {
+      revealed.forEach((el) => el.classList.remove("is-revealed"));
+      return;
+    }
+    // Clicking inside the already-revealed control itself (the tier
+    // select, the button) should behave normally, not re-toggle reveal.
+    if (e.target.closest(".cart-add")) return;
+
+    const alreadyOpen = item.classList.contains("is-revealed");
+    revealed.forEach((el) => {
+      if (el !== item) el.classList.remove("is-revealed");
+    });
+    item.classList.toggle("is-revealed", !alreadyOpen);
+  });
+})();

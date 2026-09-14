@@ -25,51 +25,59 @@
       if (dismissedKey === dismissKey) return;
 
       const link = (map.promo_banner_link || "").trim();
-      const bar = document.createElement(link ? "a" : "div");
-      bar.className = "promo-topbar";
-      if (link) bar.href = link;
+
+      const overlay = document.createElement("div");
+      overlay.className = "promo-modal";
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+
+      const scrim = document.createElement("div");
+      scrim.className = "promo-modal__scrim";
+      overlay.appendChild(scrim);
+
+      const box = document.createElement(link ? "a" : "div");
+      box.className = "promo-modal__box";
+      if (link) box.href = link;
 
       if (image) {
-        bar.classList.add("promo-topbar--image");
         const img = document.createElement("img");
         img.src = image;
         img.alt = text || "";
-        bar.appendChild(img);
+        box.appendChild(img);
       } else {
         const span = document.createElement("span");
-        span.className = "promo-topbar__text";
+        span.className = "promo-modal__text";
         span.textContent = text;
-        bar.appendChild(span);
+        box.appendChild(span);
       }
 
       const closeBtn = document.createElement("button");
       closeBtn.type = "button";
-      closeBtn.className = "promo-topbar__close";
+      closeBtn.className = "promo-modal__close";
       closeBtn.setAttribute("aria-label", "Dismiss");
       closeBtn.innerHTML =
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-      closeBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        bar.remove();
-        document.documentElement.style.setProperty("--promo-banner-h", "0px");
+      const dismiss = () => {
+        overlay.remove();
         try {
           sessionStorage.setItem(DISMISS_KEY, dismissKey);
         } catch {
           /* non-fatal */
         }
+      };
+      closeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dismiss();
       });
-      bar.appendChild(closeBtn);
+      scrim.addEventListener("click", dismiss);
+      box.appendChild(closeBtn);
 
-      document.body.insertBefore(bar, document.body.firstChild);
-      // Measured after insertion so this works for any text length/wrap —
-      // pushes the fixed header (and page content) down to make room,
-      // since the banner is also fixed and would otherwise sit underneath it.
-      requestAnimationFrame(() => {
-        document.documentElement.style.setProperty("--promo-banner-h", bar.offsetHeight + "px");
-      });
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
     } catch {
       // A failed fetch just means no banner shows — nothing else breaks.
     }
   });
 })();
+
