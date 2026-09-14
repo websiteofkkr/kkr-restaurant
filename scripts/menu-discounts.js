@@ -25,11 +25,19 @@
 
         tierInput.value = discountedPrice;
 
-        const priceEl = wrap.closest(".mitem")?.querySelector(".mitem__price");
+        // Different sections style their price display differently — the
+        // menu page uses .mitem__price, the homepage's Special
+        // Platters/Popular Picks cards use .favcard__price.
+        const priceEl =
+          wrap.closest(".mitem")?.querySelector(".mitem__price") ||
+          wrap.closest(".favcard")?.querySelector(".favcard__price");
         if (priceEl) {
-          priceEl.innerHTML =
-            `<s>${originalPrice}</s> ${discountedPrice}` +
-            (d.badge_label ? ` <span class="mitem__badge">${escapeHtml(d.badge_label)}</span>` : "");
+          const badge = d.badge_label ? ` <span class="mitem__badge">${escapeHtml(d.badge_label)}</span>` : "";
+          if (priceEl.classList.contains("favcard__price")) {
+            priceEl.innerHTML = `<s>Rs ${originalPrice}</s> Rs ${discountedPrice}${badge}`;
+          } else {
+            priceEl.innerHTML = `<s>${originalPrice}</s> ${discountedPrice}${badge}`;
+          }
         }
       });
     } catch {

@@ -373,7 +373,6 @@ body { padding-block-start: calc(var(--header-h) + var(--promo-banner-h, 0px)); 
 }
 .langs__menu a[aria-current] { color: var(--color-gold-deep); font-weight: 700; }
 .langs__menu a:hover, .langs__menu a:focus-visible { background: rgba(201,163,91,.14); color: var(--color-gold-deep); }
-}
 .masthead__cta {
   padding: .62rem 1rem; white-space: nowrap; font-size: .74rem; letter-spacing: .06em;
   transition: transform .4s var(--ease), box-shadow .4s var(--ease);
