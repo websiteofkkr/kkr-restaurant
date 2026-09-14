@@ -54,6 +54,7 @@
     $("[data-oa-whoami]").textContent = profile.full_name || session.user.email;
     showApp(true);
     loadOrders();
+    loadReservations();
     loadSettings();
   };
 
@@ -68,6 +69,7 @@
       if (name === "coupons") renderCouponList();
       if (name === "featured") renderFeaturedList();
       if (name === "moments") renderMomentsList();
+      if (name === "reservations") loadReservations();
     });
   });
 
@@ -787,6 +789,68 @@
     } catch (err) {
       errEl.hidden = false;
       errEl.textContent = err.message;
+    }
+  });
+
+  /* ------------------------------------------------------- reservations */
+  const RESERVATION_STATUS_LABELS = { new: "New", confirmed: "Confirmed", declined: "Declined", completed: "Completed" };
+
+  const loadReservations = async () => {
+    try {
+      const data = await authedFetch("/api/admin/reservations");
+      const reservations = data.reservations || [];
+      const newCount = reservations.filter((r) => r.status === "new").length;
+      const badge = $("[data-oa-reservations-badge]");
+      if (badge) {
+        badge.hidden = newCount === 0;
+        badge.textContent = String(newCount);
+      }
+
+      const countEl = $("[data-oa-reservations-count]");
+      if (countEl) countEl.textContent = `${reservations.length} request${reservations.length === 1 ? "" : "s"}`;
+
+      const body = $("[data-oa-reservations-body]");
+      if (!body) return;
+      if (reservations.length === 0) {
+        body.innerHTML = `<tr><td colspan="7" class="oa-muted">No reservation requests yet.</td></tr>`;
+        return;
+      }
+      body.innerHTML = reservations
+        .map((r) => {
+          const when = new Date(r.created_at).toLocaleString();
+          const guestLine = `${esc(r.name)}<br><span class="oa-muted">${esc(r.phone)}${r.email ? " · " + esc(r.email) : ""}</span>`;
+          const statusOptions = Object.entries(RESERVATION_STATUS_LABELS)
+            .map(([val, label]) => `<option value="${val}" ${r.status === val ? "selected" : ""}>${label}</option>`)
+            .join("");
+          return `<tr ${r.status === "new" ? 'style="background:rgba(192,57,43,.06);"' : ""}>
+            <td>${esc(when)}</td>
+            <td>${guestLine}</td>
+            <td>${esc(r.reservation_date)}<br>${esc(r.reservation_time)}</td>
+            <td>${esc(r.guests)}</td>
+            <td>${esc(r.occasion || "—")}</td>
+            <td>${esc(r.notes || "—")}</td>
+            <td><select class="cart-input" data-oa-reservation-status="${esc(r.id)}" style="font-size:.8rem;padding:.35rem .5rem;">${statusOptions}</select></td>
+          </tr>`;
+        })
+        .join("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  $("[data-oa-refresh-reservations]")?.addEventListener("click", loadReservations);
+
+  document.addEventListener("change", async (e) => {
+    const select = e.target.closest("[data-oa-reservation-status]");
+    if (!select) return;
+    try {
+      await authedFetch("/api/admin/reservations", {
+        method: "PATCH",
+        body: JSON.stringify({ id: select.dataset.oaReservationStatus, status: select.value }),
+      });
+      loadReservations();
+    } catch (err) {
+      console.error(err);
     }
   });
 

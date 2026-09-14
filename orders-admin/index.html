@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260914122356">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914122356">
+<link rel="stylesheet" href="../styles/site.css?v=20260914171522">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914171522">
 </head>
 <body class="orders-admin">
 
@@ -32,6 +32,7 @@
 
   <nav class="oa-tabs">
     <button type="button" class="oa-tab is-active" data-oa-tab="orders">Orders</button>
+    <button type="button" class="oa-tab" data-oa-tab="reservations">Reservations <span class="oa-badge" data-oa-reservations-badge hidden></span></button>
     <button type="button" class="oa-tab" data-oa-tab="rewards">Reward points</button>
     <button type="button" class="oa-tab" data-oa-tab="features">Site features</button>
     <button type="button" class="oa-tab" data-oa-tab="discounts">Menu discounts</button>
@@ -55,6 +56,24 @@
           </tr>
         </thead>
         <tbody data-oa-orders-body></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------ reservations -->
+  <section class="oa-panel" data-oa-panel="reservations" hidden>
+    <div class="oa-toolbar">
+      <button type="button" class="btn btn--ghost" data-oa-refresh-reservations>Refresh</button>
+      <span class="oa-muted" data-oa-reservations-count></span>
+    </div>
+    <div class="oa-table-wrap">
+      <table class="oa-table">
+        <thead>
+          <tr>
+            <th>Requested</th><th>Guest</th><th>Date &amp; time</th><th>Guests</th><th>Occasion</th><th>Notes</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody data-oa-reservations-body></tbody>
       </table>
     </div>
   </section>
@@ -360,8 +379,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260914122356" defer></script>
-<script src="../scripts/auth.js?v=20260914122356" defer></script>
-<script src="../scripts/orders-admin.js?v=20260914122356" defer></script>
+<script src="../scripts/supabase-config.js?v=20260914171522" defer></script>
+<script src="../scripts/auth.js?v=20260914171522" defer></script>
+<script src="../scripts/orders-admin.js?v=20260914171522" defer></script>
 </body>
 </html>
