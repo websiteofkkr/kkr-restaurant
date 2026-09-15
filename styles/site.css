@@ -3292,8 +3292,11 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 .contest-coming-soon {
   text-align: center; padding: .5rem 0 0; display: flex; flex-direction: column; align-items: center;
 }
-.contest-coming-soon__month {
-  font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: #fff; margin: 0 0 .6em;
+.contest-coming-soon p.contest-coming-soon__month {
+  display: inline-block; font-family: var(--poster); font-weight: 700; font-size: var(--step-3);
+  color: var(--color-gold-deep); margin: 0 0 .8em;
+  padding: .3em .9em; border: 2px solid var(--color-gold-deep); border-radius: 10px;
+  letter-spacing: .02em;
 }
 .contest-coming-soon__lead { color: rgba(246,240,231,.85); margin: 0 0 .3em; font-size: 1rem; }
 .contest-coming-soon p { color: rgba(246,240,231,.7); margin: 0 0 .8em; }
