@@ -798,11 +798,20 @@
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   };
-  // Set a sensible default the first time the tab is opened.
-  const monthInput = $("[data-oa-contest-month]");
-  if (monthInput && !monthInput.value) monthInput.value = currentMonthValue();
+  const monthDisplayLabel = (ym) => {
+    const [y, m] = ym.split("-").map(Number);
+    return new Date(y, m - 1, 1).toLocaleString("en", { month: "long", year: "numeric" });
+  };
+
+  let contestViewingMonth = currentMonthValue();
+  let contestSummaryCache = null;
+  let contestWinnerEntryCache = null;
 
   const PLATFORM_LABEL = { instagram: "Instagram", tiktok: "TikTok", facebook: "Facebook", snapchat: "Snapchat", x: "X", youtube: "YouTube", other: "Other" };
+  const MONTH_STATUS_LABEL = {
+    COMING_SOON: "Coming soon", ACCEPTING_ENTRIES: "Accepting entries",
+    JUDGING: "Judging", WINNER_SELECTED: "Winner selected — not yet published", PUBLISHED: "Published",
+  };
 
   const renderContestCard = (e) => {
     const badge = `<span class="oa-contest-card__badge oa-contest-card__badge--${e.status}">${e.status.replace("_", " ")}</span>`;
@@ -848,21 +857,60 @@
     </div>`;
   };
 
+  const renderWinnerPanel = (summary, entries) => {
+    const panel = $("[data-oa-contest-winner-panel]");
+    if (!summary.winner) {
+      panel.hidden = true;
+      contestWinnerEntryCache = null;
+      return;
+    }
+    const winnerEntry = entries.find((e) => e.status === "WINNER");
+    contestWinnerEntryCache = winnerEntry || null;
+    panel.hidden = false;
+    $("[data-oa-contest-winner-name]").textContent = summary.winner;
+    if (winnerEntry) {
+      $("[data-oa-contest-winner-photo]").src = winnerEntry.photo_url;
+      $("[data-oa-contest-winner-photo]").alt = `Winning photo by @${winnerEntry.social_username}`;
+      $("[data-oa-contest-winner-username]").textContent = winnerEntry.social_username;
+      $("[data-oa-contest-winner-platform]").textContent = PLATFORM_LABEL[winnerEntry.social_platform] || winnerEntry.social_platform;
+      $("[data-oa-contest-winner-score]").textContent = winnerEntry.ai_score ?? "—";
+      $("[data-oa-contest-winner-selected-at]").textContent = winnerEntry.winner_selected_at
+        ? new Date(winnerEntry.winner_selected_at).toLocaleString()
+        : "";
+    }
+    const publishedNote = $("[data-oa-contest-published-note]");
+    const publishBtn = $("[data-oa-contest-publish]");
+    if (summary.published) {
+      publishedNote.style.display = "block";
+      publishBtn.disabled = true;
+      publishBtn.textContent = "Published";
+    } else {
+      publishedNote.style.display = "none";
+      publishBtn.disabled = false;
+      publishBtn.textContent = "Publish Winner";
+    }
+  };
+
   const loadContestEntries = async () => {
-    const month = $("[data-oa-contest-month]").value || currentMonthValue();
-    const status = $("[data-oa-contest-status-filter]").value;
-    const platform = $("[data-oa-contest-platform-filter]").value;
-    $("[data-oa-contest-month-label]").textContent = month;
+    $("[data-oa-contest-month-label]").textContent = monthDisplayLabel(contestViewingMonth);
     $("[data-oa-contest-error]").hidden = true;
 
-    const params = new URLSearchParams({ month });
+    const status = $("[data-oa-contest-status-filter]").value;
+    const platform = $("[data-oa-contest-platform-filter]").value;
+    const params = new URLSearchParams({ month: contestViewingMonth });
     if (status) params.set("status", status);
     if (platform) params.set("platform", platform);
 
     try {
       const data = await authedFetch(`/api/admin/contest?${params.toString()}`);
-      const entries = data.entries || [];
+      const entries = (data.entries || []).filter((e) => e.contest_month === contestViewingMonth);
       const s = data.summary || {};
+      contestSummaryCache = s;
+
+      const badgeEl = $("[data-oa-contest-status-badge]");
+      badgeEl.className = `oa-contest-status-badge oa-contest-status-badge--${s.monthStatus || "COMING_SOON"}`;
+      badgeEl.textContent = MONTH_STATUS_LABEL[s.monthStatus] || s.monthStatus || "Coming soon";
+
       $("[data-oa-contest-summary]").innerHTML = `
         <div class="oa-contest-summary__item"><strong>${s.totalEntries ?? 0}</strong><span>Total entries</span></div>
         <div class="oa-contest-summary__item"><strong>${s.validEntries ?? 0}</strong><span>Valid</span></div>
@@ -871,10 +919,22 @@
         <div class="oa-contest-summary__item"><strong>${s.finalists ?? 0}</strong><span>Finalists</span></div>
         <div class="oa-contest-summary__item"><strong>${s.winner ? "✓" : "—"}</strong><span>${s.winner ? esc(s.winner) : "No winner yet"}</span></div>
       `;
+
+      renderWinnerPanel(s, entries);
+
       const grid = $("[data-oa-contest-grid]");
       grid.innerHTML = entries.length
         ? entries.map(renderContestCard).join("")
         : `<p class="oa-muted">No entries match these filters.</p>`;
+
+      // History dropdown, populated once we know what months exist.
+      const historySelect = $("[data-oa-contest-history-select]");
+      if (historySelect && data.availableMonths) {
+        const months = [...new Set([currentMonthValue(), ...data.availableMonths])].sort().reverse();
+        historySelect.innerHTML =
+          `<option value="">Choose a month…</option>` +
+          months.map((m) => `<option value="${m}" ${m === contestViewingMonth ? "selected" : ""}>${monthDisplayLabel(m)}${m === currentMonthValue() ? " (current)" : ""}</option>`).join("");
+      }
     } catch (err) {
       $("[data-oa-contest-error]").hidden = false;
       $("[data-oa-contest-error]").textContent = err.message;
@@ -882,18 +942,21 @@
   };
 
   $("[data-oa-contest-refresh]")?.addEventListener("click", loadContestEntries);
-  $("[data-oa-contest-month]")?.addEventListener("change", loadContestEntries);
   $("[data-oa-contest-status-filter]")?.addEventListener("change", loadContestEntries);
   $("[data-oa-contest-platform-filter]")?.addEventListener("change", loadContestEntries);
+  $("[data-oa-contest-history-select]")?.addEventListener("change", (e) => {
+    if (!e.target.value) return;
+    contestViewingMonth = e.target.value;
+    loadContestEntries();
+  });
 
   $("[data-oa-contest-shortlist]")?.addEventListener("click", async () => {
-    const month = $("[data-oa-contest-month]").value || currentMonthValue();
     const statusEl = $("[data-oa-contest-ai-status]");
     const errEl = $("[data-oa-contest-error]");
     errEl.hidden = true;
     statusEl.textContent = "Running AI shortlist — this can take a minute…";
     try {
-      const data = await authedFetch("/api/admin/contest-ai-shortlist", { method: "POST", body: JSON.stringify({ month }) });
+      const data = await authedFetch("/api/admin/contest-ai-shortlist", { method: "POST", body: JSON.stringify({ month: contestViewingMonth }) });
       statusEl.textContent = `Evaluated ${data.evaluatedCount ?? 0}, shortlisted ${data.shortlistedCount ?? 0}.`;
       loadContestEntries();
     } catch (err) {
@@ -904,19 +967,136 @@
   });
 
   $("[data-oa-contest-compare]")?.addEventListener("click", async () => {
-    const month = $("[data-oa-contest-month]").value || currentMonthValue();
     const statusEl = $("[data-oa-contest-ai-status]");
     const errEl = $("[data-oa-contest-error]");
     errEl.hidden = true;
     statusEl.textContent = "Comparing finalists…";
     try {
-      const data = await authedFetch("/api/admin/contest-ai-compare", { method: "POST", body: JSON.stringify({ month }) });
+      const data = await authedFetch("/api/admin/contest-ai-compare", { method: "POST", body: JSON.stringify({ month: contestViewingMonth }) });
       statusEl.textContent = `Top 3 finalists selected. ${data.note || ""}`;
       loadContestEntries();
     } catch (err) {
       statusEl.textContent = "";
       errEl.hidden = false;
       errEl.textContent = err.message;
+    }
+  });
+
+  // ---- Winner announcement graphic (client-side canvas — no server-side
+  // image manipulation infrastructure needed) ----
+  const buildAnnouncementCanvas = (entry) => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const W = 1080, H = 1350; // a standard social portrait canvas
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext("2d");
+
+      // Photo fills the frame, cropped to cover.
+      const scale = Math.max(W / img.width, H / img.height);
+      const dw = img.width * scale, dh = img.height * scale;
+      ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+
+      // Dark gradient for text legibility, KKR black/gold identity.
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, "rgba(11,9,7,.75)");
+      grad.addColorStop(0.18, "rgba(11,9,7,.15)");
+      grad.addColorStop(0.72, "rgba(11,9,7,.25)");
+      grad.addColorStop(1, "rgba(11,9,7,.92)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#C9A35B";
+      ctx.font = "700 34px Georgia, serif";
+      ctx.fillText("KKR PHOTO OF THE MONTH", W / 2, 90);
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "400 46px Georgia, serif";
+      ctx.fillText(`${monthDisplayLabel(entry.contest_month || contestViewingMonth).toUpperCase()} WINNER`, W / 2, 150);
+
+      ctx.fillStyle = "#C9A35B";
+      ctx.font = "700 40px Georgia, serif";
+      ctx.fillText(`@${entry.social_username}`, W / 2, H - 220);
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 44px Georgia, serif";
+      ctx.fillText("CONGRATULATIONS!", W / 2, H - 160);
+
+      ctx.fillStyle = "#C9A35B";
+      ctx.font = "700 38px Georgia, serif";
+      ctx.fillText("PKR 5,000 KKR DINING CREDIT", W / 2, H - 100);
+
+      ctx.fillStyle = "rgba(255,255,255,.85)";
+      ctx.font = "400 24px Georgia, serif";
+      ctx.fillText("#KKRPeshawar   #KKRPhotoOfTheMonth", W / 2, H - 50);
+
+      resolve(canvas);
+    };
+    img.onerror = () => reject(new Error("Could not load the winning photo to build the announcement."));
+    img.src = entry.photo_url;
+  });
+
+  $("[data-oa-contest-generate-announcement]")?.addEventListener("click", async () => {
+    if (!contestWinnerEntryCache) return;
+    const preview = $("[data-oa-contest-announcement-preview]");
+    preview.innerHTML = `<p class="oa-muted">Generating…</p>`;
+    try {
+      const canvas = await buildAnnouncementCanvas(contestWinnerEntryCache);
+      const dataUrl = canvas.toDataURL("image/png");
+      preview.innerHTML = `
+        <img src="${dataUrl}" alt="Winner announcement graphic" style="max-width:16rem;border-radius:10px;display:block;margin-block-end:.5rem;">
+        <a href="${dataUrl}" download="kkr-photo-of-the-month-${contestViewingMonth}.png" class="cart-drawer__back">Download announcement image</a>
+      `;
+    } catch (err) {
+      preview.innerHTML = `<p class="cart-checkout__error">${esc(err.message)}</p>`;
+    }
+  });
+
+  const buildCaption = (entry) => {
+    const month = monthDisplayLabel(entry.contest_month || contestViewingMonth).split(" ")[0];
+    return `Congratulations to our ${month} KKR Photo of the Month winner! 🎉
+
+A special KKR moment captured by @${entry.social_username}.
+
+You've won PKR 5,000 in KKR Dining Credit! 🏆
+
+Thank you to everyone who shared their KKR moments with us.
+
+Want to be our next winner?
+Tag @KKRPeshawar and use #KKRPeshawar.
+
+#KKRPeshawar #KKRPhotoOfTheMonth`;
+  };
+
+  $("[data-oa-contest-copy-caption]")?.addEventListener("click", async () => {
+    if (!contestWinnerEntryCache) return;
+    const caption = buildCaption(contestWinnerEntryCache);
+    const preview = $("[data-oa-contest-caption-preview]");
+    preview.innerHTML = `<p class="cart-checkout__note" style="white-space:pre-wrap;">${esc(caption)}</p>`;
+    try {
+      await navigator.clipboard.writeText(caption);
+      preview.innerHTML += `<p class="oa-muted">Copied to clipboard.</p>`;
+    } catch {
+      preview.innerHTML += `<p class="oa-muted">Select the text above and copy manually.</p>`;
+    }
+  });
+
+  $("[data-oa-contest-publish]")?.addEventListener("click", async () => {
+    if (!contestWinnerEntryCache) return;
+    const monthLabel = monthDisplayLabel(contestWinnerEntryCache.contest_month || contestViewingMonth);
+    if (!confirm(`Publish ${monthLabel} winner?\n\n@${contestWinnerEntryCache.social_username} will appear as the Photo of the Month on the live website.`)) return;
+    try {
+      const caption = buildCaption(contestWinnerEntryCache);
+      await authedFetch("/api/admin/contest", {
+        method: "PATCH",
+        body: JSON.stringify({ id: contestWinnerEntryCache.id, publish: true, caption }),
+      });
+      loadContestEntries();
+    } catch (err) {
+      alert(err.message);
     }
   });
 

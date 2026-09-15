@@ -92,6 +92,10 @@
     const [y, m] = ym.split("-").map(Number);
     return new Date(y, m - 1, 1).toLocaleString("en", { month: "long", year: "numeric" });
   };
+  const currentMonthValue = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  };
 
   window.addEventListener("DOMContentLoaded", async () => {
     const section = $("[data-contest-winner-section]");
@@ -100,15 +104,31 @@
       const res = await fetch("/api/contest-winners");
       const data = await res.json();
       const winners = data.winners || [];
-      if (winners.length === 0) return; // no winner announced yet — keep the section hidden
+      const thisMonth = currentMonthValue();
+      const currentWinner = winners.find((w) => w.contestMonth === thisMonth);
 
-      const [latest, ...previous] = winners;
-      $("[data-contest-winner-photo]", section).src = latest.photoUrl;
-      $("[data-contest-winner-photo]", section).alt = `Winning photo by @${latest.username}`;
-      $("[data-contest-winner-username]", section).textContent = `@${latest.username}`;
-      $("[data-contest-winner-month]", section).textContent = `${monthLabel(latest.contestMonth)} Winner`;
-      $("[data-contest-winner-amount]", section).textContent = "PKR 5,000 KKR Dining Credit";
+      if (currentWinner) {
+        $("[data-contest-winner-photo]", section).src = currentWinner.photoUrl;
+        $("[data-contest-winner-photo]", section).alt = `Winning photo by @${currentWinner.username}`;
+        $("[data-contest-winner-username]", section).textContent = `@${currentWinner.username}`;
+        $("[data-contest-winner-month]", section).textContent = `${monthLabel(currentWinner.contestMonth)} Winner`;
+        $("[data-contest-winner-amount]", section).textContent = "PKR 5,000 KKR Dining Credit";
+      } else {
+        // No published winner for the current month yet — show the
+        // "coming soon" state rather than an empty/stale section, and
+        // never a placeholder photo (spec: "Do not show a fake winner").
+        const grid = $(".contest-winner-section__grid", section);
+        if (grid) {
+          grid.innerHTML = `<div class="contest-coming-soon">
+            <p class="contest-coming-soon__month">${monthLabel(thisMonth)}</p>
+            <p class="contest-coming-soon__lead">We're looking for our next KKR Photo of the Month.</p>
+            <p>Share your KKR moment for a chance to win.</p>
+            <p class="contest-coming-soon__badge">WINNER ANNOUNCED SOON</p>
+          </div>`;
+        }
+      }
 
+      const previous = winners.filter((w) => w.contestMonth !== thisMonth || !currentWinner);
       if (previous.length > 0) {
         const wrap = $("[data-contest-previous-winners]", section);
         wrap.innerHTML =
@@ -124,9 +144,11 @@
           `</div>`;
       }
 
+      // Always visible — either a real winner or the "coming soon" state,
+      // both are worth showing (Part 3/9: the section is permanent).
       section.hidden = false;
     } catch {
-      // No winner shows if this fails — the rest of the page is unaffected.
+      // No section shows if this fails — the rest of the page is unaffected.
     }
   });
 })();

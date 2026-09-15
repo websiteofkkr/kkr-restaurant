@@ -76,6 +76,25 @@
 .oa-contest-summary__item strong { display: block; font-size: 1.3rem; color: var(--color-dark); }
 .oa-contest-summary__item span { font-size: .72rem; color: var(--muted-dark); text-transform: uppercase; letter-spacing: .03em; }
 
+.oa-contest-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-block-end: .5rem; }
+.oa-contest-status-badge {
+  display: inline-block; padding: .25rem .7rem; border-radius: 999px;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+  background: #e8e2d3; color: #6b5a2e;
+}
+.oa-contest-status-badge--ACCEPTING_ENTRIES { background: #dbe9f5; color: #2a5c85; }
+.oa-contest-status-badge--JUDGING { background: #f3ddb0; color: #8a6216; }
+.oa-contest-status-badge--WINNER_SELECTED { background: #f0c9a0; color: #96430e; }
+.oa-contest-status-badge--PUBLISHED { background: #c0392b; color: #fff; }
+
+.oa-contest-winner-panel {
+  margin-block-start: 1.25rem; padding: 1.25rem; border-radius: 10px;
+  background: linear-gradient(150deg, rgba(201,163,91,.14), rgba(201,163,91,.04));
+  border: 1px solid rgba(201,163,91,.3);
+}
+.oa-contest-winner-panel__grid { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-block-start: .75rem; }
+.oa-contest-winner-panel__grid p { margin: 0 0 .35rem; font-size: .88rem; }
+
 .oa-contest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
 .oa-contest-card {
   border: 1px solid rgba(128,97,38,.18); border-radius: 10px; overflow: hidden; background: #fff;

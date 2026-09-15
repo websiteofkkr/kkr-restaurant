@@ -15,9 +15,13 @@ const genRewardCode = (contestMonth) => {
   return `KKR-${monthName}${yy}-${suffix}`;
 };
 
-/** GET /api/admin/contest?month=&status=&platform=&minScore= — list with
+/** GET /api/admin/contest?month=&status=&platform=&minScore() — list with
  *  optional filters (Part 8). Every field including email/staff notes is
- *  visible here since this is the admin-only view. */
+ *  visible here since this is the admin-only view. Also returns a
+ *  computed status for "the permanent Photo of the Month section" (Part
+ *  1) and the list of months that have any activity (Part 11: History) —
+ *  derived entirely from contest_entries, no separate month-tracking
+ *  table needed, so there's nothing that can drift out of sync. */
 export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const auth = await requireAdmin(request, env);
   if (auth.error) return auth.error;
@@ -37,20 +41,34 @@ export const onRequestGet = withErrorHandling(async ({ request, env }) => {
 
   const rows = await dbSelect(env, "contest_entries", filters.join("&"));
 
-  // Summary counts for the dashboard header (Part 8), computed from
-  // whichever month is currently being viewed (or all-time if none set).
   const scoped = month ? rows.filter((r) => r.contest_month === month) : rows;
+  const winnerRow = scoped.find((r) => r.status === "WINNER");
+
+  let monthStatus = "COMING_SOON";
+  if (winnerRow?.published_at) monthStatus = "PUBLISHED";
+  else if (winnerRow) monthStatus = "WINNER_SELECTED";
+  else if (scoped.some((r) => r.status === "FINALIST" || r.status === "SHORTLISTED")) monthStatus = "JUDGING";
+  else if (scoped.length > 0) monthStatus = "ACCEPTING_ENTRIES";
+
   const summary = {
     totalEntries: scoped.length,
     validEntries: scoped.filter((r) => ["VALID", "SHORTLISTED", "FINALIST", "WINNER", "NOT_SELECTED"].includes(r.status)).length,
     aiEvaluated: scoped.filter((r) => r.ai_evaluated_at).length,
     shortlisted: scoped.filter((r) => r.status === "SHORTLISTED").length,
     finalists: scoped.filter((r) => r.status === "FINALIST").length,
-    winner: scoped.find((r) => r.status === "WINNER")?.contestant_name || null,
-    rewardStatus: scoped.find((r) => r.status === "WINNER")?.reward_status || null,
+    winner: winnerRow?.contestant_name || null,
+    winnerUsername: winnerRow?.social_username || null,
+    rewardStatus: winnerRow?.reward_status || null,
+    monthStatus,
+    published: !!winnerRow?.published_at,
   };
 
-  return jsonResponse({ entries: rows, summary });
+  // All-time distinct months (for the History picker) — a cheap extra
+  // query, only the one column.
+  const allMonthRows = await dbSelect(env, "contest_entries", "select=contest_month&order=contest_month.desc");
+  const availableMonths = [...new Set(allMonthRows.map((r) => r.contest_month))];
+
+  return jsonResponse({ entries: rows, summary, availableMonths });
 });
 
 /** PATCH /api/admin/contest — a handful of distinct admin actions on one
@@ -104,6 +122,19 @@ export const onRequestPatch = withErrorHandling(async ({ request, env }) => {
       }
     );
 
+    return jsonResponse({ entry: updated[0] });
+  }
+
+  if (body.publish === true) {
+    const rows = await dbSelect(env, "contest_entries", `id=eq.${encodeURIComponent(id)}&select=status`);
+    if (!rows[0]) return jsonResponse({ error: "Entry not found." }, 404);
+    if (rows[0].status !== "WINNER") {
+      return jsonResponse({ error: "Only a confirmed winner can be published." }, 400);
+    }
+    const updated = await dbUpdate(env, "contest_entries", `id=eq.${encodeURIComponent(id)}`, {
+      published_at: new Date().toISOString(),
+      announcement_caption: body.caption ? String(body.caption).slice(0, 2000) : null,
+    });
     return jsonResponse({ entry: updated[0] });
   }
 

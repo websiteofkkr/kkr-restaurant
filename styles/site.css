@@ -3244,6 +3244,16 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
   background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.3);
   color: var(--color-gold-light); font-weight: 700; font-size: .85rem; margin: 0;
 }
+.contest-coming-soon { text-align: center; padding: 1.5rem 1rem; }
+.contest-coming-soon__month { font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: #fff; margin: 0 0 .5em; }
+.contest-coming-soon__lead { color: rgba(246,240,231,.85); margin: 0 0 .3em; font-size: 1rem; }
+.contest-coming-soon p { color: rgba(246,240,231,.7); margin: 0 0 .8em; }
+.contest-coming-soon__badge {
+  display: inline-block; margin-block-start: .5rem; padding: .5rem 1.1rem; border-radius: 999px;
+  background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.3);
+  color: var(--color-gold-light); font-weight: 700; font-size: .82rem; letter-spacing: .04em;
+}
+
 .contest-previous-winners { margin-block-start: 3rem; text-align: center; }
 .contest-previous-winners h3 { font-family: var(--poster); font-weight: 400; font-size: var(--step-0); color: rgba(246,240,231,.8); margin: 0 0 1.25rem; }
 .contest-previous-winners__grid {

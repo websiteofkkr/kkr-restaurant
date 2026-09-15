@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260914173554">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260914173554">
+<link rel="stylesheet" href="../styles/site.css?v=20260915020141">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260915020141">
 </head>
 <body class="orders-admin">
 
@@ -349,21 +349,43 @@
   <!-- ------------------------------------------------------- contest -->
   <section class="oa-panel" data-oa-panel="contest" hidden>
     <div class="oa-block">
-      <h2>Photo Contest — <span data-oa-contest-month-label></span></h2>
-      <div class="oa-toolbar" style="flex-wrap:wrap;">
-        <label>Month <input type="month" class="cart-input" data-oa-contest-month style="width:auto;display:inline-block;"></label>
-        <label>Status
-          <select class="cart-input" data-oa-contest-status-filter style="width:auto;display:inline-block;">
-            <option value="">All</option>
-            <option value="SUBMITTED">Submitted</option>
-            <option value="VALID">Valid</option>
-            <option value="SHORTLISTED">Shortlisted</option>
-            <option value="FINALIST">Finalist</option>
-            <option value="WINNER">Winner</option>
-            <option value="NOT_SELECTED">Not selected</option>
-            <option value="REJECTED">Rejected</option>
-          </select>
-        </label>
+      <h2>KKR Photo of the Month</h2>
+      <p class="oa-muted">This is the one permanent section for the contest — it always shows the current month, and you can browse any past month from History below. Nothing here needs to be recreated month to month.</p>
+
+      <div class="oa-contest-header">
+        <div>
+          <h3 data-oa-contest-month-label style="margin:0 0 .2rem;"></h3>
+          <span class="oa-contest-status-badge" data-oa-contest-status-badge></span>
+        </div>
+        <button type="button" class="btn btn--ghost" data-oa-contest-refresh>Refresh</button>
+      </div>
+
+      <div class="oa-contest-summary" data-oa-contest-summary></div>
+
+      <div data-oa-contest-winner-panel hidden class="oa-contest-winner-panel">
+        <h3>Winner — <span data-oa-contest-winner-name></span></h3>
+        <div class="oa-contest-winner-panel__grid">
+          <img data-oa-contest-winner-photo alt="" style="width:100%;max-width:16rem;border-radius:10px;">
+          <div>
+            <p><strong>@<span data-oa-contest-winner-username></span></strong> · <span data-oa-contest-winner-platform></span></p>
+            <p>AI score: <span data-oa-contest-winner-score></span>/100</p>
+            <p>Prize: <span data-oa-contest-prize-amount>PKR 5,000 KKR Dining Credit</span></p>
+            <p class="oa-muted">Selected <span data-oa-contest-winner-selected-at></span></p>
+            <p data-oa-contest-published-note style="display:none;color:#2f6b3f;font-weight:600;">✓ Published to the website</p>
+          </div>
+        </div>
+
+        <div class="oa-toolbar" style="margin-block-start:1rem;">
+          <button type="button" class="btn btn--ghost" data-oa-contest-generate-announcement>Generate Announcement</button>
+          <button type="button" class="btn btn--ghost" data-oa-contest-copy-caption>Copy Social Caption</button>
+          <button type="button" class="btn btn--reserve" data-oa-contest-publish>Publish Winner</button>
+        </div>
+
+        <div data-oa-contest-announcement-preview style="margin-block-start:1rem;"></div>
+        <div data-oa-contest-caption-preview style="margin-block-start:1rem;"></div>
+      </div>
+
+      <div class="oa-toolbar" style="margin-block-start:1rem;flex-wrap:wrap;">
         <label>Platform
           <select class="cart-input" data-oa-contest-platform-filter style="width:auto;display:inline-block;">
             <option value="">All</option>
@@ -376,12 +398,18 @@
             <option value="other">Other</option>
           </select>
         </label>
-        <button type="button" class="btn btn--ghost" data-oa-contest-refresh>Refresh</button>
-      </div>
-
-      <div class="oa-contest-summary" data-oa-contest-summary></div>
-
-      <div class="oa-toolbar" style="margin-block-start:1rem;">
+        <label>Status
+          <select class="cart-input" data-oa-contest-status-filter style="width:auto;display:inline-block;">
+            <option value="">All</option>
+            <option value="SUBMITTED">Submitted</option>
+            <option value="VALID">Valid</option>
+            <option value="SHORTLISTED">Shortlisted</option>
+            <option value="FINALIST">Finalist</option>
+            <option value="WINNER">Winner</option>
+            <option value="NOT_SELECTED">Not selected</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </label>
         <button type="button" class="btn btn--reserve" data-oa-contest-shortlist>Run AI Shortlist</button>
         <button type="button" class="btn btn--reserve" data-oa-contest-compare>Compare Finalists</button>
         <span class="oa-muted" data-oa-contest-ai-status></span>
@@ -392,6 +420,14 @@
     <div class="oa-block">
       <h2>Entries</h2>
       <div class="oa-contest-grid" data-oa-contest-grid></div>
+    </div>
+
+    <div class="oa-block">
+      <h2>Contest History</h2>
+      <label class="oa-field">
+        <span>Browse a past month</span>
+        <select class="cart-input" data-oa-contest-history-select><option value="">Choose a month…</option></select>
+      </label>
     </div>
   </section>
 
@@ -429,8 +465,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260914173554" defer></script>
-<script src="../scripts/auth.js?v=20260914173554" defer></script>
-<script src="../scripts/orders-admin.js?v=20260914173554" defer></script>
+<script src="../scripts/supabase-config.js?v=20260915020141" defer></script>
+<script src="../scripts/auth.js?v=20260915020141" defer></script>
+<script src="../scripts/orders-admin.js?v=20260915020141" defer></script>
 </body>
 </html>
