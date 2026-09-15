@@ -147,6 +147,26 @@
       // Always visible — either a real winner or the "coming soon" state,
       // both are worth showing (Part 3/9: the section is permanent).
       section.hidden = false;
+
+      // Fade/slide the section in the first time it scrolls into view,
+      // rather than animating immediately on page load off-screen.
+      const inner = $(".contest-winner-section__inner", section);
+      if (inner && "IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                inner.classList.add("is-visible");
+                io.disconnect();
+              }
+            });
+          },
+          { threshold: 0.2 }
+        );
+        io.observe(inner);
+      } else if (inner) {
+        inner.classList.add("is-visible");
+      }
     } catch {
       // No section shows if this fails — the rest of the page is unaffected.
     }

@@ -3225,33 +3225,63 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 .contest-consent input { margin-block-start: .2rem; flex: none; }
 
 .contest-winner-section {
-  background: var(--color-dark); color: var(--color-ivory);
+  background: var(--color-white); color: var(--color-dark);
   padding: clamp(2.5rem, 5vw, 4rem) var(--gutter); text-align: center;
+  border-block: 1px solid rgba(11,9,7,.08);
 }
-.contest-winner-section__inner { max-width: var(--shell); margin-inline: auto; }
+.contest-winner-section__inner {
+  max-width: var(--shell); margin-inline: auto;
+  opacity: 0; transform: translateY(1.5rem);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.contest-winner-section__inner.is-visible { opacity: 1; transform: none; }
+.contest-winner-section__logo {
+  height: 3rem; width: auto; margin: 0 auto 1.25rem; display: block;
+  animation: contest-logo-in .8s var(--ease) both;
+}
+@keyframes contest-logo-in {
+  from { opacity: 0; transform: translateY(-.75rem) scale(.94); }
+  to { opacity: 1; transform: none; }
+}
 .contest-winner-section__grid {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-  gap: clamp(1.5rem, 4vw, 3rem); margin-block-start: 1.5rem; text-align: start;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1.25rem; margin-block-start: 1.5rem; text-align: center;
 }
 .contest-winner-section__photo {
   width: min(100%, 22rem); aspect-ratio: 4/5; object-fit: cover;
-  border-radius: 16px; border: 2px solid rgba(201,163,91,.4);
+  border-radius: 16px; border: 2px solid rgba(201,163,91,.5);
+  box-shadow: 0 20px 45px -18px rgba(11,9,7,.35);
+  animation: contest-photo-in .8s .15s var(--ease) both;
 }
-.contest-winner-section__username { font-family: var(--poster); font-weight: 400; font-size: var(--step-2); color: #fff; margin: 0 0 .3em; }
-.contest-winner-section__month { color: var(--color-gold-light); font-size: .9rem; margin: 0 0 .8em; }
+@keyframes contest-photo-in {
+  from { opacity: 0; transform: translateY(1rem) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+.contest-winner-section__username { font-family: var(--poster); font-weight: 400; font-size: var(--step-2); color: var(--color-dark); margin: 0 0 .3em; }
+.contest-winner-section__month { color: var(--color-gold-deep); font-size: .9rem; margin: 0 0 .8em; }
 .contest-winner-section__prize {
   display: inline-block; padding: .5rem 1rem; border-radius: 999px;
-  background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.3);
-  color: var(--color-gold-light); font-weight: 700; font-size: .85rem; margin: 0;
+  background: rgba(201,163,91,.12); border: 1px solid rgba(201,163,91,.35);
+  color: var(--color-gold-deep); font-weight: 700; font-size: .85rem; margin: 0;
 }
-.contest-coming-soon { text-align: center; padding: 1.5rem 1rem; }
-.contest-coming-soon__month { font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: #fff; margin: 0 0 .5em; }
-.contest-coming-soon__lead { color: rgba(246,240,231,.85); margin: 0 0 .3em; font-size: 1rem; }
-.contest-coming-soon p { color: rgba(246,240,231,.7); margin: 0 0 .8em; }
+.contest-coming-soon { text-align: center; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; }
+.contest-coming-soon__month { font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: var(--color-dark); margin: 0 0 .5em; }
+.contest-coming-soon__lead { color: var(--muted-dark); margin: 0 0 .3em; font-size: 1rem; }
+.contest-coming-soon p { color: var(--muted-dark); margin: 0 0 .8em; }
 .contest-coming-soon__badge {
-  display: inline-block; margin-block-start: .5rem; padding: .5rem 1.1rem; border-radius: 999px;
-  background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.3);
-  color: var(--color-gold-light); font-weight: 700; font-size: .82rem; letter-spacing: .04em;
+  display: inline-block; margin-block-start: .5rem; padding: .55rem 1.2rem; border-radius: 999px;
+  background: rgba(201,163,91,.12); border: 1px solid rgba(201,163,91,.35);
+  color: var(--color-gold-deep); font-weight: 700; font-size: .82rem; letter-spacing: .04em;
+  animation: contest-badge-pulse 2.4s ease-in-out infinite;
+}
+@keyframes contest-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,163,91,.35); }
+  50% { box-shadow: 0 0 0 .5rem rgba(201,163,91,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contest-winner-section__inner, .contest-winner-section__logo, .contest-winner-section__photo, .contest-coming-soon__badge {
+    animation: none; transition: none; opacity: 1; transform: none;
+  }
 }
 
 .contest-previous-winners { margin-block-start: 3rem; text-align: center; }
