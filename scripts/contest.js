@@ -112,7 +112,7 @@
         $("[data-contest-winner-photo]", section).alt = `Winning photo by @${currentWinner.username}`;
         $("[data-contest-winner-username]", section).textContent = `@${currentWinner.username}`;
         $("[data-contest-winner-month]", section).textContent = `${monthLabel(currentWinner.contestMonth)} Winner`;
-        $("[data-contest-winner-amount]", section).textContent = "PKR 5,000 KKR Dining Credit";
+        $("[data-contest-winner-amount]", section).textContent = currentWinner.prizeDescription;
       } else {
         // No published winner for the current month yet — show the
         // "coming soon" state rather than an empty/stale section, and
@@ -137,7 +137,7 @@
             .map(
               (w) => `<figure>
                 <img src="${w.photoUrl}" alt="Winning photo by @${w.username}" loading="lazy">
-                <figcaption>@${w.username}<br><span>${monthLabel(w.contestMonth)}</span></figcaption>
+                <figcaption>@${w.username}<br><span>${monthLabel(w.contestMonth)}</span><br><span class="contest-previous-winners__prize">${w.prizeDescription}</span></figcaption>
               </figure>`
             )
             .join("") +

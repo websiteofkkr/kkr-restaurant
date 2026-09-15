@@ -70,7 +70,7 @@
       if (name === "featured") renderFeaturedList();
       if (name === "moments") renderMomentsList();
       if (name === "reservations") loadReservations();
-      if (name === "contest") loadContestEntries();
+      if (name === "contest") { loadPrizeConfig(); loadContestEntries(); }
     });
   });
 
@@ -857,6 +857,43 @@
     </div>`;
   };
 
+  let contestCurrentPrize = "PKR 5,000 KKR Dining Credit";
+
+  const loadPrizeConfig = async () => {
+    try {
+      const data = await authedFetch(`/api/admin/contest-months?month=${encodeURIComponent(contestViewingMonth)}`);
+      const cm = data.contestMonth || {};
+      contestCurrentPrize = cm.prize_description || "PKR 5,000 KKR Dining Credit";
+      $("[data-oa-prize-type]").value = cm.prize_type || "";
+      $("[data-oa-prize-amount]").value = cm.prize_amount ?? "";
+      $("[data-oa-prize-currency]").value = cm.prize_currency || "PKR";
+      $("[data-oa-prize-description]").value = contestCurrentPrize;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  $("[data-oa-prize-save]")?.addEventListener("click", async () => {
+    const note = $("[data-oa-prize-saved-note]");
+    note.textContent = "Saving…";
+    try {
+      await authedFetch("/api/admin/contest-months", {
+        method: "PATCH",
+        body: JSON.stringify({
+          month: contestViewingMonth,
+          prizeType: $("[data-oa-prize-type]").value || null,
+          prizeAmount: $("[data-oa-prize-amount]").value || null,
+          prizeCurrency: $("[data-oa-prize-currency]").value || "PKR",
+          prizeDescription: $("[data-oa-prize-description]").value,
+        }),
+      });
+      note.textContent = "Saved — this is now the prize shown everywhere for this month.";
+      loadContestEntries();
+    } catch (err) {
+      note.textContent = err.message;
+    }
+  });
+
   const renderWinnerPanel = (summary, entries) => {
     const panel = $("[data-oa-contest-winner-panel]");
     if (!summary.winner) {
@@ -874,6 +911,7 @@
       $("[data-oa-contest-winner-username]").textContent = winnerEntry.social_username;
       $("[data-oa-contest-winner-platform]").textContent = PLATFORM_LABEL[winnerEntry.social_platform] || winnerEntry.social_platform;
       $("[data-oa-contest-winner-score]").textContent = winnerEntry.ai_score ?? "—";
+      $("[data-oa-contest-prize-amount]").textContent = contestCurrentPrize;
       $("[data-oa-contest-winner-selected-at]").textContent = winnerEntry.winner_selected_at
         ? new Date(winnerEntry.winner_selected_at).toLocaleString()
         : "";
@@ -941,12 +979,13 @@
     }
   };
 
-  $("[data-oa-contest-refresh]")?.addEventListener("click", loadContestEntries);
+  $("[data-oa-contest-refresh]")?.addEventListener("click", () => { loadPrizeConfig(); loadContestEntries(); });
   $("[data-oa-contest-status-filter]")?.addEventListener("change", loadContestEntries);
   $("[data-oa-contest-platform-filter]")?.addEventListener("change", loadContestEntries);
   $("[data-oa-contest-history-select]")?.addEventListener("change", (e) => {
     if (!e.target.value) return;
     contestViewingMonth = e.target.value;
+    loadPrizeConfig();
     loadContestEntries();
   });
 
@@ -1027,7 +1066,7 @@
 
       ctx.fillStyle = "#C9A35B";
       ctx.font = "700 38px Georgia, serif";
-      ctx.fillText("PKR 5,000 KKR DINING CREDIT", W / 2, H - 100);
+      ctx.fillText(contestCurrentPrize.toUpperCase(), W / 2, H - 100);
 
       ctx.fillStyle = "rgba(255,255,255,.85)";
       ctx.font = "400 24px Georgia, serif";
@@ -1061,7 +1100,7 @@
 
 A special KKR moment captured by @${entry.social_username}.
 
-You've won PKR 5,000 in KKR Dining Credit! 🏆
+You've won ${contestCurrentPrize}! 🏆
 
 Thank you to everyone who shared their KKR moments with us.
 
@@ -1161,6 +1200,100 @@ Tag @KKRPeshawar and use #KKRPeshawar.
         alert(err.message);
       }
     }
+  });
+
+  /* ------------------------------------------------------ reveal ceremony */
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const runReveal = (entry, { isPreview }) => new Promise((resolve) => {
+    const overlay = $("[data-oa-reveal-overlay]");
+    const countdownEl = $("[data-oa-reveal-countdown]");
+    const numberEl = $("[data-oa-reveal-number]");
+    const resultEl = $("[data-oa-reveal-result]");
+    const closeBtn = $("[data-oa-reveal-close]");
+
+    overlay.hidden = false;
+    countdownEl.hidden = false;
+    resultEl.hidden = true;
+    closeBtn.hidden = true; // no escaping mid-countdown (spec: prevent accidental skips)
+    document.body.style.overflow = "hidden";
+
+    const finish = () => {
+      overlay.hidden = true;
+      document.body.style.overflow = "";
+      resolve();
+    };
+    closeBtn.onclick = finish;
+
+    const showResult = () => {
+      countdownEl.hidden = true;
+      resultEl.hidden = false;
+      closeBtn.hidden = false;
+      $("[data-oa-reveal-preview-flag]").hidden = !isPreview;
+      $("[data-oa-reveal-month]").textContent = monthDisplayLabel(entry.contest_month || contestViewingMonth).toUpperCase();
+      $("[data-oa-reveal-photo]").src = entry.photo_url;
+      $("[data-oa-reveal-photo]").alt = `Winning photo by @${entry.social_username}`;
+      $("[data-oa-reveal-username]").textContent = `@${entry.social_username}`;
+      $("[data-oa-reveal-prize]").textContent = contestCurrentPrize;
+    };
+
+    if (reduceMotion) {
+      // Skip the drawn-out countdown but keep the same information and
+      // sequencing (spec Part 25: simpler transition, same functionality).
+      showResult();
+      return;
+    }
+
+    let n = 10;
+    numberEl.textContent = String(n);
+    const tick = () => {
+      n -= 1;
+      if (n >= 0) {
+        numberEl.textContent = String(n);
+        numberEl.classList.remove("is-flash");
+        void numberEl.offsetWidth; // restart the pop animation each tick
+        if (n === 0) numberEl.classList.add("is-flash");
+        setTimeout(tick, 1000);
+      } else {
+        setTimeout(showResult, 500); // brief pause before the reveal, per spec
+      }
+    };
+    setTimeout(tick, 1000);
+  });
+
+  $("[data-oa-contest-reveal]")?.addEventListener("click", async () => {
+    if (!contestWinnerEntryCache) return;
+    await runReveal(contestWinnerEntryCache, { isPreview: false });
+    // Recording that the ceremony happened is purely informational — it
+    // never changes who won or any contest status (spec Part 14).
+    try {
+      await authedFetch("/api/admin/contest-months", {
+        method: "PATCH",
+        body: JSON.stringify({ month: contestWinnerEntryCache.contest_month || contestViewingMonth, markRevealed: true }),
+      });
+    } catch {
+      /* non-fatal */
+    }
+  });
+
+  $("[data-oa-contest-preview-reveal]")?.addEventListener("click", async () => {
+    // Available even before a real winner exists — uses the winner if
+    // already selected, otherwise the top-ranked finalist, purely to test
+    // the animation. Never writes anything to the database.
+    let subject = contestWinnerEntryCache;
+    if (!subject) {
+      try {
+        const data = await authedFetch(`/api/admin/contest?month=${encodeURIComponent(contestViewingMonth)}&status=FINALIST`);
+        subject = (data.entries || [])[0];
+      } catch {
+        /* fall through to the alert below */
+      }
+    }
+    if (!subject) {
+      alert("Nothing to preview yet — select at least one finalist first.");
+      return;
+    }
+    runReveal(subject, { isPreview: true });
   });
 
   /* ------------------------------------------------------- reservations */

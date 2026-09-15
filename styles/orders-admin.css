@@ -95,7 +95,85 @@
 .oa-contest-winner-panel__grid { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-block-start: .75rem; }
 .oa-contest-winner-panel__grid p { margin: 0 0 .35rem; font-size: .88rem; }
 
+.oa-contest-prize-config { background: #faf7ef; border-radius: 10px; padding: 1rem 1.25rem; margin-block: 1rem; }
 .oa-contest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
+
+/* ---------------------------------------------------- reveal overlay */
+.reveal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  background: #0b0907; overflow-y: auto; padding: 2rem 1rem;
+}
+.reveal-overlay[hidden] { display: none; }
+.reveal-overlay__bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(201,163,91,.14), transparent 60%);
+  pointer-events: none;
+}
+.reveal-overlay__close {
+  position: absolute; top: 1.25rem; right: 1.25rem; z-index: 2;
+  width: 2.6rem; height: 2.6rem; border-radius: 50%; border: 1px solid rgba(201,163,91,.4);
+  background: rgba(255,255,255,.05); color: #C9A35B; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.reveal-overlay__close svg { width: 1.2rem; height: 1.2rem; }
+
+.reveal-countdown { position: relative; text-align: center; color: #fff; }
+.reveal-countdown__eyebrow {
+  font-size: .85rem; letter-spacing: .25em; color: #C9A35B; font-weight: 700;
+  margin: 0 0 .5rem; text-transform: uppercase;
+}
+.reveal-countdown__title {
+  font-family: Georgia, serif; font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 400;
+  margin: 0 0 3rem; letter-spacing: .08em;
+}
+.reveal-countdown__number {
+  font-family: Georgia, serif; font-size: clamp(6rem, 22vw, 12rem); font-weight: 700;
+  line-height: 1; margin: 0; color: #fff;
+  text-shadow: 0 0 60px rgba(201,163,91,.5);
+  animation: reveal-count-pop .55s var(--ease, ease);
+}
+@keyframes reveal-count-pop {
+  from { opacity: 0; transform: scale(.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+.reveal-countdown__number.is-flash {
+  animation: reveal-flash .6s ease;
+}
+@keyframes reveal-flash {
+  0% { text-shadow: 0 0 0 rgba(201,163,91,0); }
+  40% { text-shadow: 0 0 120px rgba(201,163,91,.95); color: #C9A35B; }
+  100% { text-shadow: 0 0 60px rgba(201,163,91,.5); }
+}
+
+.reveal-result { position: relative; text-align: center; color: #fff; max-width: 34rem; animation: reveal-result-in 1s var(--ease, ease) both; }
+@keyframes reveal-result-in {
+  from { opacity: 0; transform: translateY(1.5rem) scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+.reveal-result__banner {
+  display: inline-block; margin: 0 0 1rem; padding: .4rem 1rem; border-radius: 999px;
+  background: rgba(255,255,255,.1); border: 1px dashed rgba(255,255,255,.4);
+  font-size: .75rem; letter-spacing: .08em; font-weight: 700;
+}
+.reveal-result__emoji { font-size: 1.1rem; letter-spacing: .1em; color: #C9A35B; font-weight: 700; margin: 0 0 .3rem; }
+.reveal-result__eyebrow { font-size: .82rem; letter-spacing: .2em; color: rgba(255,255,255,.6); margin: 0 0 .2rem; text-transform: uppercase; }
+.reveal-result__month { font-family: Georgia, serif; font-size: clamp(1.4rem, 3.5vw, 2rem); margin: 0 0 1.5rem; }
+.reveal-result__photo {
+  width: min(100%, 18rem); aspect-ratio: 4/5; object-fit: cover; border-radius: 14px;
+  border: 2px solid rgba(201,163,91,.5); box-shadow: 0 25px 60px -15px rgba(0,0,0,.6);
+  margin: 0 auto 1.5rem; display: block;
+}
+.reveal-result__username { font-family: Georgia, serif; font-size: clamp(1.5rem, 4vw, 2.2rem); color: #C9A35B; margin: 0 0 .6rem; }
+.reveal-result__congrats { font-size: 1.15rem; font-weight: 700; margin: 0 0 .8rem; }
+.reveal-result__prize {
+  display: inline-block; padding: .6rem 1.4rem; border-radius: 999px;
+  background: rgba(201,163,91,.15); border: 1px solid rgba(201,163,91,.4);
+  color: #C9A35B; font-weight: 700; font-size: 1rem; margin: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-countdown__number, .reveal-result, .reveal-countdown__number.is-flash { animation: none; }
+}
 .oa-contest-card {
   border: 1px solid rgba(128,97,38,.18); border-radius: 10px; overflow: hidden; background: #fff;
   display: flex; flex-direction: column;

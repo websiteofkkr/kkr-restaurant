@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260915020141">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260915020141">
+<link rel="stylesheet" href="../styles/site.css?v=20260915022037">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260915022037">
 </head>
 <body class="orders-admin">
 
@@ -362,6 +362,31 @@
 
       <div class="oa-contest-summary" data-oa-contest-summary></div>
 
+      <div class="oa-contest-prize-config">
+        <h3 style="margin:1rem 0 .5rem;font-size:.95rem;">Prize for this month</h3>
+        <div class="oa-toolbar" style="flex-wrap:wrap;">
+          <label>Type
+            <select class="cart-input" data-oa-prize-type style="width:auto;display:inline-block;">
+              <option value="">—</option>
+              <option value="cash">Cash</option>
+              <option value="dining_credit">Dining Credit</option>
+              <option value="free_meal">Free Meal</option>
+              <option value="discount">Discount</option>
+              <option value="gift">Gift</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label>Amount <input type="number" class="cart-input" data-oa-prize-amount style="width:6rem;display:inline-block;"></label>
+          <label>Currency <input type="text" class="cart-input" data-oa-prize-currency value="PKR" style="width:4rem;display:inline-block;"></label>
+        </div>
+        <label class="oa-field">
+          <span>Prize description (this is what's shown everywhere — homepage, reveal, announcement, caption)</span>
+          <input type="text" class="cart-input" data-oa-prize-description placeholder="e.g. PKR 5,000 KKR Dining Credit">
+        </label>
+        <button type="button" class="btn btn--ghost" data-oa-prize-save>Save Prize</button>
+        <span class="oa-muted" data-oa-prize-saved-note></span>
+      </div>
+
       <div data-oa-contest-winner-panel hidden class="oa-contest-winner-panel">
         <h3>Winner — <span data-oa-contest-winner-name></span></h3>
         <div class="oa-contest-winner-panel__grid">
@@ -369,13 +394,14 @@
           <div>
             <p><strong>@<span data-oa-contest-winner-username></span></strong> · <span data-oa-contest-winner-platform></span></p>
             <p>AI score: <span data-oa-contest-winner-score></span>/100</p>
-            <p>Prize: <span data-oa-contest-prize-amount>PKR 5,000 KKR Dining Credit</span></p>
+            <p>Prize: <span data-oa-contest-prize-amount></span></p>
             <p class="oa-muted">Selected <span data-oa-contest-winner-selected-at></span></p>
             <p data-oa-contest-published-note style="display:none;color:#2f6b3f;font-weight:600;">✓ Published to the website</p>
           </div>
         </div>
 
         <div class="oa-toolbar" style="margin-block-start:1rem;">
+          <button type="button" class="btn btn--reserve" data-oa-contest-reveal>Reveal Winner</button>
           <button type="button" class="btn btn--ghost" data-oa-contest-generate-announcement>Generate Announcement</button>
           <button type="button" class="btn btn--ghost" data-oa-contest-copy-caption>Copy Social Caption</button>
           <button type="button" class="btn btn--reserve" data-oa-contest-publish>Publish Winner</button>
@@ -412,6 +438,7 @@
         </label>
         <button type="button" class="btn btn--reserve" data-oa-contest-shortlist>Run AI Shortlist</button>
         <button type="button" class="btn btn--reserve" data-oa-contest-compare>Compare Finalists</button>
+        <button type="button" class="btn btn--ghost" data-oa-contest-preview-reveal>Preview Winner Reveal</button>
         <span class="oa-muted" data-oa-contest-ai-status></span>
       </div>
       <p class="cart-checkout__error" data-oa-contest-error hidden></p>
@@ -430,6 +457,31 @@
       </label>
     </div>
   </section>
+
+  <!-- ------------------------------------------------- reveal overlay -->
+  <div class="reveal-overlay" data-oa-reveal-overlay hidden>
+    <div class="reveal-overlay__bg"></div>
+    <button type="button" class="reveal-overlay__close" data-oa-reveal-close aria-label="Close" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+
+    <div class="reveal-countdown" data-oa-reveal-countdown>
+      <p class="reveal-countdown__eyebrow">THE KKR PHOTO OF THE MONTH</p>
+      <p class="reveal-countdown__title">WINNER REVEAL</p>
+      <p class="reveal-countdown__number" data-oa-reveal-number>10</p>
+    </div>
+
+    <div class="reveal-result" data-oa-reveal-result hidden>
+      <p class="reveal-result__banner" data-oa-reveal-preview-flag hidden>PREVIEW — not official</p>
+      <p class="reveal-result__emoji">🎉 WINNER</p>
+      <p class="reveal-result__eyebrow">KKR PHOTO OF THE MONTH</p>
+      <p class="reveal-result__month" data-oa-reveal-month></p>
+      <img class="reveal-result__photo" data-oa-reveal-photo alt="">
+      <p class="reveal-result__username" data-oa-reveal-username></p>
+      <p class="reveal-result__congrats">CONGRATULATIONS!</p>
+      <p class="reveal-result__prize" data-oa-reveal-prize></p>
+    </div>
+  </div>
 
   <!-- ---------------------------------------------------------- settings -->
   <section class="oa-panel" data-oa-panel="settings" hidden>
@@ -465,8 +517,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260915020141" defer></script>
-<script src="../scripts/auth.js?v=20260915020141" defer></script>
-<script src="../scripts/orders-admin.js?v=20260915020141" defer></script>
+<script src="../scripts/supabase-config.js?v=20260915022037" defer></script>
+<script src="../scripts/auth.js?v=20260915022037" defer></script>
+<script src="../scripts/orders-admin.js?v=20260915022037" defer></script>
 </body>
 </html>

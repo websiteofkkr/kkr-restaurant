@@ -68,6 +68,20 @@ export const onRequestGet = withErrorHandling(async ({ request, env }) => {
   const allMonthRows = await dbSelect(env, "contest_entries", "select=contest_month&order=contest_month.desc");
   const availableMonths = [...new Set(allMonthRows.map((r) => r.contest_month))];
 
+  // The month's prize is the single source of truth (Part 4) — read here
+  // so the admin dashboard always shows what the public site will show.
+  let prizeDescription = "PKR 5,000 KKR Dining Credit";
+  let revealedAt = null;
+  if (month) {
+    const monthRows = await dbSelect(env, "contest_months", `month=eq.${encodeURIComponent(month)}&select=prize_description,winner_revealed_at`);
+    if (monthRows[0]) {
+      prizeDescription = monthRows[0].prize_description;
+      revealedAt = monthRows[0].winner_revealed_at;
+    }
+  }
+  summary.prizeDescription = prizeDescription;
+  summary.winnerRevealedAt = revealedAt;
+
   return jsonResponse({ entries: rows, summary, availableMonths });
 });
 

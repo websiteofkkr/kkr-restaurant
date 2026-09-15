@@ -20,12 +20,27 @@ export const onRequestGet = withErrorHandling(async ({ env }) => {
   if (!res.ok) return jsonResponse({ winners: [] });
   const rows = await res.json();
 
+  // Each winner's prize comes from that month's own record (Part 4/26) —
+  // never a value baked into this response or hard-coded on the frontend.
+  const months = [...new Set(rows.map((r) => r.contest_month))];
+  const prizeByMonth = {};
+  if (months.length > 0) {
+    const monthsFilter = months.map((m) => `"${m}"`).join(",");
+    const monthRes = await fetch(
+      `${env.SUPABASE_URL}/rest/v1/contest_months?month=in.(${monthsFilter})&select=month,prize_description`,
+      { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` } }
+    );
+    const monthRows = await monthRes.json().catch(() => []);
+    monthRows.forEach((m) => (prizeByMonth[m.month] = m.prize_description));
+  }
+
   const winners = rows.map((r) => ({
     photoUrl: r.photo_url,
     username: r.social_username,
     platform: r.social_platform,
     contestMonth: r.contest_month,
     caption: r.caption,
+    prizeDescription: prizeByMonth[r.contest_month] || "PKR 5,000 KKR Dining Credit",
   }));
 
   return jsonResponse({ winners });
