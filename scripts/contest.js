@@ -18,6 +18,7 @@
     setTimeout(() => {
       m.hidden = true;
     }, 300);
+    if (attr === "contest") stopCamera();
   };
 
   document.addEventListener("click", (e) => {
@@ -45,6 +46,86 @@
     closeModal("contest-howitworks");
   });
 
+  // ------------------------------------------------------- camera capture
+  // Opens the device camera directly inside the page (getUserMedia) rather
+  // than a generic file picker — there's no "choose from gallery" option
+  // in this flow at all, which rules out the easy version of submitting
+  // an existing/AI-generated image. It can't rule out someone recapturing
+  // a screen with their camera, but it meaningfully raises the bar.
+  let capturedPhotoBlob = null;
+  let cameraStream = null;
+
+  const cameraVideo = $("[data-contest-camera-video]");
+  const cameraCanvas = $("[data-contest-camera-canvas]");
+  const cameraPreview = $("[data-contest-camera-preview]");
+  const startBtn = $("[data-contest-camera-start]");
+  const snapBtn = $("[data-contest-camera-snap]");
+  const retakeBtn = $("[data-contest-camera-retake]");
+  const fallbackNote = $("[data-contest-camera-fallback-note]");
+  const fallbackInput = $("[data-contest-photo-fallback]");
+
+  const stopCamera = () => {
+    cameraStream?.getTracks().forEach((t) => t.stop());
+    cameraStream = null;
+  };
+
+  const startCamera = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      fallbackNote.hidden = false;
+      fallbackInput.hidden = false;
+      fallbackInput.required = true;
+      startBtn.hidden = true;
+      return;
+    }
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+      cameraVideo.srcObject = cameraStream;
+      cameraVideo.hidden = false;
+      cameraPreview.hidden = true;
+      startBtn.hidden = true;
+      snapBtn.hidden = false;
+      retakeBtn.hidden = true;
+    } catch {
+      // Permission denied or no camera present — fall back to a normal
+      // file picker rather than leaving the customer stuck.
+      fallbackNote.hidden = false;
+      fallbackInput.hidden = false;
+      fallbackInput.required = true;
+      startBtn.hidden = true;
+    }
+  };
+
+  startBtn?.addEventListener("click", startCamera);
+
+  snapBtn?.addEventListener("click", () => {
+    const w = cameraVideo.videoWidth || 720;
+    const h = cameraVideo.videoHeight || 960;
+    cameraCanvas.width = w;
+    cameraCanvas.height = h;
+    cameraCanvas.getContext("2d").drawImage(cameraVideo, 0, 0, w, h);
+    cameraCanvas.toBlob(
+      (blob) => {
+        capturedPhotoBlob = blob;
+        cameraPreview.src = URL.createObjectURL(blob);
+        cameraPreview.hidden = false;
+        cameraVideo.hidden = true;
+        snapBtn.hidden = true;
+        retakeBtn.hidden = false;
+        stopCamera();
+      },
+      "image/jpeg",
+      0.9
+    );
+  });
+
+  retakeBtn?.addEventListener("click", () => {
+    capturedPhotoBlob = null;
+    cameraPreview.hidden = true;
+    retakeBtn.hidden = true;
+    startBtn.hidden = false;
+    startCamera();
+  });
+
   // ------------------------------------------------------------- submit
   const form = $("[data-contest-form]");
   if (form) {
@@ -59,6 +140,11 @@
         status.textContent = "Please confirm the photo permission checkbox.";
         return;
       }
+      if (!capturedPhotoBlob && !fallbackInput.files?.[0]) {
+        status.className = "form__status is-error";
+        status.textContent = "Please take a live photo (or use the file upload if your camera isn't available).";
+        return;
+      }
 
       status.className = "form__status";
       status.textContent = "Submitting…";
@@ -69,6 +155,11 @@
         // Checkboxes only appear in FormData when checked, but the
         // server checks for an explicit "true" — set it plainly.
         formData.set("consent", "true");
+        // The live-captured photo takes priority over the fallback file
+        // input if both somehow have a value.
+        if (capturedPhotoBlob) {
+          formData.set("photo", capturedPhotoBlob, "kkr-moment.jpg");
+        }
         const res = await fetch("/api/contest-entry", { method: "POST", body: formData });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Could not submit your entry.");
@@ -76,6 +167,10 @@
         status.className = "form__status is-ok";
         status.textContent = "Thank you! Your KKR moment has been entered into this month's Photo of the Month contest.";
         form.reset();
+        capturedPhotoBlob = null;
+        cameraPreview.hidden = true;
+        startBtn.hidden = false;
+        stopCamera();
         setTimeout(() => closeModal("contest"), 2500);
       } catch (err) {
         status.className = "form__status is-error";

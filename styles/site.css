@@ -3224,6 +3224,16 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 }
 .contest-consent input { margin-block-start: .2rem; flex: none; }
 
+.contest-camera { grid-column: 1 / -1; }
+.contest-camera__video, .contest-camera__preview {
+  width: 100%; max-width: 22rem; aspect-ratio: 3/4; object-fit: cover;
+  border-radius: 12px; background: #000; display: block; margin-block-end: .75rem;
+}
+.contest-camera__canvas { display: none; }
+.contest-camera__controls { display: flex; gap: .6rem; flex-wrap: wrap; margin-block-end: .5rem; }
+.contest-camera__note { font-size: .78rem; color: var(--muted-dark); margin: 0 0 .3em; }
+.contest-camera__fallback-note { font-size: .78rem; color: #96430e; margin: 0; }
+
 .contest-winner-section {
   background: var(--color-white); color: var(--color-dark);
   padding: clamp(2.5rem, 5vw, 4rem) var(--gutter); text-align: center;
