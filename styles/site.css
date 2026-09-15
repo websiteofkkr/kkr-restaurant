@@ -3245,6 +3245,11 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
   transition: opacity .7s var(--ease), transform .7s var(--ease);
 }
 .contest-winner-section__inner.is-visible { opacity: 1; transform: none; }
+.contest-winner-section__card {
+  max-width: 34rem; margin-inline: auto; padding: 2rem 1.75rem;
+  background: linear-gradient(150deg, #1a1611, #0b0907);
+  border: 1px solid rgba(201,163,91,.3); border-radius: 14px;
+}
 .contest-winner-section__logo {
   height: 3rem; width: auto; margin: 0 auto 1.25rem; display: block;
   animation: contest-logo-in .8s var(--ease) both;
@@ -3275,10 +3280,7 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
   color: var(--color-gold-deep); font-weight: 700; font-size: .85rem; margin: 0;
 }
 .contest-coming-soon {
-  text-align: center; padding: 1.75rem 1.5rem; display: flex; flex-direction: column; align-items: center;
-  max-width: 30rem; margin-inline: auto;
-  background: linear-gradient(150deg, #1a1611, #0b0907);
-  border: 1px solid rgba(201,163,91,.3); border-radius: 14px;
+  text-align: center; padding: .5rem 0 0; display: flex; flex-direction: column; align-items: center;
 }
 .contest-coming-soon__month {
   font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: #fff; margin: 0 0 .6em;
@@ -3287,13 +3289,13 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 .contest-coming-soon p { color: rgba(246,240,231,.7); margin: 0 0 .8em; }
 .contest-coming-soon__badge {
   display: inline-block; margin-block-start: .5rem; padding: .55rem 1.2rem; border-radius: 999px;
-  background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.4);
+  border: 1px solid rgba(201,163,91,.4);
   color: var(--color-gold-light); font-weight: 700; font-size: .82rem; letter-spacing: .04em;
-  animation: contest-badge-pulse 2.4s ease-in-out infinite;
+  animation: contest-badge-blink 1.6s ease-in-out infinite;
 }
-@keyframes contest-badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,163,91,.35); }
-  50% { box-shadow: 0 0 0 .5rem rgba(201,163,91,0); }
+@keyframes contest-badge-blink {
+  0%, 100% { background: rgba(201,163,91,.1); box-shadow: 0 0 0 0 rgba(201,163,91,.35); }
+  50% { background: rgba(201,163,91,.45); box-shadow: 0 0 0 .5rem rgba(201,163,91,0); }
 }
 @media (prefers-reduced-motion: reduce) {
   .contest-winner-section__inner, .contest-winner-section__logo, .contest-winner-section__photo, .contest-coming-soon__badge {
