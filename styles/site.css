@@ -3250,6 +3250,7 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
   background: linear-gradient(150deg, #1a1611, #0b0907);
   border: 1px solid rgba(201,163,91,.3); border-radius: 14px;
 }
+.contest-winner-section__card .kicker { text-align: center; max-width: none; }
 .contest-winner-section__logo {
   height: 3rem; width: auto; margin: 0 auto 1.25rem; display: block;
   animation: contest-logo-in .8s var(--ease) both;
