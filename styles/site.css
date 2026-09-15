@@ -3274,14 +3274,21 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
   background: rgba(201,163,91,.12); border: 1px solid rgba(201,163,91,.35);
   color: var(--color-gold-deep); font-weight: 700; font-size: .85rem; margin: 0;
 }
-.contest-coming-soon { text-align: center; padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center; }
-.contest-coming-soon__month { font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: var(--color-dark); margin: 0 0 .5em; }
-.contest-coming-soon__lead { color: var(--muted-dark); margin: 0 0 .3em; font-size: 1rem; }
-.contest-coming-soon p { color: var(--muted-dark); margin: 0 0 .8em; }
+.contest-coming-soon {
+  text-align: center; padding: 1.75rem 1.5rem; display: flex; flex-direction: column; align-items: center;
+  max-width: 30rem; margin-inline: auto;
+  background: linear-gradient(150deg, #1a1611, #0b0907);
+  border: 1px solid rgba(201,163,91,.3); border-radius: 14px;
+}
+.contest-coming-soon__month {
+  font-family: var(--poster); font-weight: 400; font-size: var(--step-1); color: #fff; margin: 0 0 .6em;
+}
+.contest-coming-soon__lead { color: rgba(246,240,231,.85); margin: 0 0 .3em; font-size: 1rem; }
+.contest-coming-soon p { color: rgba(246,240,231,.7); margin: 0 0 .8em; }
 .contest-coming-soon__badge {
   display: inline-block; margin-block-start: .5rem; padding: .55rem 1.2rem; border-radius: 999px;
-  background: rgba(201,163,91,.12); border: 1px solid rgba(201,163,91,.35);
-  color: var(--color-gold-deep); font-weight: 700; font-size: .82rem; letter-spacing: .04em;
+  background: rgba(201,163,91,.14); border: 1px solid rgba(201,163,91,.4);
+  color: var(--color-gold-light); font-weight: 700; font-size: .82rem; letter-spacing: .04em;
   animation: contest-badge-pulse 2.4s ease-in-out infinite;
 }
 @keyframes contest-badge-pulse {
