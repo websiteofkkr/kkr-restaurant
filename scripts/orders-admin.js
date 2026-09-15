@@ -1236,16 +1236,37 @@ Tag @KKRPeshawar and use #KKRPeshawar.
   /* ------------------------------------------------------ reveal ceremony */
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  const spawnConfetti = () => {
+    const container = $("[data-oa-reveal-confetti]");
+    if (!container || reduceMotion) return;
+    const colors = ["#C9A35B", "#E7C982", "#ffffff", "#c0392b", "#2f9e44"];
+    const pieceCount = 90;
+    for (let i = 0; i < pieceCount; i++) {
+      const piece = document.createElement("span");
+      piece.className = "reveal-confetti__piece";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
+      piece.style.animationDelay = `${Math.random() * 0.4}s`;
+      piece.style.borderRadius = Math.random() > .5 ? "50%" : "2px";
+      container.appendChild(piece);
+    }
+    // Cleaned up automatically once this reveal closes / the next one
+    // starts (container.innerHTML is reset there) — no lingering nodes.
+  };
+
   const runReveal = (entry, { isPreview }) => new Promise((resolve) => {
     const overlay = $("[data-oa-reveal-overlay]");
     const countdownEl = $("[data-oa-reveal-countdown]");
     const numberEl = $("[data-oa-reveal-number]");
     const resultEl = $("[data-oa-reveal-result]");
     const closeBtn = $("[data-oa-reveal-close]");
+    const confettiEl = $("[data-oa-reveal-confetti]");
 
     overlay.hidden = false;
     countdownEl.hidden = false;
     resultEl.hidden = true;
+    if (confettiEl) confettiEl.innerHTML = "";
     closeBtn.hidden = true; // no escaping mid-countdown (spec: prevent accidental skips)
     document.body.style.overflow = "hidden";
 
@@ -1286,7 +1307,11 @@ Tag @KKRPeshawar and use #KKRPeshawar.
         if (n === 0) numberEl.classList.add("is-flash");
         setTimeout(tick, 1000);
       } else {
-        setTimeout(showResult, 500); // brief pause before the reveal, per spec
+        // At zero: confetti celebration plays first, over the countdown
+        // screen, then the contestant's details fade in afterward —
+        // celebrate, then reveal, rather than both at once.
+        spawnConfetti();
+        setTimeout(showResult, 1400);
       }
     };
     setTimeout(tick, 1000);
