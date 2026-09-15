@@ -193,7 +193,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 .delivery__inner {
   max-width: var(--shell); margin: 0 auto; padding: .35rem var(--gutter);
-  display: flex; align-items: center; justify-content: center; gap: clamp(.75rem, 2vw, 1.5rem);
+  display: flex; align-items: center; justify-content: space-between; gap: clamp(.75rem, 2vw, 1.5rem);
 }
 
 /* Rounded cap holding the scooter. */
@@ -219,7 +219,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
 [dir="rtl"] .delivery__scooter { transform: scaleX(-1); }
 [dir="rtl"] .delivery__scooter svg { transform: scaleX(-1); }
 
-.delivery__words { display: flex; align-items: baseline; gap: .6rem; min-width: 0; }
+.delivery__words { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.delivery__words-track {
+  display: flex; align-items: baseline; gap: 3rem; width: max-content;
+  animation: delivery-marquee 14s linear infinite;
+}
+@keyframes delivery-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .delivery__words-track { animation: none; }
+  .delivery__words-track span:nth-child(n+3) { display: none; }
+}
 .delivery__label {
   font-size: .78rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
   color: var(--color-gold-light); white-space: nowrap;
@@ -250,11 +262,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--color-dark);
 }
 .delivery__phone-icon svg { width: .85rem; height: .85rem; }
-/* Hairline between the words and the number. */
-.delivery__words::after {
-  content: ""; align-self: center; margin-inline-start: clamp(.75rem, 2vw, 1.5rem);
-  width: 1px; height: 1.5rem; background: rgba(231,201,130,.45);
-}
 
 @media (max-width: 52rem) {
   .delivery__label { display: none; }
