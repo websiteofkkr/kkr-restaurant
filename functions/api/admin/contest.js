@@ -152,6 +152,33 @@ export const onRequestPatch = withErrorHandling(async ({ request, env }) => {
     return jsonResponse({ entry: updated[0] });
   }
 
+  // Takes a published winner back off the public site immediately, but
+  // keeps them recorded as the internal WINNER (use undoWinner below for
+  // a full reversal, e.g. after testing with a placeholder entry).
+  if (body.unpublish === true) {
+    const updated = await dbUpdate(env, "contest_entries", `id=eq.${encodeURIComponent(id)}`, {
+      published_at: null,
+    });
+    return jsonResponse({ entry: updated[0] });
+  }
+
+  // Fully reverses a winner selection — unpublishes, clears the reward
+  // code/status, and reverts status back to FINALIST so a different
+  // entry can be selected instead. Meant for correcting a mistaken or
+  // test selection, not for changing a real published winner's mind.
+  if (body.undoWinner === true) {
+    const updated = await dbUpdate(env, "contest_entries", `id=eq.${encodeURIComponent(id)}`, {
+      status: "FINALIST",
+      is_winner: false,
+      published_at: null,
+      announcement_caption: null,
+      reward_code: null,
+      reward_status: null,
+      winner_selected_at: null,
+    });
+    return jsonResponse({ entry: updated[0] });
+  }
+
   if (body.rewardStatus != null) {
     if (!VALID_REWARD_STATUSES.includes(body.rewardStatus)) {
       return jsonResponse({ error: "Invalid reward status." }, 400);

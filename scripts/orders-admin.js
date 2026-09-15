@@ -918,14 +918,17 @@
     }
     const publishedNote = $("[data-oa-contest-published-note]");
     const publishBtn = $("[data-oa-contest-publish]");
+    const unpublishBtn = $("[data-oa-contest-unpublish]");
     if (summary.published) {
       publishedNote.style.display = "block";
       publishBtn.disabled = true;
       publishBtn.textContent = "Published";
+      unpublishBtn.hidden = false;
     } else {
       publishedNote.style.display = "none";
       publishBtn.disabled = false;
       publishBtn.textContent = "Publish Winner";
+      unpublishBtn.hidden = true;
     }
   };
 
@@ -1132,6 +1135,34 @@ Tag @KKRPeshawar and use #KKRPeshawar.
       await authedFetch("/api/admin/contest", {
         method: "PATCH",
         body: JSON.stringify({ id: contestWinnerEntryCache.id, publish: true, caption }),
+      });
+      loadContestEntries();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+
+  $("[data-oa-contest-unpublish]")?.addEventListener("click", async () => {
+    if (!contestWinnerEntryCache) return;
+    if (!confirm(`Take @${contestWinnerEntryCache.social_username} off the live website?\n\nThey'll stay recorded as the winner internally — this just removes the public homepage display.`)) return;
+    try {
+      await authedFetch("/api/admin/contest", {
+        method: "PATCH",
+        body: JSON.stringify({ id: contestWinnerEntryCache.id, unpublish: true }),
+      });
+      loadContestEntries();
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+
+  $("[data-oa-contest-undo-winner]")?.addEventListener("click", async () => {
+    if (!contestWinnerEntryCache) return;
+    if (!confirm(`Remove @${contestWinnerEntryCache.social_username} as the winner?\n\nThis unpublishes them (if published), clears the reward code, and moves them back to Finalist so you can select someone else instead. This can't be undone.`)) return;
+    try {
+      await authedFetch("/api/admin/contest", {
+        method: "PATCH",
+        body: JSON.stringify({ id: contestWinnerEntryCache.id, undoWinner: true }),
       });
       loadContestEntries();
     } catch (err) {
