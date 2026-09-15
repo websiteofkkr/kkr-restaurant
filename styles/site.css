@@ -233,7 +233,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .delivery__words-track span:nth-child(n+3) { display: none; }
 }
 .delivery__label {
-  font-size: .78rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
+  font-size: .78rem; font-weight: 800; letter-spacing: .28em; text-transform: uppercase;
   color: var(--color-gold-light); white-space: nowrap;
 }
 .delivery__lead {
