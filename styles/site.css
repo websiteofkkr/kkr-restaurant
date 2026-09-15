@@ -293,10 +293,10 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 
 .masthead.is-stuck .masthead__inner { padding-block: .65rem; }
 .masthead__inner {
-  max-width: var(--shell); margin-inline: auto; padding: .9rem var(--gutter);
+  padding: .9rem var(--gutter);
   display: flex; align-items: center; gap: .85rem;
 }
-.brand { flex: none; perspective: 900px; margin-inline-start: -.5rem; }
+.brand { flex: none; perspective: 900px; margin-inline-start: -.5rem; margin-inline-end: 1.5rem; }
 .brand img { width: clamp(120px, 10vw, 155px); height: auto; }
 
 /* The mark turns in on load. It used to sit behind a no-preference query, so
