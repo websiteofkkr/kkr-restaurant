@@ -3236,7 +3236,7 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 
 .contest-winner-section {
   background: var(--color-white); color: var(--color-dark);
-  padding: clamp(1.25rem, 2.5vw, 2rem) var(--gutter); text-align: center;
+  padding: clamp(.75rem, 1.5vw, 1.25rem) var(--gutter); text-align: center;
   border-block: 1px solid rgba(11,9,7,.08);
 }
 .contest-winner-section__inner {
@@ -3246,7 +3246,7 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 }
 .contest-winner-section__inner.is-visible { opacity: 1; transform: none; }
 .contest-winner-section__card {
-  max-width: 24rem; margin-inline: auto; padding: 3rem 1.75rem;
+  max-width: var(--shell); margin-inline: auto; padding: 1.5rem 1.75rem;
   background: linear-gradient(150deg, #1a1611, #0b0907);
   border: 1px solid rgba(201,163,91,.3); border-radius: 14px;
 }
