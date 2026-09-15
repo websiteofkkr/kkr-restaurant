@@ -821,6 +821,9 @@
     const aiDetail = e.ai_reason
       ? `<p class="oa-contest-card__ai"><strong>Why:</strong> ${esc(e.ai_reason)}</p>`
       : "";
+    const metadataFlag = e.has_camera_metadata === false
+      ? `<p class="oa-contest-card__ai" style="color:#96430e;">⚠ No camera metadata found — worth a closer look before shortlisting.</p>`
+      : "";
 
     const statusOptions = ["SUBMITTED","VALIDATING","VALID","SHORTLISTED","FINALIST","WINNER","NOT_SELECTED","REJECTED"]
       .map((s) => `<option value="${s}" ${e.status === s ? "selected" : ""}>${s.replace("_", " ")}</option>`)
@@ -847,6 +850,7 @@
         <span class="oa-muted">${esc(PLATFORM_LABEL[e.social_platform] || e.social_platform)} · ${new Date(e.submitted_at).toLocaleDateString()}</span>
         ${scoreLine}
         ${aiDetail}
+        ${metadataFlag}
         <div class="oa-contest-card__actions">
           <select data-oa-contest-status="${esc(e.id)}">${statusOptions}</select>
           <button type="button" data-oa-contest-reevaluate="${esc(e.id)}" class="cart-drawer__back">${e.ai_evaluated_at ? "Re-evaluate" : "Evaluate"}</button>

@@ -21,6 +21,32 @@ const currentContestMonth = () => {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 };
 
+/** Scans the first portion of an image file for common EXIF metadata
+ *  markers, across the three formats this endpoint accepts:
+ *  - JPEG: an APP1 segment (bytes 0xFFE1) containing the ASCII "Exif"
+ *  - WEBP: an "EXIF" RIFF chunk fourCC
+ *  - PNG:  an "eXIf" chunk (case-sensitive, per the PNG spec)
+ *  This is a lightweight signature scan, not a full parser — sufficient
+ *  to tell "some EXIF block is present" from "none at all" without
+ *  pulling in an image-parsing library. */
+function bufferHasExifMarker(buffer) {
+  const bytes = new Uint8Array(buffer.slice(0, 131072)); // first 128KB is plenty; EXIF sits near the start
+  const needles = ["Exif", "EXIF", "eXIf"].map((s) => Array.from(s, (c) => c.charCodeAt(0)));
+  for (let i = 0; i < bytes.length - 4; i++) {
+    for (const needle of needles) {
+      let match = true;
+      for (let j = 0; j < needle.length; j++) {
+        if (bytes[i + j] !== needle[j]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) return true;
+    }
+  }
+  return false;
+}
+
 export const onRequestPost = withErrorHandling(async ({ request, env }) => {
   const requestId = newRequestId();
 
@@ -88,6 +114,16 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
 
   const ext = photo.type.split("/")[1];
   const storagePath = `contest/${contestMonth}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+  const photoBuffer = await photo.arrayBuffer();
+
+  // Advisory-only authenticity signal: real camera/phone photos almost
+  // always embed EXIF metadata (camera make/model, timestamp, etc.);
+  // screenshots and most AI-generated images don't. This never blocks a
+  // submission — messaging apps sometimes strip EXIF from genuine
+  // photos too — it just flags lower-confidence entries for admin to
+  // weigh when reviewing, alongside the AI content evaluation.
+  const hasCameraMetadata = bufferHasExifMarker(photoBuffer);
+
   const upload = await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads/${storagePath}`, {
     method: "POST",
     headers: {
@@ -95,7 +131,7 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
       Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
       "Content-Type": photo.type,
     },
-    body: await photo.arrayBuffer(),
+    body: photoBuffer,
   });
   if (!upload.ok) {
     console.error("Contest photo upload failed:", upload.status, await upload.text().catch(() => ""));
@@ -116,6 +152,7 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
       consent_to_repost: true,
       contest_month: contestMonth,
       status: "VALID",
+      has_camera_metadata: hasCameraMetadata,
     },
   ]);
 
