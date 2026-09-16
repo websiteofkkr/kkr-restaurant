@@ -109,9 +109,23 @@
 
     const recalc = () => {
       const items = Array.from(track.children);
+      if (items.length === 0) return;
       itemsPerPage = getItemsPerPage();
       totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
       if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+      // Size the viewport to exactly fit itemsPerPage cards, no more, no
+      // less — computed from the card's real current width rather than a
+      // fixed guess, since the card's own CSS uses a viewport-relative
+      // clamp() that changes continuously with screen width. A static
+      // guess can never stay aligned with that at every size; this always
+      // matches exactly, which is what stops a partial next card peeking
+      // through the edge.
+      const gap = parseFloat(getComputedStyle(track).gap) || 0;
+      const cardWidth = items[0].getBoundingClientRect().width;
+      const exactWidth = cardWidth * itemsPerPage + gap * (itemsPerPage - 1);
+      viewport.style.maxWidth = `${exactWidth}px`;
+
       buildDots();
       applyTransform();
     };
