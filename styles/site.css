@@ -805,20 +805,21 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 .about > * { position: relative; z-index: 1; }
 
 .about__kicker {
-  display: flex; align-items: center; gap: .8rem; margin: 0 0 .4rem;
-  font-size: .78rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+  display: flex; align-items: center; gap: .8rem; margin: 0 0 .3em;
+  font-family: var(--poster); font-weight: 400; font-size: var(--step-3);
+  letter-spacing: .02em; text-transform: none;
   color: var(--color-gold-deep);
 }
 .about__kicker span { flex: 0 1 7rem; height: 1px; background: rgba(128,97,38,.5); }
 .lang-ur .about__kicker, .lang-ps .about__kicker { letter-spacing: normal; text-transform: none; }
 
 .about__text h2 {
-  font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.08;
-  margin: 0 0 .55em; display: grid; gap: .04em;
+  font-size: var(--step-0); line-height: 1.3; font-weight: 400;
+  margin: 0 0 .8em; display: grid; gap: .04em;
 }
 .about__line1 { color: var(--color-dark); }
 .about__line2 {
-  color: var(--color-gold-deep);
+  color: var(--color-dark);
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
 }
 
