@@ -863,6 +863,16 @@
 
   let contestCurrentPrize = "PKR 5,000 KKR Dining Credit";
 
+  // datetime-local inputs need "YYYY-MM-DDTHH:mm" in the browser's local
+  // time — converting an ISO/UTC timestamp to that requires adjusting
+  // for the timezone offset, not just slicing the string.
+  const isoToLocalInputValue = (iso) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const offsetMs = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offsetMs).toISOString().slice(0, 16);
+  };
+
   const loadPrizeConfig = async () => {
     try {
       const data = await authedFetch(`/api/admin/contest-months?month=${encodeURIComponent(contestViewingMonth)}`);
@@ -872,10 +882,45 @@
       $("[data-oa-prize-amount]").value = cm.prize_amount ?? "";
       $("[data-oa-prize-currency]").value = cm.prize_currency || "PKR";
       $("[data-oa-prize-description]").value = contestCurrentPrize;
+      $("[data-oa-reveal-at]").value = isoToLocalInputValue(cm.reveal_at);
     } catch (err) {
       console.error(err);
     }
   };
+
+  $("[data-oa-reveal-at-save]")?.addEventListener("click", async () => {
+    const note = $("[data-oa-reveal-at-note]");
+    const value = $("[data-oa-reveal-at]").value;
+    if (!value) {
+      note.textContent = "Pick a date and time first.";
+      return;
+    }
+    note.textContent = "Saving…";
+    try {
+      await authedFetch("/api/admin/contest-months", {
+        method: "PATCH",
+        body: JSON.stringify({ month: contestViewingMonth, revealAt: value }),
+      });
+      note.textContent = "Countdown set — it'll show on the homepage now.";
+    } catch (err) {
+      note.textContent = err.message;
+    }
+  });
+
+  $("[data-oa-reveal-at-clear]")?.addEventListener("click", async () => {
+    const note = $("[data-oa-reveal-at-note]");
+    note.textContent = "Clearing…";
+    try {
+      await authedFetch("/api/admin/contest-months", {
+        method: "PATCH",
+        body: JSON.stringify({ month: contestViewingMonth, revealAt: "" }),
+      });
+      $("[data-oa-reveal-at]").value = "";
+      note.textContent = "Countdown cleared.";
+    } catch (err) {
+      note.textContent = err.message;
+    }
+  });
 
   $("[data-oa-prize-save]")?.addEventListener("click", async () => {
     const note = $("[data-oa-prize-saved-note]");

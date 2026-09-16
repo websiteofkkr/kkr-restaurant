@@ -97,12 +97,107 @@
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   };
 
+  // ---------------------------------------------------- public reveal
+  const spawnPublicConfetti = () => {
+    const container = $("[data-public-reveal-confetti]");
+    if (!container) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    const colors = ["#C9A35B", "#E7C982", "#ffffff", "#c0392b", "#2f9e44"];
+    for (let i = 0; i < 90; i++) {
+      const piece = document.createElement("span");
+      piece.className = "reveal-confetti__piece";
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.background = colors[i % colors.length];
+      piece.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
+      piece.style.animationDelay = `${Math.random() * 0.4}s`;
+      piece.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+      container.appendChild(piece);
+    }
+  };
+
+  const runPublicCeremony = (winner) => {
+    const overlay = $("[data-public-reveal-overlay]");
+    if (!overlay) return;
+    $("[data-public-reveal-confetti]").innerHTML = "";
+    $("[data-public-reveal-month]").textContent = monthLabel(winner.contestMonth).toUpperCase();
+    $("[data-public-reveal-photo]").src = winner.photoUrl;
+    $("[data-public-reveal-photo]").alt = `Winning photo by @${winner.username}`;
+    $("[data-public-reveal-username]").textContent = `@${winner.username}`;
+    $("[data-public-reveal-prize]").textContent = winner.prizeDescription;
+    overlay.hidden = false;
+    document.body.style.overflow = "hidden";
+    spawnPublicConfetti();
+  };
+
+  const closePublicCeremony = () => {
+    const overlay = $("[data-public-reveal-overlay]");
+    if (!overlay) return;
+    overlay.hidden = true;
+    document.body.style.overflow = "";
+  };
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-public-reveal-close]")) closePublicCeremony();
+  });
+
+  // ---------------------------------------------------- countdown
+  let countdownInterval = null;
+  let pollInterval = null;
+
+  const renderCountdown = (targetIso, badgeEl) => {
+    const update = () => {
+      const diff = new Date(targetIso).getTime() - Date.now();
+      if (diff <= 0) {
+        clearInterval(countdownInterval);
+        badgeEl.innerHTML = `<span class="contest-announcing-soon">ANNOUNCING VERY SOON</span>`;
+        startPollingForWinner();
+        return;
+      }
+      const totalMinutes = Math.floor(diff / 60000);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      badgeEl.innerHTML = `
+        <p class="contest-countdown__label">Winner announced in</p>
+        <div class="contest-countdown__clock">
+          <div class="contest-countdown__unit"><strong>${hours}</strong><span>Hours</span></div>
+          <strong>:</strong>
+          <div class="contest-countdown__unit"><strong>${String(minutes).padStart(2, "0")}</strong><span>Minutes</span></div>
+        </div>`;
+    };
+    update();
+    countdownInterval = setInterval(update, 30000);
+  };
+
+  const startPollingForWinner = () => {
+    if (pollInterval) return;
+    pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch("/api/contest-winners");
+        const data = await res.json();
+        const thisMonth = currentMonthValue();
+        const winner = (data.winners || []).find((w) => w.contestMonth === thisMonth);
+        if (winner) {
+          clearInterval(pollInterval);
+          pollInterval = null;
+          sessionStorage.setItem(`kkr-contest-ceremony-seen-${thisMonth}`, "1");
+          runPublicCeremony(winner);
+          // Refresh the section behind the overlay so it shows the real
+          // winner once the ceremony is closed.
+          setTimeout(() => location.reload(), 50);
+        }
+      } catch {
+        /* try again next interval */
+      }
+    }, 20000);
+  };
+
   window.addEventListener("DOMContentLoaded", async () => {
     const section = $("[data-contest-winner-section]");
     if (!section) return;
     try {
-      const res = await fetch("/api/contest-winners");
-      const data = await res.json();
+      const [winnersRes, statusRes] = await Promise.all([fetch("/api/contest-winners"), fetch("/api/contest-status")]);
+      const data = await winnersRes.json();
+      const status = await statusRes.json().catch(() => ({}));
       const winners = data.winners || [];
       const thisMonth = currentMonthValue();
       const currentWinner = winners.find((w) => w.contestMonth === thisMonth);
@@ -113,6 +208,15 @@
         $("[data-contest-winner-username]", section).textContent = `@${currentWinner.username}`;
         $("[data-contest-winner-month]", section).textContent = `${monthLabel(currentWinner.contestMonth)} Winner`;
         $("[data-contest-winner-amount]", section).textContent = currentWinner.prizeDescription;
+
+        // First time this browser sees this month's result (e.g. loaded
+        // the page shortly after the admin published), play the
+        // ceremony once rather than every visit.
+        const seenKey = `kkr-contest-ceremony-seen-${thisMonth}`;
+        if (!sessionStorage.getItem(seenKey) && status.revealAt) {
+          sessionStorage.setItem(seenKey, "1");
+          setTimeout(() => runPublicCeremony(currentWinner), 600);
+        }
       } else {
         // No published winner for the current month yet — show the
         // "coming soon" state rather than an empty/stale section, and
@@ -123,8 +227,18 @@
             <p class="contest-coming-soon__month">${monthLabel(thisMonth)}</p>
             <p class="contest-coming-soon__lead">We're looking for our next KKR Photo of the Month.</p>
             <p>Share your KKR moment for a chance to win.</p>
-            <p class="contest-coming-soon__badge">WINNER ANNOUNCED SOON</p>
+            <p class="contest-coming-soon__badge" data-contest-badge>WINNER ANNOUNCED SOON</p>
           </div>`;
+        }
+        const badgeEl = $("[data-contest-badge]", section);
+        if (status.revealAt && badgeEl) {
+          const targetTime = new Date(status.revealAt).getTime();
+          if (targetTime > Date.now()) {
+            renderCountdown(status.revealAt, badgeEl);
+          } else {
+            badgeEl.innerHTML = `<span class="contest-announcing-soon">ANNOUNCING VERY SOON</span>`;
+            startPollingForWinner();
+          }
         }
       }
 

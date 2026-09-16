@@ -54,20 +54,24 @@ export const onRequestPatch = withErrorHandling(async ({ request, env }) => {
   const patch = {};
   if (body.markRevealed === true) {
     patch.winner_revealed_at = new Date().toISOString();
-  } else {
-    if (body.prizeType != null) {
-      if (body.prizeType && !VALID_PRIZE_TYPES.includes(body.prizeType)) {
-        return jsonResponse({ error: "Invalid prize type." }, 400);
-      }
-      patch.prize_type = body.prizeType || null;
+  }
+  if (body.revealAt !== undefined) {
+    // Empty string / null clears the countdown (e.g. admin decides not
+    // to run one this month, or wants to reset it).
+    patch.reveal_at = body.revealAt ? new Date(body.revealAt).toISOString() : null;
+  }
+  if (body.prizeType != null) {
+    if (body.prizeType && !VALID_PRIZE_TYPES.includes(body.prizeType)) {
+      return jsonResponse({ error: "Invalid prize type." }, 400);
     }
-    if (body.prizeAmount != null) patch.prize_amount = body.prizeAmount === "" ? null : Number(body.prizeAmount);
-    if (body.prizeCurrency != null) patch.prize_currency = String(body.prizeCurrency).slice(0, 10) || "PKR";
-    if (body.prizeDescription != null) {
-      const desc = String(body.prizeDescription).trim();
-      if (!desc) return jsonResponse({ error: "Prize description can't be empty." }, 400);
-      patch.prize_description = desc.slice(0, 200);
-    }
+    patch.prize_type = body.prizeType || null;
+  }
+  if (body.prizeAmount != null) patch.prize_amount = body.prizeAmount === "" ? null : Number(body.prizeAmount);
+  if (body.prizeCurrency != null) patch.prize_currency = String(body.prizeCurrency).slice(0, 10) || "PKR";
+  if (body.prizeDescription != null) {
+    const desc = String(body.prizeDescription).trim();
+    if (!desc) return jsonResponse({ error: "Prize description can't be empty." }, 400);
+    patch.prize_description = desc.slice(0, 200);
   }
 
   // Upsert — the row may not exist yet if this is the first time this

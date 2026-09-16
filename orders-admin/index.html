@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KKR Orders Admin</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="../styles/site.css?v=20260915145211">
-<link rel="stylesheet" href="../styles/orders-admin.css?v=20260915145211">
+<link rel="stylesheet" href="../styles/site.css?v=20260916021117">
+<link rel="stylesheet" href="../styles/orders-admin.css?v=20260916021117">
 </head>
 <body class="orders-admin">
 
@@ -387,6 +387,18 @@
         <span class="oa-muted" data-oa-prize-saved-note></span>
       </div>
 
+      <div class="oa-contest-prize-config">
+        <h3 style="margin:.5rem 0;font-size:.95rem;">Public announcement countdown</h3>
+        <p class="oa-muted" style="margin:0 0 .75rem;">Set when the winner should be announced. A countdown appears on the homepage until then — at zero, if you've already published a winner, visitors see a full-screen celebration automatically. If you haven't published yet, they'll just see "Announcing very soon" until you do.</p>
+        <label class="oa-field">
+          <span>Announcement date &amp; time</span>
+          <input type="datetime-local" class="cart-input" data-oa-reveal-at style="width:auto;display:inline-block;">
+        </label>
+        <button type="button" class="btn btn--ghost" data-oa-reveal-at-save>Save Countdown</button>
+        <button type="button" class="btn btn--ghost" data-oa-reveal-at-clear>Clear Countdown</button>
+        <span class="oa-muted" data-oa-reveal-at-note></span>
+      </div>
+
       <div data-oa-contest-winner-panel hidden class="oa-contest-winner-panel">
         <h3>Winner — <span data-oa-contest-winner-name></span></h3>
         <div class="oa-contest-winner-panel__grid">
@@ -520,8 +532,8 @@
   </section>
 </div>
 
-<script src="../scripts/supabase-config.js?v=20260915145211" defer></script>
-<script src="../scripts/auth.js?v=20260915145211" defer></script>
-<script src="../scripts/orders-admin.js?v=20260915145211" defer></script>
+<script src="../scripts/supabase-config.js?v=20260916021117" defer></script>
+<script src="../scripts/auth.js?v=20260916021117" defer></script>
+<script src="../scripts/orders-admin.js?v=20260916021117" defer></script>
 </body>
 </html>
