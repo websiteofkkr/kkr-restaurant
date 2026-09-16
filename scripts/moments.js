@@ -28,8 +28,6 @@
 
     const viewport = carousel.querySelector("[data-moments-viewport]");
     const track = carousel.querySelector("[data-moments-track]");
-    const prevBtn = carousel.querySelector("[data-moments-prev]");
-    const nextBtn = carousel.querySelector("[data-moments-next]");
     const dotsWrap = document.querySelector("[data-moments-dots]");
     if (!viewport || !track || !dotsWrap) return;
 
@@ -55,17 +53,22 @@
       return 4;
     };
 
-    const applyTransform = () => {
+    const applyTransform = (animate = true) => {
       const items = Array.from(track.children);
       if (items.length === 0) return;
       const firstBox = items[0].getBoundingClientRect();
       const gap = parseFloat(getComputedStyle(track).gap) || 0;
       const step = (firstBox.width + gap) * itemsPerPage;
+      track.style.transition = animate ? "" : "none"; // "" restores the CSS-defined transition
       track.style.transform = `translateX(-${currentPage * step}px)`;
+      if (!animate) void track.offsetWidth; // force the instant jump to apply before anything re-enables the transition
     };
 
     const updateDots = () => {
-      Array.from(dotsWrap.children).forEach((dot, i) => dot.classList.toggle("is-active", i === currentPage));
+      // currentPage can briefly point at the cloned page (index
+      // totalPages) mid-loop — treat that as "page 0" for the dots.
+      const activeIndex = currentPage % totalPages;
+      Array.from(dotsWrap.children).forEach((dot, i) => dot.classList.toggle("is-active", i === activeIndex));
     };
 
     const buildDots = () => {
@@ -78,21 +81,39 @@
         dot.setAttribute("aria-label", `Go to moments group ${i + 1} of ${totalPages}`);
         if (i === currentPage) dot.classList.add("is-active");
         dot.addEventListener("click", () => {
-          goToPage(i);
+          currentPage = i;
+          applyTransform();
+          updateDots();
           restartAfterInteraction();
         });
         dotsWrap.appendChild(dot);
       }
     };
 
-    const goToPage = (page) => {
-      currentPage = ((page % totalPages) + totalPages) % totalPages;
+    // Always advances forward (left) — including the wrap from the last
+    // page back to the first. Rather than snapping backward to page 0
+    // (which would visibly move right), this slides one page further
+    // into a cloned copy of page 0 appended at the end of the track,
+    // then — once that slide finishes — instantly re-points to the real
+    // page 0, which sits in the identical visual position, so the jump
+    // is invisible and the motion always reads as continuous left travel.
+    let wrapTimer = null;
+    const next = () => {
+      clearTimeout(wrapTimer);
+      if (currentPage < totalPages - 1) {
+        currentPage += 1;
+        applyTransform();
+        updateDots();
+        return;
+      }
+      currentPage = totalPages; // the cloned page 0, one slot past the real last page
       applyTransform();
       updateDots();
+      wrapTimer = setTimeout(() => {
+        currentPage = 0;
+        applyTransform(false); // instant, no transition — lands exactly on the clone's twin
+      }, 550); // just past the .5s CSS transition
     };
-
-    const next = () => goToPage(currentPage + 1);
-    const prev = () => goToPage(currentPage - 1);
 
     const stopAuto = () => {
       if (autoTimer) clearInterval(autoTimer);
@@ -118,6 +139,7 @@
       itemsPerPage = getItemsPerPage();
       totalPages = Math.max(1, Math.ceil(realCount / itemsPerPage));
       if (currentPage >= totalPages) currentPage = totalPages - 1;
+      clearTimeout(wrapTimer);
 
       // Pad the final page out to a full page of slots with invisible
       // spacers, split evenly before/after the real remaining clips, so
@@ -134,7 +156,12 @@
         const lastGroup = items.splice(items.length - remainder, remainder);
         html = items.join("") + spacer.repeat(before) + lastGroup.join("") + spacer.repeat(after);
       }
-      track.innerHTML = html;
+      // A clone of page 0's own slots (real items, full page — page 0
+      // never has spacers), appended after everything else, purely so
+      // the wrap-around above always has "one more page" to slide into
+      // that looks identical to the real page 0.
+      const page0Clone = realItemsHTML.slice(0, itemsPerPage).join("");
+      track.innerHTML = html + page0Clone;
 
       // Size the viewport to exactly fit itemsPerPage cards, no more, no
       // less — computed from the card's real current width rather than a
@@ -153,22 +180,14 @@
       applyTransform();
     };
 
-    prevBtn?.addEventListener("click", () => {
-      prev();
-      restartAfterInteraction();
-    });
-    nextBtn?.addEventListener("click", () => {
-      next();
-      restartAfterInteraction();
-    });
-
     // Pause on hover/focus (mouse users), resume on leave.
     carousel.addEventListener("mouseenter", stopAuto);
     carousel.addEventListener("mouseleave", startAuto);
     carousel.addEventListener("focusin", stopAuto);
     carousel.addEventListener("focusout", startAuto);
 
-    // Touch swipe support.
+    // Touch swipe support — any deliberate swipe just advances forward,
+    // consistent with the carousel always moving the same direction.
     let touchStartX = 0;
     let touchDeltaX = 0;
     viewport.addEventListener(
@@ -188,10 +207,7 @@
       { passive: true }
     );
     viewport.addEventListener("touchend", () => {
-      if (Math.abs(touchDeltaX) > 40) {
-        if (touchDeltaX < 0) next();
-        else prev();
-      }
+      if (Math.abs(touchDeltaX) > 40) next();
       restartAfterInteraction();
     });
 
