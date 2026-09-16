@@ -1770,12 +1770,12 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 /* Ivory card, fine gold edge, and a gold corner cut away at the bottom. */
 .events__list li {
   position: relative; overflow: hidden; isolation: isolate;
-  display: grid; justify-items: center; align-content: center; gap: .6rem;
-  flex: 1 1 12.25rem; max-width: 12.5rem;
-  padding: 1.4rem 1.1rem 1.25rem;
+  display: grid; justify-items: center; align-content: center; gap: .45rem;
+  flex: 1 1 9rem; max-width: 9.5rem;
+  padding: 1.05rem .85rem .95rem;
   background: linear-gradient(160deg, #FFFFFF 0%, #FBF7F0 55%, var(--color-ivory) 100%);
   border: 1px solid rgba(201,163,91,.55);
-  border-radius: 18px;
+  border-radius: 16px;
   box-shadow: 0 12px 30px rgba(11,9,7,.10);
   transition: transform .35s var(--ease), box-shadow .35s var(--ease),
               border-color .35s var(--ease);
@@ -1802,20 +1802,20 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 /* The icon sits inside a drawn Mughal arch rather than a circle. */
 .events__icon {
   display: grid; place-items: center;
-  width: 4.6rem; height: 5.2rem;
-  padding-block-start: 1.1rem;
+  width: 3.9rem; height: 4.4rem;
+  padding-block-start: .9rem;
   color: var(--color-gold-deep);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 112' fill='none' stroke='%23C9A35B' stroke-width='2.4'%3E%3Cpath d='M14 112V50c0-15 10-25 22-33 6-4 11-8 14-15 3 7 8 11 14 15 12 8 22 18 22 33v62'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: center; background-size: contain;
   transition: color .35s var(--ease), transform .35s var(--ease);
 }
-.events__icon svg { width: 1.7rem; height: 1.7rem; }
+.events__icon svg { width: 1.45rem; height: 1.45rem; }
 .events__list li:hover .events__icon, .events__list li:active .events__icon { color: var(--color-gold); transform: translateY(-2px); }
 
 .events__label {
   font-size: var(--step--1); font-weight: 600;
-  letter-spacing: .18em; text-transform: uppercase; color: var(--color-dark);
-  line-height: 1.5;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--color-dark);
+  line-height: 1.4; text-align: center;
 }
 .lang-ur .events__label, .lang-ps .events__label {
   letter-spacing: normal; text-transform: none; font-weight: 400;
