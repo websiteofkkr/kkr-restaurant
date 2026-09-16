@@ -2234,9 +2234,16 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 .mitem__copy { flex: 1 1 auto; min-width: 0; }
 .mitem__thumb {
-  flex: none; width: 5.75rem; height: 5.75rem; border-radius: 12px;
-  object-fit: cover; border: 1px solid rgba(128,97,38,.3);
+  flex: none; width: 160px; height: 120px; border-radius: 12px;
+  object-fit: cover; object-position: center;
+  border: 1px solid rgba(128,97,38,.3);
   box-shadow: 0 8px 18px -6px rgba(11,9,7,.4);
+}
+@media (max-width: 64rem) {
+  .mitem__thumb { width: 130px; height: 98px; }
+}
+@media (max-width: 30rem) {
+  .mitem__thumb { width: 96px; height: 76px; }
 }
 .mitem__head { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
 .mitem__head h3 { font-size: var(--step-1); margin: 0; }
