@@ -51,7 +51,12 @@
     };
 
     const applyTransform = () => {
-      track.style.transform = `translateX(-${currentPage * 100}%)`;
+      const items = Array.from(track.children);
+      if (items.length === 0) return;
+      const firstBox = items[0].getBoundingClientRect();
+      const gap = parseFloat(getComputedStyle(track).gap) || 0;
+      const step = (firstBox.width + gap) * itemsPerPage;
+      track.style.transform = `translateX(-${currentPage * step}px)`;
     };
 
     const updateDots = () => {

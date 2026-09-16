@@ -1605,21 +1605,15 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 
 /* ---------------------------------------------------- moments carousel */
-.moments-carousel { position: relative; display: flex; align-items: center; gap: .75rem; max-width: 50rem; margin-inline: auto; }
+.moments-carousel { position: relative; display: flex; align-items: center; gap: .75rem; }
 .moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; }
 .moments-carousel__track {
   display: flex; gap: 1.25rem;
   transition: transform .5s var(--ease);
 }
 .moments-carousel__track .moment {
-  flex: 0 0 calc((100% - 2.5rem) / 3); /* 3 visible on desktop, minus the 2 gaps between them */
+  flex: 0 0 clamp(11rem, 17vw, 15rem); /* the original compact card size */
   min-width: 0;
-}
-@media (max-width: 64rem) {
-  .moments-carousel__track .moment { flex: 0 0 calc((100% - 1.25rem) / 2); } /* 2 visible on tablet */
-}
-@media (max-width: 30rem) {
-  .moments-carousel__track .moment { flex: 0 0 100%; } /* 1 visible on mobile */
 }
 .moments-carousel__arrow {
   flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%;
