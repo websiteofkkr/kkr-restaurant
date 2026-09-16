@@ -1670,9 +1670,10 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 .events__frame {
   position: relative;
   max-width: var(--shell); margin-inline: auto;
-  border: 1px solid rgba(128,97,38,.4);
+  border: 3px solid var(--color-gold-deep);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
-  padding: clamp(2.25rem, 5vw, 3.75rem) clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem);
+  box-shadow: 0 25px 60px -15px rgba(11,9,7,.35), 0 0 0 1px rgba(201,163,91,.15) inset;
 }
 .events__frame::before, .events__frame::after {
   content: ""; position: absolute; inset-inline-start: 50%; width: .65rem; height: .65rem;
@@ -1704,27 +1705,28 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 
 .events__head { max-width: 48rem; margin-inline: auto; }
-.events__head h2 { font-size: var(--step-3); margin-block-end: .5em; color: var(--color-dark); }
+.events__head h2 { font-size: var(--step-3); margin-block-end: .25em; color: var(--color-dark); }
 .events__line2 { color: var(--color-gold); }
 /* A bold rule under the heading, the section's one heavy line. */
 .events__head h2::after {
   content: ""; display: block; width: 4.5rem; height: 3px;
-  margin: .6em auto 0;
+  margin: .4em auto 0;
   background: linear-gradient(90deg, var(--color-gold-deep), var(--color-gold-light), var(--color-gold-deep));
 }
-.events__head p { color: var(--muted-dark); margin-inline: auto; }
+.events__head p { color: var(--muted-dark); margin: 0 auto .4em; }
+.events__head p:last-child { margin-block-end: 0; }
 
 .events__list {
-  max-width: 72rem; margin: clamp(2.5rem, 5vw, 3.5rem) auto 0;
+  max-width: 72rem; margin: clamp(1.25rem, 2.5vw, 1.75rem) auto 0;
   display: flex; flex-wrap: wrap; justify-content: center;
-  gap: clamp(1rem, 2vw, 1.5rem);
+  gap: clamp(.75rem, 1.5vw, 1.1rem);
 }
 /* Ivory card, fine gold edge, and a gold corner cut away at the bottom. */
 .events__list li {
   position: relative; overflow: hidden; isolation: isolate;
-  display: grid; justify-items: center; align-content: center; gap: .9rem;
+  display: grid; justify-items: center; align-content: center; gap: .6rem;
   flex: 1 1 12.25rem; max-width: 12.5rem;
-  padding: 2.1rem 1.25rem 1.9rem;
+  padding: 1.4rem 1.1rem 1.25rem;
   background: linear-gradient(160deg, #FFFFFF 0%, #FBF7F0 55%, var(--color-ivory) 100%);
   border: 1px solid rgba(201,163,91,.55);
   border-radius: 18px;
@@ -1777,7 +1779,7 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 .events__flourish i { display: block; width: 1.1rem; height: 1px; background: currentColor; }
 .events__flourish b { display: block; width: .4rem; height: .4rem; background: currentColor; transform: rotate(45deg); }
 
-.events__cta { margin-block-start: clamp(2rem, 4vw, 2.75rem); margin-inline: auto; }
+.events__cta { margin-block-start: clamp(1.25rem, 2.5vw, 1.75rem); margin-inline: auto; text-align: center; }
 
 
 /* ---------------------------------------------------------------- gallery */
