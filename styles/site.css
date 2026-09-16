@@ -1604,6 +1604,50 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
   .marquee__track { animation: none; }
 }
 
+/* ---------------------------------------------------- moments carousel */
+.moments-carousel { position: relative; display: flex; align-items: center; gap: .75rem; }
+.moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; }
+.moments-carousel__track {
+  display: flex; gap: 1.25rem;
+  transition: transform .5s var(--ease);
+}
+.moments-carousel__track .moment {
+  flex: 0 0 calc((100% - 2.5rem) / 3); /* 3 visible on desktop, minus the 2 gaps between them */
+  min-width: 0;
+}
+@media (max-width: 64rem) {
+  .moments-carousel__track .moment { flex: 0 0 calc((100% - 1.25rem) / 2); } /* 2 visible on tablet */
+}
+@media (max-width: 30rem) {
+  .moments-carousel__track .moment { flex: 0 0 100%; } /* 1 visible on mobile */
+}
+.moments-carousel__arrow {
+  flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  border: 1px solid rgba(201,163,91,.4); background: var(--color-white);
+  color: var(--color-gold-deep); cursor: pointer;
+  display: grid; place-items: center;
+  transition: background-color .25s var(--ease), color .25s var(--ease), transform .2s var(--ease);
+}
+.moments-carousel__arrow:hover { background: var(--color-gold-deep); color: #fff; transform: scale(1.08); }
+.moments-carousel__arrow svg { width: 1.2rem; height: 1.2rem; }
+@media (max-width: 40rem) {
+  .moments-carousel__arrow { width: 2.25rem; height: 2.25rem; }
+}
+.moments-carousel__dots {
+  display: flex; justify-content: center; align-items: center; gap: .55rem;
+  margin-block-start: 1.5rem;
+}
+.moments-carousel__dot {
+  width: .55rem; height: .55rem; border-radius: 50%;
+  background: rgba(128,97,38,.3); border: none; padding: 0; cursor: pointer;
+  transition: background-color .25s var(--ease), transform .25s var(--ease), width .25s var(--ease);
+}
+.moments-carousel__dot:hover { background: rgba(128,97,38,.55); }
+.moments-carousel__dot.is-active { background: var(--color-gold-deep); width: 1.6rem; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+  .moments-carousel__track { transition: none; }
+}
+
 .moment {
   flex: 0 0 clamp(11rem, 17vw, 15rem);
   position: relative;
