@@ -1605,8 +1605,14 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 
 /* ---------------------------------------------------- moments carousel */
-.moments-carousel { position: relative; display: flex; align-items: center; gap: .75rem; }
-.moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; }
+.moments-carousel { position: relative; display: flex; align-items: center; justify-content: center; gap: .75rem; }
+.moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; max-width: 47.25rem; }
+@media (max-width: 64rem) {
+  .moments-carousel__viewport { max-width: 23.25rem; } /* fits exactly 2 cards at their 11rem minimum size, plus a little buffer */
+}
+@media (max-width: 30rem) {
+  .moments-carousel__viewport { max-width: 11.25rem; } /* fits exactly 1 card, plus a little buffer */
+}
 .moments-carousel__track {
   display: flex; gap: 1.25rem;
   transition: transform .5s var(--ease);
