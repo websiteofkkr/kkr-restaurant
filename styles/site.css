@@ -1605,7 +1605,7 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 
 /* ---------------------------------------------------- moments carousel */
-.moments-carousel { position: relative; display: flex; align-items: center; gap: .75rem; }
+.moments-carousel { position: relative; display: flex; align-items: center; gap: .75rem; max-width: 50rem; margin-inline: auto; }
 .moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; }
 .moments-carousel__track {
   display: flex; gap: 1.25rem;
