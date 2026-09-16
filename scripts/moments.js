@@ -35,6 +35,11 @@
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // The real clips, captured once (and re-captured if Supabase swaps in
+    // live data) — kept separate from the track's actual DOM, since that
+    // DOM gets rebuilt on every recalc to include spacer slots.
+    let realItemsHTML = Array.from(track.children).map((el) => el.outerHTML);
+
     let itemsPerPage = 3;
     let currentPage = 0;
     let totalPages = 1;
@@ -108,11 +113,28 @@
     };
 
     const recalc = () => {
-      const items = Array.from(track.children);
-      if (items.length === 0) return;
+      const realCount = realItemsHTML.length;
+      if (realCount === 0) return;
       itemsPerPage = getItemsPerPage();
-      totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+      totalPages = Math.max(1, Math.ceil(realCount / itemsPerPage));
       if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+      // Pad the final page out to a full page of slots with invisible
+      // spacers, split evenly before/after the real remaining clips, so
+      // they land centered in the viewport rather than stuck to one
+      // side. Every earlier page is already full and needs no padding.
+      const remainder = realCount % itemsPerPage;
+      let html = realItemsHTML.join("");
+      if (remainder !== 0) {
+        const padCount = itemsPerPage - remainder;
+        const before = Math.floor(padCount / 2);
+        const after = Math.ceil(padCount / 2);
+        const spacer = `<div class="moment moment--spacer" aria-hidden="true"></div>`;
+        const items = realItemsHTML.slice();
+        const lastGroup = items.splice(items.length - remainder, remainder);
+        html = items.join("") + spacer.repeat(before) + lastGroup.join("") + spacer.repeat(after);
+      }
+      track.innerHTML = html;
 
       // Size the viewport to exactly fit itemsPerPage cards, no more, no
       // less — computed from the card's real current width rather than a
@@ -121,10 +143,11 @@
       // guess can never stay aligned with that at every size; this always
       // matches exactly, which is what stops a partial next card peeking
       // through the edge.
+      const firstReal = track.querySelector(".moment:not(.moment--spacer)");
       const gap = parseFloat(getComputedStyle(track).gap) || 0;
-      const cardWidth = items[0].getBoundingClientRect().width;
+      const cardWidth = firstReal ? firstReal.getBoundingClientRect().width : 0;
       const exactWidth = cardWidth * itemsPerPage + gap * (itemsPerPage - 1);
-      viewport.style.maxWidth = `${exactWidth}px`;
+      if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
 
       buildDots();
       applyTransform();
@@ -181,9 +204,15 @@
     recalc();
     startAuto();
 
-    // Exposed so the Supabase-refresh step below can re-run layout after
-    // swapping in real uploaded clips.
-    carousel.__momentsRecalc = recalc;
+    // Exposed so the Supabase-refresh step below can swap in real
+    // uploaded clips and re-run layout (recalc rebuilds the track's DOM
+    // from realItemsHTML plus spacers, so this must go through here
+    // rather than touching track.innerHTML directly).
+    carousel.__momentsSetItems = (items) => {
+      realItemsHTML = items;
+      currentPage = 0;
+      recalc();
+    };
   };
 
   window.addEventListener("DOMContentLoaded", initCarousel);
@@ -202,11 +231,9 @@
       if (!Array.isArray(moments) || moments.length === 0) return; // no uploads yet — keep the built-in default clips
 
       const carousel = document.querySelector("[data-moments-carousel]");
-      const track = carousel?.querySelector("[data-moments-track]");
-      if (!track) return;
+      if (!carousel) return;
 
-      track.innerHTML = moments.map(buildMoment).join("");
-      carousel.__momentsRecalc?.();
+      carousel.__momentsSetItems?.(moments.map(buildMoment));
     } catch {
       // A failed fetch just leaves the existing default clips in place.
     }

@@ -1627,6 +1627,7 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
   flex: 0 0 clamp(11rem, 17vw, 15rem); /* the original compact card size */
   min-width: 0;
 }
+.moment--spacer { visibility: hidden; pointer-events: none; }
 .moments-carousel__arrow {
   flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%;
   border: 1px solid rgba(201,163,91,.4); background: var(--color-white);
