@@ -3290,6 +3290,10 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
 }
 .contest-coming-soon__lead { color: rgba(246,240,231,.85); margin: 0 0 .3em; font-size: 1rem; }
 .contest-coming-soon p { color: rgba(246,240,231,.7); margin: 0 0 .8em; }
+.contest-coming-soon__badge.contest-coming-soon__badge--countdown {
+  animation: none; background: rgba(201,163,91,.1); border-color: rgba(201,163,91,.35);
+  padding: 1rem 1.75rem; border-radius: 14px; display: inline-block;
+}
 .contest-coming-soon__badge {
   display: inline-block; margin-block-start: .5rem; padding: .55rem 1.2rem; border-radius: 999px;
   border: 1px solid rgba(201,163,91,.4);

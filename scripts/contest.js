@@ -145,10 +145,12 @@
   let pollInterval = null;
 
   const renderCountdown = (targetIso, badgeEl) => {
+    badgeEl.classList.add("contest-coming-soon__badge--countdown");
     const update = () => {
       const diff = new Date(targetIso).getTime() - Date.now();
       if (diff <= 0) {
         clearInterval(countdownInterval);
+        badgeEl.classList.remove("contest-coming-soon__badge--countdown");
         badgeEl.innerHTML = `<span class="contest-announcing-soon">ANNOUNCING VERY SOON</span>`;
         startPollingForWinner();
         return;
