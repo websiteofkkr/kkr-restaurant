@@ -47,7 +47,7 @@
       const w = window.innerWidth;
       if (w <= 480) return 1;
       if (w <= 1024) return 2;
-      return 3;
+      return 4;
     };
 
     const applyTransform = () => {

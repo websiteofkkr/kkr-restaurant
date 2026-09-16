@@ -1613,7 +1613,7 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 
 /* ---------------------------------------------------- moments carousel */
 .moments-carousel { position: relative; display: flex; align-items: center; justify-content: center; gap: .75rem; }
-.moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; max-width: 47.25rem; }
+.moments-carousel__viewport { overflow: hidden; flex: 1 1 auto; max-width: 64rem; }
 @media (max-width: 64rem) {
   .moments-carousel__viewport { max-width: 23.25rem; } /* fits exactly 2 cards at their 11rem minimum size, plus a little buffer */
 }
