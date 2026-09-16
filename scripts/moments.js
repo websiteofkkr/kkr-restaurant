@@ -4,7 +4,7 @@
   // ---- adjustable timing -----------------------------------------------
   // How long each group of videos stays on screen before auto-advancing,
   // in milliseconds. Change this one number to speed up or slow down the
-  // rotation (5000 = 5 seconds, matching the requested "~5 seconds").
+  // rotation (5000 = 5 seconds).
   const AUTO_ADVANCE_MS = 5000;
   // -------------------------------------------------------------------
 
@@ -22,234 +22,49 @@
       ${m.subtitle ? `<p>${escapeHtml(m.subtitle)}</p>` : ""}
     </article>`;
 
+  const getItemsPerPage = () => {
+    const w = window.innerWidth;
+    if (w <= 480) return 1;
+    if (w <= 1024) return 2;
+    return 4;
+  };
+
+  let carouselInstance = null;
+
   const initCarousel = () => {
     const carousel = document.querySelector("[data-moments-carousel]");
     if (!carousel) return;
-
     const viewport = carousel.querySelector("[data-moments-viewport]");
     const track = carousel.querySelector("[data-moments-track]");
     const dotsWrap = document.querySelector("[data-moments-dots]");
-    if (!viewport || !track || !dotsWrap) return;
+    if (!viewport || !track) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // The real clips, captured once (and re-captured if Supabase swaps in
-    // live data) — kept separate from the track's actual DOM, since that
-    // DOM gets rebuilt on every recalc to include spacer slots.
-    let realItemsHTML = Array.from(track.children).map((el) => el.outerHTML);
-
-    let itemsPerPage = 3;
-    let currentPage = 0;
-    let totalPages = 1;
-    let autoTimer = null;
-    let resumeTimer = null;
-
-    // Matches the CSS breakpoints in .moments-carousel__track .moment —
-    // keep these two in sync if the breakpoints change in the CSS.
-    const getItemsPerPage = () => {
-      const w = window.innerWidth;
-      if (w <= 480) return 1;
-      if (w <= 1024) return 2;
-      return 4;
-    };
-
-    const applyTransform = (animate = true) => {
-      const items = Array.from(track.children);
-      if (items.length === 0) return;
-      const firstBox = items[0].getBoundingClientRect();
-      const gap = parseFloat(getComputedStyle(track).gap) || 0;
-      const step = (firstBox.width + gap) * itemsPerPage;
-      track.style.transition = animate ? "" : "none"; // "" restores the CSS-defined transition
-      track.style.transform = `translateX(-${currentPage * step}px)`;
-      if (!animate) void track.offsetWidth; // force the instant jump to apply before anything re-enables the transition
-    };
-
-    const updateDots = () => {
-      // currentPage can briefly point at the cloned page (index
-      // totalPages) mid-loop — treat that as "page 0" for the dots.
-      const activeIndex = currentPage % totalPages;
-      Array.from(dotsWrap.children).forEach((dot, i) => dot.classList.toggle("is-active", i === activeIndex));
-    };
-
-    const buildDots = () => {
-      dotsWrap.innerHTML = "";
-      if (totalPages <= 1) return; // nothing to paginate
-      for (let i = 0; i < totalPages; i++) {
-        const dot = document.createElement("button");
-        dot.type = "button";
-        dot.className = "moments-carousel__dot";
-        dot.setAttribute("aria-label", `Go to moments group ${i + 1} of ${totalPages}`);
-        if (i === currentPage) dot.classList.add("is-active");
-        dot.addEventListener("click", () => {
-          currentPage = i;
-          applyTransform();
-          updateDots();
-          restartAfterInteraction();
-        });
-        dotsWrap.appendChild(dot);
-      }
-    };
-
-    // Always advances forward (left) — including the wrap from the last
-    // page back to the first. Rather than snapping backward to page 0
-    // (which would visibly move right), this slides one page further
-    // into a cloned copy of page 0 appended at the end of the track,
-    // then — once that slide finishes — instantly re-points to the real
-    // page 0, which sits in the identical visual position, so the jump
-    // is invisible and the motion always reads as continuous left travel.
-    let wrapTimer = null;
-    const next = () => {
-      clearTimeout(wrapTimer);
-      if (currentPage < totalPages - 1) {
-        currentPage += 1;
-        applyTransform();
-        updateDots();
-        return;
-      }
-      currentPage = totalPages; // the cloned page 0, one slot past the real last page
-      applyTransform();
-      updateDots();
-      wrapTimer = setTimeout(() => {
-        currentPage = 0;
-        applyTransform(false); // instant, no transition — lands exactly on the clone's twin
-      }, 550); // just past the .5s CSS transition
-    };
-
-    const stopAuto = () => {
-      if (autoTimer) clearInterval(autoTimer);
-      autoTimer = null;
-    };
-    const startAuto = () => {
-      stopAuto();
-      if (reduceMotion || totalPages <= 1) return;
-      autoTimer = setInterval(next, AUTO_ADVANCE_MS);
-    };
-    // Pausing then resuming after user interaction, rather than just
-    // pausing forever, so the carousel keeps cycling on its own once
-    // someone's done clicking around.
-    const restartAfterInteraction = () => {
-      stopAuto();
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(startAuto, AUTO_ADVANCE_MS);
-    };
-
-    const recalc = () => {
-      const realCount = realItemsHTML.length;
-      if (realCount === 0) return;
-      itemsPerPage = getItemsPerPage();
-      totalPages = Math.max(1, Math.ceil(realCount / itemsPerPage));
-      if (currentPage >= totalPages) currentPage = totalPages - 1;
-      clearTimeout(wrapTimer);
-
-      // Pad the final page out to a full page of slots with invisible
-      // spacers, split evenly before/after the real remaining clips, so
-      // they land centered in the viewport rather than stuck to one
-      // side. Every earlier page is already full and needs no padding.
-      const remainder = realCount % itemsPerPage;
-      let html = realItemsHTML.join("");
-      if (remainder !== 0) {
-        const padCount = itemsPerPage - remainder;
-        const before = Math.floor(padCount / 2);
-        const after = Math.ceil(padCount / 2);
-        const spacer = `<div class="moment moment--spacer" aria-hidden="true"></div>`;
-        const items = realItemsHTML.slice();
-        const lastGroup = items.splice(items.length - remainder, remainder);
-        html = items.join("") + spacer.repeat(before) + lastGroup.join("") + spacer.repeat(after);
-      }
-      // A clone of page 0's own slots (real items, full page — page 0
-      // never has spacers), appended after everything else, purely so
-      // the wrap-around above always has "one more page" to slide into
-      // that looks identical to the real page 0.
-      const page0Clone = realItemsHTML.slice(0, itemsPerPage).join("");
-      track.innerHTML = html + page0Clone;
-
-      // Size the viewport to exactly fit itemsPerPage cards, no more, no
-      // less — computed from the card's real current width rather than a
-      // fixed guess, since the card's own CSS uses a viewport-relative
-      // clamp() that changes continuously with screen width. A static
-      // guess can never stay aligned with that at every size; this always
-      // matches exactly, which is what stops a partial next card peeking
-      // through the edge.
-      const firstReal = track.querySelector(".moment:not(.moment--spacer)");
-      const gap = parseFloat(getComputedStyle(track).gap) || 0;
-      const cardWidth = firstReal ? firstReal.getBoundingClientRect().width : 0;
-      const exactWidth = cardWidth * itemsPerPage + gap * (itemsPerPage - 1);
-      if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
-
-      buildDots();
-      applyTransform();
-    };
-
-    // Pause on hover/focus (mouse users), resume on leave.
-    carousel.addEventListener("mouseenter", stopAuto);
-    carousel.addEventListener("mouseleave", startAuto);
-    carousel.addEventListener("focusin", stopAuto);
-    carousel.addEventListener("focusout", startAuto);
-
-    // Touch swipe support — any deliberate swipe just advances forward,
-    // consistent with the carousel always moving the same direction.
-    let touchStartX = 0;
-    let touchDeltaX = 0;
-    viewport.addEventListener(
-      "touchstart",
-      (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchDeltaX = 0;
-        stopAuto();
-      },
-      { passive: true }
-    );
-    viewport.addEventListener(
-      "touchmove",
-      (e) => {
-        touchDeltaX = e.touches[0].clientX - touchStartX;
-      },
-      { passive: true }
-    );
-    viewport.addEventListener("touchend", () => {
-      if (Math.abs(touchDeltaX) > 40) next();
-      restartAfterInteraction();
+    carouselInstance = window.KKRCarousel.create({
+      root: carousel,
+      viewport,
+      track,
+      dotsWrap,
+      itemSelector: ".moment:not(.moment--spacer)",
+      spacerClass: "moment moment--spacer",
+      getItemsPerPage,
+      autoAdvanceMs: AUTO_ADVANCE_MS,
     });
-
-    let resizeTimer = null;
-    window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(recalc, 150);
-    });
-
-    recalc();
-    startAuto();
-
-    // Exposed so the Supabase-refresh step below can swap in real
-    // uploaded clips and re-run layout (recalc rebuilds the track's DOM
-    // from realItemsHTML plus spacers, so this must go through here
-    // rather than touching track.innerHTML directly).
-    carousel.__momentsSetItems = (items) => {
-      realItemsHTML = items;
-      currentPage = 0;
-      recalc();
-    };
   };
 
   window.addEventListener("DOMContentLoaded", initCarousel);
 
   // ------------------------------------------------- optional live data
   // If real moments have been uploaded via the admin dashboard, swap them
-  // in for the built-in default clips. No duplication needed here (that
-  // was only ever for the old marquee's seamless-loop illusion) — the
-  // carousel paginates whatever set of clips it's given.
+  // in for the built-in default clips.
   window.addEventListener("DOMContentLoaded", async () => {
     try {
       const { url, anonKey } = window.KKR_SUPABASE || {};
       if (!url) return;
       const res = await fetch(`${url}/rest/v1/moments?select=*&order=sort_order.asc`, { headers: { apikey: anonKey } });
       const moments = await res.json();
-      if (!Array.isArray(moments) || moments.length === 0) return; // no uploads yet — keep the built-in default clips
+      if (!Array.isArray(moments) || moments.length === 0) return;
 
-      const carousel = document.querySelector("[data-moments-carousel]");
-      if (!carousel) return;
-
-      carousel.__momentsSetItems?.(moments.map(buildMoment));
+      carouselInstance?.setItems(moments.map(buildMoment));
     } catch {
       // A failed fetch just leaves the existing default clips in place.
     }

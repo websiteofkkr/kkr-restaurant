@@ -1651,6 +1651,32 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 .moments-carousel__dot:hover { background: rgba(128,97,38,.55); }
 .moments-carousel__dot.is-active { background: var(--color-gold-deep); width: 1.6rem; border-radius: 999px; }
+
+/* --------------------------------------------- generic dish carousels */
+/* Shared by Special Platters and Popular Picks — same engine as Moments,
+   just reused for food cards instead of video clips. */
+.kkr-carousel { position: relative; display: flex; align-items: center; justify-content: center; max-width: var(--shell); margin-inline: auto; }
+.kkr-carousel__viewport { overflow: hidden; flex: 1 1 auto; }
+.kkr-carousel__track.favgrid {
+  display: flex !important; flex-wrap: nowrap !important; overflow: visible !important;
+  max-width: none !important; margin-inline: 0 !important; padding-inline: 0 !important;
+  transition: transform .5s var(--ease);
+}
+.kkr-carousel .favgrid-spacer { visibility: hidden; pointer-events: none; }
+.kkr-carousel__dots {
+  display: flex; justify-content: center; align-items: center; gap: .55rem;
+  margin-block-start: 1.5rem;
+}
+.kkr-carousel__dot {
+  width: .55rem; height: .55rem; border-radius: 50%;
+  background: rgba(128,97,38,.3); border: none; padding: 0; cursor: pointer;
+  transition: background-color .25s var(--ease), transform .25s var(--ease), width .25s var(--ease);
+}
+.kkr-carousel__dot:hover { background: rgba(128,97,38,.55); }
+.kkr-carousel__dot.is-active { background: var(--color-gold-deep); width: 1.6rem; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) {
+  .kkr-carousel__track.favgrid { transition: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   .moments-carousel__track { transition: none; }
 }
@@ -2946,6 +2972,8 @@ body.cart-drawer-open { overflow: hidden; }
 #signature .favgrid::-webkit-scrollbar { display: none; }
 #signature .favcard { flex: 0 0 16rem; }
 @media (min-width: 40rem) { #signature .favcard { flex-basis: 17.5rem; } }
+.kkr-carousel__track.favgrid .favcard { flex: 0 0 16rem !important; }
+@media (min-width: 40rem) { .kkr-carousel__track.favgrid .favcard { flex-basis: 17.5rem !important; } }
 .favcard {
   background: linear-gradient(180deg, rgba(32,25,15,.96), rgba(12,10,7,.98));
   border: 1px solid rgba(201,163,91,.25); border-radius: 14px;
