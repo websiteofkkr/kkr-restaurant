@@ -1583,7 +1583,7 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 .moments__frame {
   max-width: var(--shell); margin-inline: auto;
-  background: var(--color-ivory);
+  background: var(--color-cream);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem);
   box-shadow: 0 25px 60px -15px rgba(11,9,7,.35), 0 0 0 1px rgba(201,163,91,.15) inset;
