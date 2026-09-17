@@ -2335,6 +2335,15 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 @media (max-width: 30rem) {
   .mitem__thumb { width: 100px; height: 63px; }
 }
+/* This photo's own proportions are much closer to square than the wide
+   landscape frame, so object-fit:cover was cropping off the saucer,
+   cinnamon sticks, and other detail around the base to fill the width.
+   Switching this one image to contain shows the complete photo, scaled
+   down and centered, with even breathing room on the sides instead. */
+.mitem__thumb[src*="black-coffee.webp"],
+.mitem__thumb[src*="doodh-pati.webp"] {
+  object-fit: contain; padding: .4rem; background: var(--color-ivory);
+}
 .mitem__head { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
 .mitem__head h3 { font-size: var(--step-1); margin: 0; }
 .mitem__dots { flex: 1 1 2rem; min-width: 1.5rem; border-block-end: 1px dotted var(--muted-dark); opacity: .4; transform: translateY(-.25em); }
