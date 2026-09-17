@@ -225,7 +225,10 @@
       setText("[data-session-name]", session.profile?.full_name || session.user?.email || "you");
       setText("[data-session-points]", String(session.profile?.reward_points ?? 0));
       showAuthPanel("session");
-      prefill(session.profile);
+      // The account's login email is always known the moment someone's
+      // logged in, even if they never separately saved a profile email —
+      // fall back to it so the field isn't left blank for no reason.
+      prefill({ ...session.profile, email: session.profile?.email || session.user?.email });
       renderRewardEstimate();
     } else {
       showAuthPanel("login");
@@ -354,6 +357,13 @@
     }
 
     try {
+      // Refresh the token right before the request that matters most —
+      // if the session has been open a while, this is the one place
+      // where using a stale token would actually cost the person their
+      // order, not just a delayed profile refresh.
+      await window.KKRAuth?.refreshAccessToken?.();
+      const freshSession = window.KKRAuth?.getSession() || session;
+
       const res = await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -365,7 +375,7 @@
           customer: { name, phone, email, address, notes },
           deliveryLat: addressLat || undefined,
           deliveryLng: addressLng || undefined,
-          accessToken: session?.access_token,
+          accessToken: freshSession?.access_token,
           turnstileToken,
           idempotencyKey,
           couponCode: appliedCoupon?.code,

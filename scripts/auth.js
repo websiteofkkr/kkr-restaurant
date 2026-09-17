@@ -72,6 +72,66 @@
     }
   };
 
+  // Supabase access tokens expire after about an hour. Without this, a
+  // session that looked "logged in" (the session object and email are
+  // still sitting in localStorage) would silently carry a dead token —
+  // every authenticated request from that point on gets rejected by the
+  // server, which is exactly what "it says I'm logged in but won't let
+  // me do anything" looks like from the outside. The refresh_token is
+  // long-lived and exists precisely to mint a new access_token without
+  // making the person log in again.
+  let refreshingToken = null;
+  const refreshAccessToken = () => {
+    if (!session?.refresh_token) return Promise.resolve(false);
+    if (refreshingToken) return refreshingToken; // avoid parallel refreshes racing each other
+    refreshingToken = authFetch("/auth/v1/token?grant_type=refresh_token", {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: session.refresh_token }),
+    })
+      .then((data) => {
+        session.access_token = data.access_token;
+        session.refresh_token = data.refresh_token;
+        saveSession(session);
+        notify();
+        return true;
+      })
+      .catch(() => {
+        // The refresh_token itself is invalid/expired too — this session
+        // is genuinely dead. Log out cleanly so the UI honestly shows a
+        // login form instead of a "logged in" state that can never
+        // successfully do anything.
+        logout();
+        return false;
+      })
+      .finally(() => {
+        refreshingToken = null;
+      });
+    return refreshingToken;
+  };
+
+  // A version of authFetch for calls that need a valid session: retries
+  // once with a refreshed token if the server says the current one is
+  // no longer valid, instead of failing outright.
+  const authedFetchWithRetry = async (path, opts = {}) => {
+    const { url, anonKey } = SB();
+    const run = () =>
+      fetch(`${url}${path}`, {
+        ...opts,
+        headers: {
+          apikey: anonKey,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token || anonKey}`,
+          ...(opts.headers || {}),
+        },
+      });
+    let res = await run();
+    if (res.status === 401 && session?.refresh_token) {
+      const refreshed = await refreshAccessToken();
+      if (refreshed) res = await run();
+    }
+    return res;
+  };
+
   const login = async (email, password) => {
     const data = await authFetch("/auth/v1/token?grant_type=password", {
       method: "POST",
@@ -107,13 +167,25 @@
     register,
     logout,
     refreshProfile,
+    refreshAccessToken,
+    authedFetch: authedFetchWithRetry,
     onChange: (fn) => {
       listeners.add(fn);
       return () => listeners.delete(fn);
     },
   };
 
-  // Warm the profile (name/phone/reward points) on every page load so it's
-  // ready the instant any UI asks for it, rather than waiting on a click.
-  if (session) refreshProfile();
+  // Refresh the token proactively on every page load — cheap, and means
+  // a session that's been sitting in localStorage for a while (from an
+  // earlier visit) starts this page load with a token that's actually
+  // valid, rather than waiting to discover it's dead on the first thing
+  // that needs it. Then warm the profile (name/phone/reward points) so
+  // it's ready the instant any UI asks for it.
+  if (session) {
+    refreshAccessToken().then(() => refreshProfile());
+    // Also refresh periodically for people who stay on one page a long
+    // time (e.g. slowly filling out checkout) rather than navigating —
+    // 45 minutes keeps it comfortably ahead of the ~60 minute expiry.
+    setInterval(refreshAccessToken, 45 * 60 * 1000);
+  }
 })();
