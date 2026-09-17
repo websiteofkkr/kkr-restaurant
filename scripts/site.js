@@ -18,7 +18,14 @@
     };
     burger.addEventListener("click", () => setOpen(burger.getAttribute("aria-expanded") !== "true"));
     nav.addEventListener("click", (e) => {
-      if (e.target.closest("a") && window.innerWidth <= 1200) setOpen(false);
+      if (e.target.closest("a") && window.innerWidth <= 1200) {
+        // Deferred a tick so the browser's own anchor-scroll (triggered
+        // by this same click) isn't racing against overflow:hidden being
+        // switched off mid-calculation — closing the menu one frame
+        // later doesn't race, but still closes it before the user can
+        // register the previous frame as "menu open".
+        requestAnimationFrame(() => setOpen(false));
+      }
     });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && burger.getAttribute("aria-expanded") === "true") {

@@ -63,7 +63,7 @@
 /* ------------------------------------------------------------------ reset */
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 1.5rem); }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 3rem); }
 body {
   margin: 0;
   background: var(--page);
@@ -1927,7 +1927,7 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 
 .reserve {
   background: var(--color-white); color: var(--color-dark);
-  padding: var(--rhythm) var(--gutter);
+  padding: clamp(1rem, 2.5vw, 1.75rem) var(--gutter) var(--rhythm);
   display: grid; gap: clamp(2rem, 4vw, 3rem); justify-items: center;
   max-width: var(--shell); margin-inline: auto;
 }
@@ -2323,16 +2323,16 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 .mitem__copy { flex: 1 1 auto; min-width: 0; }
 .mitem__thumb {
-  flex: none; width: 160px; height: 120px; border-radius: 12px;
+  flex: none; width: 168px; height: 105px; border-radius: 12px;
   object-fit: cover; object-position: center;
   border: 1px solid rgba(128,97,38,.3);
   box-shadow: 0 8px 18px -6px rgba(11,9,7,.4);
 }
 @media (max-width: 64rem) {
-  .mitem__thumb { width: 130px; height: 98px; }
+  .mitem__thumb { width: 136px; height: 85px; }
 }
 @media (max-width: 30rem) {
-  .mitem__thumb { width: 96px; height: 76px; }
+  .mitem__thumb { width: 100px; height: 63px; }
 }
 .mitem__head { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
 .mitem__head h3 { font-size: var(--step-1); margin: 0; }
@@ -2761,14 +2761,8 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
    never push sibling rows around, since it was never part of the
    document flow to begin with. */
 .mitem .cart-add {
-  position: absolute; inset-inline: 0; inset-block-start: 100%;
-  z-index: 6; padding: .65rem .75rem .5rem;
-  background: var(--color-ivory); border-radius: 0 0 10px 10px;
-  box-shadow: 0 16px 32px -8px rgba(11,9,7,.35);
-  opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity .2s ease, visibility .2s ease;
-}
-.mitem:hover .cart-add, .mitem.is-revealed .cart-add {
+  position: static; margin-block-start: .6rem;
+  padding: 0; background: none; box-shadow: none;
   opacity: 1; visibility: visible; pointer-events: auto;
 }
 /* The homepage's Special Platters/Popular Picks grid is a small, fixed
@@ -2778,10 +2772,6 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
    cascade here since nothing changes size on hover. */
 .favcard .cart-add {
   margin-block-start: .65rem;
-  opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity .2s ease, visibility .2s ease;
-}
-.favcard:hover .cart-add, .favcard.is-revealed .cart-add {
   opacity: 1; visibility: visible; pointer-events: auto;
 }
 .cart-add__tier {
@@ -3163,7 +3153,6 @@ textarea.cart-input { resize: vertical; min-height: 3rem; }
    This page has no hero, so its opening lines sat immediately under the fixed
    bar and read as crammed against it rather than centred on the page. */
 
-.reservepage { padding-block-start: calc(var(--header-h) + clamp(1rem, 3vw, 2.5rem)); }
 .reservepage .reserve { justify-items: center; text-align: center; }
 .reservepage .reserve__copy { margin-inline: auto; }
 .reservepage .reserve__copy .kicker,
