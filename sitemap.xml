@@ -5,29 +5,59 @@
     <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/"/>
     <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/"/>
   </url>
-  <url><loc>https://kkr-restaurant-esv.pages.dev/en/menu/</loc><changefreq>weekly</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/menu/"/>
-    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/menu/"/>
-    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/menu/"/>
-  </url>
   <url><loc>https://kkr-restaurant-esv.pages.dev/ur/</loc><changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/"/>
     <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/"/>
     <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/"/>
-  </url>
-  <url><loc>https://kkr-restaurant-esv.pages.dev/ur/menu/</loc><changefreq>weekly</changefreq>
-    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/menu/"/>
-    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/menu/"/>
-    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/menu/"/>
   </url>
   <url><loc>https://kkr-restaurant-esv.pages.dev/ps/</loc><changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/"/>
     <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/"/>
     <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/"/>
   </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/en/menu/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/menu/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/menu/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/menu/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/ur/menu/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/menu/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/menu/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/menu/"/>
+  </url>
   <url><loc>https://kkr-restaurant-esv.pages.dev/ps/menu/</loc><changefreq>weekly</changefreq>
     <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/menu/"/>
     <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/menu/"/>
     <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/menu/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/en/reserve/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/reserve/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/reserve/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/reserve/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/ur/reserve/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/reserve/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/reserve/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/reserve/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/ps/reserve/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/reserve/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/reserve/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/reserve/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/en/privacy/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/privacy/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/ur/privacy/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/privacy/"/>
+  </url>
+  <url><loc>https://kkr-restaurant-esv.pages.dev/ps/privacy/</loc><changefreq>weekly</changefreq>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kkr-restaurant-esv.pages.dev/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ur" href="https://kkr-restaurant-esv.pages.dev/ur/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="ps" href="https://kkr-restaurant-esv.pages.dev/ps/privacy/"/>
   </url>
 </urlset>
