@@ -1583,19 +1583,11 @@ body { padding-block-start: calc(var(--header-h) + .75rem); }
 }
 .moments__frame {
   max-width: var(--shell); margin-inline: auto;
-  background: var(--color-darkest);
+  background: var(--color-cream);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.25rem);
   box-shadow: 0 25px 60px -15px rgba(11,9,7,.35), 0 0 0 1px rgba(201,163,91,.15) inset;
 }
-.moments__frame .kicker { color: var(--color-gold); }
-.moments__frame .moments__head h2 { color: var(--color-gold); }
-.moments__frame .moments__head p { color: var(--muted); }
-.moments__frame .moment h3 { color: var(--color-white); }
-.moments__frame .moment p { color: var(--muted); }
-.moments__frame .moments-carousel__dot { background: rgba(255,255,255,.25); }
-.moments__frame .moments-carousel__dot.is-active { background: var(--color-gold); }
-.moments__frame .moments-carousel__arrow { background: rgba(255,255,255,.08); border-color: rgba(201,163,91,.4); color: var(--color-gold); }
 .moments__head {
   max-width: 42rem; margin: 0 auto clamp(1.75rem, 3vw, 2.5rem);
   padding-inline: var(--gutter); text-align: center;
