@@ -119,22 +119,40 @@ window.KKRCarousel = (() => {
       clearTimeout(wrapTimer);
 
       const remainder = realCount % itemsPerPage;
-      let html = realItemsHTML.join("");
-      if (remainder !== 0) {
-        const padCount = itemsPerPage - remainder;
-        const before = Math.floor(padCount / 2);
-        const after = Math.ceil(padCount / 2);
-        const spacer = `<div class="${spacerClass}" aria-hidden="true"></div>`;
-        const items = realItemsHTML.slice();
-        const lastGroup = items.splice(items.length - remainder, remainder);
-        html = items.join("") + spacer.repeat(before) + lastGroup.join("") + spacer.repeat(after);
-      }
       const page0Clone = realItemsHTML.slice(0, itemsPerPage).join("");
-      track.innerHTML = html + page0Clone;
 
+      // First pass: render without spacers, purely to measure the real
+      // rendered card width (depends on the current viewport, font size,
+      // etc. — not something to hardcode).
+      track.innerHTML = realItemsHTML.join("") + page0Clone;
       const firstReal = track.querySelector(itemSelector);
       const gap = parseFloat(getComputedStyle(track).gap) || 0;
       const cardWidth = firstReal ? firstReal.getBoundingClientRect().width : 0;
+
+      if (remainder !== 0 && cardWidth > 0) {
+        // Center the leftover cards on the final page using exactly one
+        // spacer on each side, each sized to precisely half the missing
+        // width — rather than whole-card-width spacers split by
+        // floor/ceil, which is only symmetric when the leftover count is
+        // even. A single leftover item in a 4-up page, for example,
+        // needs 1.5 card-widths of space on each side; two whole spacers
+        // can never express that "half a card" — one correctly-sized
+        // spacer on each side always can, for any remainder.
+        //
+        // The padded "page" is [spacer, real x remainder, spacer] — that's
+        // (remainder + 2) elements and (remainder + 1) gaps between them.
+        // Solving for the spacer width that makes this whole sequence
+        // exactly as wide as a normal full page of itemsPerPage cards
+        // (padCount = itemsPerPage - remainder missing cards' worth):
+        //   2*spacerWidth = padCount*cardWidth + (padCount - 2)*gap
+        const padCount = itemsPerPage - remainder;
+        const halfPad = Math.max(0, (padCount * cardWidth + (padCount - 2) * gap) / 2);
+        const spacer = (w) => `<div class="${spacerClass}" aria-hidden="true" style="flex:0 0 ${w}px !important;"></div>`;
+        const items = realItemsHTML.slice();
+        const lastGroup = items.splice(items.length - remainder, remainder);
+        track.innerHTML = items.join("") + spacer(halfPad) + lastGroup.join("") + spacer(halfPad) + page0Clone;
+      }
+
       const exactWidth = cardWidth * itemsPerPage + gap * (itemsPerPage - 1);
       if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
 
