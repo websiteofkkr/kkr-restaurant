@@ -59,7 +59,8 @@
           "image": "/assets/img/menu/fastfood-platter.webp",
           "alt": "Fastfood platter with wings, fries and rolls",
           "available": true,
-          "price": 999.0
+          "price": 999.0,
+          "description": "4 piece oven baked wings, 4 piece bihari rolls, french fries, sauce dip"
         }
       ]
     },
@@ -738,7 +739,8 @@
           "image": "/assets/img/menu/lamb-white-karahi.webp",
           "alt": "Karahi of lamb white karahi",
           "available": true,
-          "price": 3600.0
+          "price": 3600.0,
+          "description": "Kharar Ghwakha"
         },
         {
           "id": "shinwari--lamb-seekh-tikka",
@@ -746,7 +748,8 @@
           "image": "/assets/img/menu/lamb-seekh-tikka.webp",
           "alt": "Skewers of lamb seekh tikka",
           "available": true,
-          "price": 3700.0
+          "price": 3700.0,
+          "description": "Wreta"
         },
         {
           "id": "shinwari--chatpatha-lamb-mutton",
@@ -768,7 +771,8 @@
           "image": "/assets/img/platter-1.webp",
           "alt": "Bukhari Dampukh Platter",
           "available": true,
-          "price": 6499.0
+          "price": 6499.0,
+          "description": "1 kg Bukhari dampukh (lamb), 2 pieces chicken seekh kabab, 4 pieces malai boti, 4 pieces chicken tikka boti, 4 pieces patta tikka, 2 kg polao. For 5–6 persons."
         },
         {
           "id": "platters--bukhari-chicken-with-rice",
@@ -776,7 +780,8 @@
           "image": "/assets/img/menu/bukhari-chicken-rice.webp",
           "alt": "Bowl of bukhari chicken with rice",
           "available": true,
-          "price": 1990.0
+          "price": 1990.0,
+          "description": "Uzbeki rice 1.5 kg, 1 full dampukh chicken. For 2 persons."
         },
         {
           "id": "platters--bukhari-dampukh-with-rice",
@@ -784,7 +789,8 @@
           "image": "/assets/img/menu/bukhari-dampukh-rice.webp",
           "alt": "Plate of bukhari dampukh with rice",
           "available": true,
-          "price": 3899.0
+          "price": 3899.0,
+          "description": "1 kg Bukhari dampukh, 1.5 kg rice. For 2–3 persons."
         },
         {
           "id": "platters--afghani-mix-platter",
@@ -803,7 +809,8 @@
               "name": "Full",
               "price": 5390.0
             }
-          ]
+          ],
+          "description": "5 seekh afghani beef tikka, 4 malai boti, 4 chicken boti, 2.2 kg rice, 4 chapli kabab (moti kabab), 5 seekh afghani kabab, 2 chicken seekh kebab, 2 beef seekh kabab, 1 full bukhari chicken, raita, salad, 2 roghni naan. Half for 2–3, full for 4–5 persons."
         },
         {
           "id": "platters--chicken-lovers",
@@ -811,7 +818,8 @@
           "image": "/assets/img/platter-3.webp",
           "alt": "Chicken Lovers",
           "available": true,
-          "price": 3900.0
+          "price": 3900.0,
+          "description": "1 full chicken roast, polao (2 kg), 4 pcs chicken seekh kabab, 4 pcs chicken boti, 4 pcs chicken malai boti, 2 rogni naan, salad, raita. For 4–5 persons."
         },
         {
           "id": "platters--shahi-mix-platter",
@@ -819,7 +827,8 @@
           "image": "/assets/img/menu/shahi-mix-platter-clean.webp",
           "alt": "Shahi mix platter with lamb, chicken and seekh kabab",
           "available": true,
-          "price": 14700.0
+          "price": 14700.0,
+          "description": "5 kg Uzbaki pulao, dampukh chicken, 2 kg Bukhari dampukh, 4 pieces seekh kabab, 8 pieces chicken boti, 8 pieces malai boti, 8 pieces fish boti, 8 pieces patta tikka. For 10–12 persons."
         },
         {
           "id": "platters--damdaar-platter",
@@ -827,7 +836,8 @@
           "image": "/assets/img/menu/damdaar-platter-clean.webp",
           "alt": "Damdaar platter with mixed grilled meats",
           "available": true,
-          "price": 11400.0
+          "price": 11400.0,
+          "description": "3 kg sada pulao, 2 kg Bukhari dampukh (dumba), 8 malai boti, 8 chicken boti, 8 fish boti, 8 pcs patta tikka. For 7–9 persons."
         },
         {
           "id": "platters--kkr-special-lunch-box",
@@ -835,7 +845,8 @@
           "image": "/assets/img/menu/kkr-special-lunch-box.webp",
           "alt": "KKR special lunch box with rice and sides",
           "available": true,
-          "price": 690.0
+          "price": 690.0,
+          "description": "1 chicken piece, 1 shami kebab, 1 portion polao, salad, raita. For 1 person."
         }
       ]
     },
@@ -941,7 +952,8 @@
           "image": "/assets/img/menu/water-small.webp",
           "alt": "500ml bottle of mineral water",
           "available": true,
-          "price": 70.0
+          "price": 70.0,
+          "description": "500 ml mineral water"
         },
         {
           "id": "cold-drinks--water-large",
@@ -949,7 +961,8 @@
           "image": "/assets/img/menu/water-large.webp",
           "alt": "1.5 litre bottle of mineral water",
           "available": true,
-          "price": 120.0
+          "price": 120.0,
+          "description": "1.5 l mineral water"
         },
         {
           "id": "cold-drinks--lemon-margarita",
@@ -957,7 +970,8 @@
           "image": "/assets/img/menu/lemon-margarita.webp",
           "alt": "Lemon margarita with a lemon wheel garnish",
           "available": true,
-          "price": 250.0
+          "price": 250.0,
+          "description": "Fresh and cold lemon margarita"
         },
         {
           "id": "cold-drinks--mint-margarita",
@@ -965,7 +979,8 @@
           "image": "/assets/img/menu/mint-margarita.webp",
           "alt": "Mint margarita with fresh mint and lime",
           "available": true,
-          "price": 250.0
+          "price": 250.0,
+          "description": "Fresh and cold mint margarita"
         },
         {
           "id": "cold-drinks--nr-bottle",
@@ -973,7 +988,8 @@
           "image": "/assets/img/menu/nr-bottle.webp",
           "alt": "250ml glass bottle of cold drink",
           "available": true,
-          "price": 100.0
+          "price": 100.0,
+          "description": "250 ml cold drink"
         },
         {
           "id": "cold-drinks--can",
@@ -981,7 +997,8 @@
           "image": "/assets/img/menu/can.webp",
           "alt": "200ml can of cold drink",
           "available": true,
-          "price": 150.0
+          "price": 150.0,
+          "description": "200 ml can of cold drink"
         },
         {
           "id": "cold-drinks--cold-coffee",
@@ -989,7 +1006,8 @@
           "image": "/assets/img/menu/cold-coffee.webp",
           "alt": "Iced cold coffee topped with cream",
           "available": true,
-          "price": 350.0
+          "price": 350.0,
+          "description": "Iced cold coffee"
         },
         {
           "id": "cold-drinks--lassi",
@@ -997,7 +1015,8 @@
           "image": "/assets/img/menu/lassi.webp",
           "alt": "Glass of lassi with a bowl of cream",
           "available": true,
-          "price": 350.0
+          "price": 350.0,
+          "description": "Both savoury and sweet available"
         },
         {
           "id": "cold-drinks--fresh-lime",
@@ -1005,7 +1024,8 @@
           "image": "/assets/img/menu/fresh-lime.webp",
           "alt": "Fresh lime drink with mint and lime wedges",
           "available": true,
-          "price": 170.0
+          "price": 170.0,
+          "description": "Fresh and cold lemon drink"
         },
         {
           "id": "cold-drinks--icecream-shake",
@@ -1013,7 +1033,8 @@
           "image": "/assets/img/menu/icecream-shake.webp",
           "alt": "Ice cream milkshake topped with cream",
           "available": true,
-          "price": 330.0
+          "price": 330.0,
+          "description": "Mix of icecream and milk shake"
         }
       ]
     },
@@ -1035,7 +1056,8 @@
           "image": "/assets/img/menu/icecream-single.webp",
           "alt": "Single scoop of ice cream with strawberry and mint",
           "available": true,
-          "price": 180.0
+          "price": 180.0,
+          "description": "Kulfa, vanilla, chocolate, mango, strawberry, pista"
         },
         {
           "id": "dessert--icecream-double-scoop",
@@ -1043,7 +1065,8 @@
           "image": "/assets/img/menu/icecream-double.webp",
           "alt": "Double scoop of ice cream with chocolate drizzle",
           "available": true,
-          "price": 350.0
+          "price": 350.0,
+          "description": "Kulfa, vanilla, chocolate, mango, strawberry, pista"
         }
       ]
     }

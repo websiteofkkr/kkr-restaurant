@@ -19,11 +19,12 @@
           .map((v) => `<option value="${v.price}">${escapeHtml(v.name)} — Rs ${Number(v.price).toLocaleString()}</option>`)
           .join("")}</select>`
       : `<input type="hidden" class="cart-add__tier" value="${item.price}">`;
-    // Prefer a custom admin blurb if one was set; otherwise fall back to
-    // the dish's own menu description, matching how the original
-    // hardcoded cards (e.g. the platters) show their ingredients/detail
-    // line under the title without needing anyone to type it separately.
-    const caption = blurb || item.description || "";
+    // The dish's own menu description shows by default, matching how the
+    // original hardcoded cards (e.g. the platters) show their
+    // ingredients/detail line under the title automatically. If the admin
+    // also types a custom blurb, it's appended after that description
+    // rather than replacing it — both show together.
+    const caption = [item.description, blurb].filter(Boolean).join(" ");
     return `<article class="favcard">
       <div class="favcard__media">
         <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.name)}" width="640" height="480" loading="lazy" decoding="async">
