@@ -79,6 +79,7 @@ window.KKRCarousel = (() => {
     // page 0 once that slide finishes, which sits in the same visual
     // spot, so the loop point is invisible and motion never reverses.
     const next = () => {
+      if (totalPages <= 1) return; // nothing to advance to — a stale timer from before an update should be a no-op, not slide into empty space
       clearTimeout(wrapTimer);
       if (currentPage < totalPages - 1) {
         currentPage += 1;
@@ -142,6 +143,7 @@ window.KKRCarousel = (() => {
         if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
         buildDots();
         applyTransform();
+        startAuto();
         return;
       }
 
@@ -175,6 +177,7 @@ window.KKRCarousel = (() => {
 
       buildDots();
       applyTransform();
+      startAuto();
     };
 
     root.addEventListener("mouseenter", stopAuto);
@@ -198,7 +201,6 @@ window.KKRCarousel = (() => {
     });
 
     recalc();
-    startAuto();
 
     // Images/fonts can still be settling at DOMContentLoaded time, which
     // is when this first runs — re-measure once everything has actually
