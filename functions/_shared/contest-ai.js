@@ -1,7 +1,6 @@
 /**
  * AI photo evaluation for the Photo of the Month contest, using
- * Cloudflare Workers AI via the native `env.AI` binding — NOT an
- * external API.
+ * Cloudflare Workers AI via the native env.AI binding — NOT an external API.
  *
  * Model: @cf/meta/llama-3.2-11b-vision-instruct
  */
@@ -23,7 +22,7 @@ Respond with ONLY a JSON object, no other text, no markdown formatting, in exact
 
 /**
  * Fetches an image and returns it as a plain byte array,
- * the input shape this model's `image` parameter expects.
+ * the input shape this model's image parameter expects.
  */
 async function fetchImageAsBytes(url) {
   const res = await fetch(url);
@@ -39,8 +38,8 @@ async function fetchImageAsBytes(url) {
 
 /**
  * Evaluates one photo.
- * Returns the parsed scoring object, or throws with
- * a message safe to show an admin.
+ * Returns the parsed scoring object, or throws
+ * with a message safe to show an admin.
  */
 export async function evaluatePhoto(env, photoUrl) {
   if (!env.AI) {
@@ -62,18 +61,30 @@ export async function evaluatePhoto(env, photoUrl) {
   } catch (err) {
     console.error("Workers AI call failed:", err);
 
-    // TEMPORARY DIAGNOSTIC ERROR:
-    // This exposes the actual Workers AI error so we can identify
-    // why the AI request is failing.
     throw new Error(
       `Workers AI error: ${err?.message || String(err)}`
     );
   }
 
+  // Cloudflare Workers AI normally returns the generated text
+  // in response.response.
   const text =
     typeof response === "string"
       ? response
-      : response?.response || "";
+      : typeof response?.response === "string"
+        ? response.response
+        : "";
+
+  // Diagnostic logging so we can see the exact response if parsing fails.
+  console.log(
+    "Workers AI raw response:",
+    JSON.stringify(response)
+  );
+
+  console.log(
+    "Workers AI text:",
+    text
+  );
 
   let parsed;
 
@@ -87,7 +98,17 @@ export async function evaluatePhoto(env, photoUrl) {
     parsed = JSON.parse(
       jsonMatch ? jsonMatch[0] : clean
     );
-  } catch {
+  } catch (err) {
+    console.error(
+      "AI response parsing failed:",
+      err
+    );
+
+    console.error(
+      "Raw Workers AI response:",
+      JSON.stringify(response)
+    );
+
     throw new Error(
       "AI returned an unexpected response format."
     );
@@ -120,9 +141,13 @@ export async function evaluatePhoto(env, photoUrl) {
 
   return {
     ai_food_score: food,
+
     ai_composition_score: composition,
+
     ai_atmosphere_score: atmosphere,
+
     ai_creativity_score: creativity,
+
     ai_authenticity_score: authenticity,
 
     ai_score:
