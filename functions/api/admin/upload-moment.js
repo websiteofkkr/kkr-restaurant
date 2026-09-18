@@ -5,7 +5,7 @@ import { requireAdmin } from "../../_shared/admin.js";
 // Kept deliberately tight since Supabase Storage's free tier is limited,
 // and it's easy for a "short video" to balloon to 50-100MB if someone
 // uploads an un-compressed phone recording.
-const MAX_VIDEO_BYTES = 15 * 1024 * 1024; // 15MB
+const MAX_VIDEO_BYTES = 30 * 1024 * 1024; // 30MB — a typical uncompressed phone recording of even a few seconds can exceed 15MB, so this gives real-world clips reasonable headroom while still respecting the free storage tier
 const MAX_POSTER_BYTES = 2 * 1024 * 1024; // 2MB
 const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
