@@ -26,11 +26,27 @@ export const onRequestDelete = withErrorHandling(async ({ request, env }) => {
   const moment = rows[0];
   if (!moment) return jsonResponse({ error: "Moment not found." }, 404);
 
+  // Delete the database row first, then clean up storage — deliberately
+  // in that order. The database row is what the homepage carousel
+  // actually reads, so if something goes wrong partway through, it
+  // matters a lot which half completed: a row deleted with its storage
+  // file left behind is just a few invisible orphaned KB on the free
+  // tier, but a storage file deleted with its row left behind is a
+  // moment that still displays with a video pointing at nothing — which
+  // looks exactly like a blank gap in the reel where a clip used to be.
+  const res = await fetch(`${env.SUPABASE_URL}/rest/v1/moments?id=eq.${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    headers: {
+      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+    },
+  });
+  if (!res.ok) return jsonResponse({ error: "Could not delete moment." }, 500);
+
   // Best-effort storage cleanup — only applies to videos actually
   // uploaded to Supabase Storage. A moment with no storage_path is one
   // of the site's built-in static clips (served for free from Cloudflare
-  // Pages, not Supabase), so there's nothing to reclaim there — deleting
-  // it just removes it from the homepage reel.
+  // Pages, not Supabase), so there's nothing to reclaim there.
   if (moment.storage_path) {
     const pathsToDelete = [moment.storage_path];
     if (moment.poster_url) {
@@ -48,17 +64,9 @@ export const onRequestDelete = withErrorHandling(async ({ request, env }) => {
         body: JSON.stringify({ prefixes: pathsToDelete }),
       });
     } catch (err) {
-      console.error("Moment storage cleanup failed:", err);
+      console.error("Moment storage cleanup failed (row already deleted, file is now just orphaned):", err);
     }
   }
 
-  const res = await fetch(`${env.SUPABASE_URL}/rest/v1/moments?id=eq.${encodeURIComponent(id)}`, {
-    method: "DELETE",
-    headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-    },
-  });
-  if (!res.ok) return jsonResponse({ error: "Could not delete moment." }, 500);
   return jsonResponse({ success: true });
 });

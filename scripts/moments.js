@@ -61,8 +61,15 @@
       const { url, anonKey } = window.KKR_SUPABASE || {};
       if (!url) return;
       const res = await fetch(`${url}/rest/v1/moments?select=*&order=sort_order.asc`, { headers: { apikey: anonKey } });
-      const moments = await res.json();
-      if (!Array.isArray(moments) || moments.length === 0) return;
+      const rows = await res.json();
+      if (!Array.isArray(rows)) return;
+      // A row with no video_url (e.g. left over from an upload that
+      // failed partway through) would otherwise still render as a real
+      // <video> element with an empty src — invisible, but still taking
+      // up a slot in the carousel, which looks exactly like a blank gap
+      // between the clips on either side of it.
+      const moments = rows.filter((m) => m && typeof m.video_url === "string" && m.video_url.trim());
+      if (moments.length === 0) return;
 
       carouselInstance?.setItems(moments.map(buildMoment));
     } catch {
