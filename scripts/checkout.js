@@ -436,9 +436,75 @@
     }
   };
 
+  // Sends the order as a pre-filled WhatsApp message instead of through
+  // the website's own order pipeline — for customers who'd rather
+  // confirm by chat. Login is required here too, exactly like the normal
+  // flow, so every order (whichever way it's placed) is tied to a real
+  // account; reward points for these are added manually by staff via the
+  // admin's existing "Award reward points" tool once the order's
+  // fulfilled, since it never touches /api/order automatically.
+  const WHATSAPP_NUMBER = "923355850009";
+  const placeOrderViaWhatsApp = () => {
+    setError("[data-order-error]", "");
+
+    const session = window.KKRAuth?.getSession();
+    if (!session?.access_token) {
+      // Already logged in customers never see this — only shown the one
+      // time it's actually needed.
+      setError("[data-order-error]", "Please log in or create an account to place an order.");
+      showAuthPanel("login");
+      return;
+    }
+
+    const items = window.KKRCart.getItems();
+    if (items.length === 0) {
+      setError("[data-order-error]", "Your cart is empty.");
+      return;
+    }
+
+    const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
+    const name = $("[data-cf-name]")?.value.trim();
+    const phone = $("[data-cf-phone]")?.value.trim();
+    const address = $("[data-cf-address]")?.value.trim();
+    const notes = $("[data-cf-notes]")?.value.trim();
+
+    if (!name || !phone) {
+      setError("[data-order-error]", "Please enter your name and phone number.");
+      return;
+    }
+    if (orderType === "delivery" && !address) {
+      setError("[data-order-error]", "Please enter a delivery address.");
+      return;
+    }
+
+    const { sub, discount, delivery, tax, total } = computeTotals();
+    const lines = [
+      "New order via website",
+      "",
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Order type: ${orderType === "delivery" ? "Delivery" : "Pickup"}`,
+    ];
+    if (orderType === "delivery") lines.push(`Address: ${address}`);
+    lines.push("", "Items:");
+    items.forEach((it) => lines.push(`${it.qty} × ${it.name} — ${fmt(it.price * it.qty)}`));
+    lines.push("", `Subtotal: ${fmt(sub)}`);
+    if (discount > 0) lines.push(`Discount: -${fmt(discount)}`);
+    lines.push(`Delivery: ${delivery === 0 ? "Free" : fmt(delivery)}`, `Tax: ${fmt(tax)}`, `Total: ${fmt(total)}`);
+    if (notes) lines.push("", `Notes: ${notes}`);
+
+    const message = lines.join("\n");
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener");
+  };
+
   document.addEventListener("click", (e) => {
     if (e.target.closest("[data-cart-send]")) {
       placeOrder();
+      return;
+    }
+    if (e.target.closest("[data-cart-send-whatsapp]")) {
+      placeOrderViaWhatsApp();
       return;
     }
     if (e.target.closest("[data-coupon-apply]")) {
