@@ -19,13 +19,18 @@
           .map((v) => `<option value="${v.price}">${escapeHtml(v.name)} — Rs ${Number(v.price).toLocaleString()}</option>`)
           .join("")}</select>`
       : `<input type="hidden" class="cart-add__tier" value="${item.price}">`;
+    // Prefer a custom admin blurb if one was set; otherwise fall back to
+    // the dish's own menu description, matching how the original
+    // hardcoded cards (e.g. the platters) show their ingredients/detail
+    // line under the title without needing anyone to type it separately.
+    const caption = blurb || item.description || "";
     return `<article class="favcard">
       <div class="favcard__media">
         <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.name)}" width="640" height="480" loading="lazy" decoding="async">
       </div>
       <div class="favcard__body">
         <h3>${escapeHtml(item.name)}</h3>
-        ${blurb ? `<p>${escapeHtml(blurb)}</p>` : ""}
+        ${caption ? `<p>${escapeHtml(caption)}</p>` : ""}
         <div class="favcard__foot">
           ${priceRow}
           <div class="cart-add" data-item-id="${escapeHtml(item.id)}" data-item-name="${escapeHtml(item.name)}" data-item-image="${escapeHtml(item.image)}" data-item-alt="${escapeHtml(item.alt || item.name)}">
@@ -47,8 +52,8 @@
       if (!url) return;
 
       const [featuredRes, menuRes] = await Promise.all([
-        fetch(`${url}/rest/v1/featured_items?select=*&order=sort_order.asc`, { headers: { apikey: anonKey } }),
-        fetch("/menu.json"),
+        fetch(`${url}/rest/v1/featured_items?select=*&order=sort_order.asc`, { headers: { apikey: anonKey }, cache: "no-store" }),
+        fetch("/menu.json", { cache: "no-store" }),
       ]);
       const featured = await featuredRes.json();
       const menu = await menuRes.json();

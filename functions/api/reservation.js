@@ -40,6 +40,9 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
   if (!name || !phone || !date || !time || !Number.isInteger(guests) || guests < 1) {
     return jsonResponse({ error: "Please fill in every required field." }, 400);
   }
+  if (!/^\d{7,11}$/.test(phone)) {
+    return jsonResponse({ error: "Please enter a valid phone number (digits only, up to 11 digits)." }, 400);
+  }
   if (guests > 200) {
     return jsonResponse({ error: "For groups this size, please call us directly." }, 400);
   }
@@ -47,7 +50,7 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
   const row = await dbInsert(env, "reservations", [
     {
       name: name.slice(0, 80),
-      phone: phone.slice(0, 24),
+      phone: phone.slice(0, 11),
       email: email ? email.slice(0, 120) : null,
       reservation_date: date,
       reservation_time: time,

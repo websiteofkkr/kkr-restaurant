@@ -255,6 +255,16 @@
   // Easypaisa transaction numbers are digits only — strip anything else
   // as the person types, rather than only complaining about it later at
   // submit time.
+  // Pakistani mobile numbers are 11 digits — strip anything else as the
+  // person types, across every phone field this page has (order details,
+  // inline registration, account registration).
+  document.querySelectorAll('[data-cf-phone], [data-register-phone], [data-acc-register-phone]').forEach((el) => {
+    el.addEventListener("input", (e) => {
+      const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 11);
+      if (digitsOnly !== e.target.value) e.target.value = digitsOnly;
+    });
+  });
+
   $("[data-cf-payment-ref]")?.addEventListener("input", (e) => {
     const digitsOnly = e.target.value.replace(/\D/g, "");
     if (digitsOnly !== e.target.value) e.target.value = digitsOnly;

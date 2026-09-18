@@ -16,6 +16,17 @@
   const DEFAULT_CENTER = [34.0128612, 71.540616];
   const DEFAULT_ZOOM = 14;
 
+  // Roughly Peshawar city and its immediate surrounding areas — wide
+  // enough to cover realistic delivery addresses at the city's edges,
+  // without allowing the pin to end up in a different city entirely.
+  // Delivery orders are separately checked against the restaurant's own
+  // delivery radius later in checkout — this bound is about keeping the
+  // map picker itself honest, not a delivery-fee calculation.
+  const PESHAWAR_BOUNDS = [
+    [33.85, 71.30], // southwest
+    [34.25, 71.80], // northeast
+  ];
+
   let map = null;
   let currentLatLng = { lat: DEFAULT_CENTER[0], lng: DEFAULT_CENTER[1] };
   let reverseGeocodeTimer = null;
@@ -55,6 +66,13 @@
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
+
+    // Keep the pannable area within Peshawar — soft elasticity so it
+    // doesn't feel like hitting a wall, but the map springs back rather
+    // than letting the pin drift into another city.
+    map.setMaxBounds(PESHAWAR_BOUNDS);
+    map.setMinZoom(11);
+    map.options.maxBoundsViscosity = 0.8;
 
     map.on("move", () => {
       const c = map.getCenter();
@@ -99,13 +117,13 @@
       return;
     }
     try {
-      // Biased toward Peshawar via viewbox + bounded, but not restricted
-      // to it entirely, in case a customer is coordinating delivery from
-      // just outside the usual area.
-      const viewbox = "71.35,34.15,71.75,33.90"; // left,top,right,bottom
+      // Restricted strictly to the Peshawar area — bounded=1 means
+      // Nominatim only returns results actually inside this box, not
+      // just results it merely prefers.
+      const viewbox = "71.30,34.25,71.80,33.85"; // left,top,right,bottom
       const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(
         query
-      )}&viewbox=${viewbox}&bounded=0&limit=5&countrycodes=pk`;
+      )}&viewbox=${viewbox}&bounded=1&limit=5&countrycodes=pk`;
       const res = await fetch(url, { headers: { Accept: "application/json" } });
       const results = await res.json();
       resultsEl.innerHTML = results
@@ -149,6 +167,16 @@
       return;
     }
     if (e.target.closest("[data-map-confirm]")) {
+      const [[south, west], [north, east]] = PESHAWAR_BOUNDS;
+      const withinPeshawar =
+        currentLatLng.lat >= south && currentLatLng.lat <= north && currentLatLng.lng >= west && currentLatLng.lng <= east;
+      if (!withinPeshawar) {
+        setText(
+          "[data-map-address-preview]",
+          "Please pick a location within Peshawar — pan the map back into the city to continue."
+        );
+        return;
+      }
       const scope = activeScope || document;
       const addressField = $("[data-cf-address]", scope) || $("[data-map-address]", scope);
       const latField = $("[data-cf-address-lat]", scope) || $("[data-map-lat]", scope);

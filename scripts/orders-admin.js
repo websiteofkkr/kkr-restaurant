@@ -725,24 +725,31 @@
     try {
       const data = await authedFetch("/api/admin/featured-items");
       const featured = data.items || [];
+      const sectionLabel = { signature: "Our Special Platters", favourites: "Popular Picks" };
+      const counts = featured.reduce((acc, f) => ({ ...acc, [f.section]: (acc[f.section] || 0) + 1 }), {});
+      const countLine = Object.entries(sectionLabel)
+        .map(([key, label]) => `${esc(label)}: ${counts[key] || 0}/8`)
+        .join(" · ");
+      const countHtml = `<p class="oa-muted" data-oa-featured-counts>${countLine}</p>`;
       if (featured.length === 0) {
-        listEl.innerHTML = `<p class="oa-muted">No items featured yet.</p>`;
+        listEl.innerHTML = `${countHtml}<p class="oa-muted">No items featured yet.</p>`;
         return;
       }
       const items = await loadMenuItemsAll();
-      const sectionLabel = { signature: "Our Special Platters", favourites: "Popular Picks" };
-      listEl.innerHTML = featured
-        .map((f) => {
-          const item = items.find((it) => it.id === f.item_id);
-          return `<div class="oa-toggle-row">
-            <span>
-              <strong>${esc(item?.name || f.item_id)}</strong>
-              <small>${esc(sectionLabel[f.section] || f.section)}</small>
-            </span>
-            <button type="button" class="cart-drawer__back" data-oa-featured-remove="${esc(f.item_id)}" data-oa-featured-remove-section="${esc(f.section)}">Remove</button>
-          </div>`;
-        })
-        .join("");
+      listEl.innerHTML =
+        countHtml +
+        featured
+          .map((f) => {
+            const item = items.find((it) => it.id === f.item_id);
+            return `<div class="oa-toggle-row">
+              <span>
+                <strong>${esc(item?.name || f.item_id)}</strong>
+                <small>${esc(sectionLabel[f.section] || f.section)}</small>
+              </span>
+              <button type="button" class="cart-drawer__back" data-oa-featured-remove="${esc(f.item_id)}" data-oa-featured-remove-section="${esc(f.section)}">Remove</button>
+            </div>`;
+          })
+          .join("");
     } catch {
       listEl.innerHTML = `<p class="oa-muted">Could not load featured items.</p>`;
     }

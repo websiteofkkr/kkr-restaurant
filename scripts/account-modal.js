@@ -99,6 +99,15 @@
   };
 
   window.addEventListener("DOMContentLoaded", checkForUpdates);
+
+  // Pakistani mobile numbers are 11 digits — strip anything else as the
+  // person types.
+  window.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("[data-acc-register-phone]")?.addEventListener("input", (e) => {
+      const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 11);
+      if (digitsOnly !== e.target.value) e.target.value = digitsOnly;
+    });
+  });
   if (window.KKRAuth) window.KKRAuth.onChange(checkForUpdates);
 
   document.addEventListener("click", async (e) => {

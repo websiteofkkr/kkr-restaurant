@@ -6,7 +6,16 @@
   window.addEventListener("DOMContentLoaded", () => {
     const btn = document.querySelector("[data-reserve-whatsapp]");
     const form = document.querySelector('[data-form="reservation"]');
-    if (!btn || !form) return;
+    if (!form) return;
+
+    // Pakistani mobile numbers are 11 digits — strip anything else as the
+    // person types, rather than only complaining about it at submit time.
+    form.querySelector('[name="phone"]')?.addEventListener("input", (e) => {
+      const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 11);
+      if (digitsOnly !== e.target.value) e.target.value = digitsOnly;
+    });
+
+    if (!btn) return;
 
     btn.addEventListener("click", () => {
       // Reuses the form's own required-field rules (name, phone, date,

@@ -28,6 +28,19 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
 
   if (!itemId) return jsonResponse({ error: "itemId is required." }, 400);
 
+  const currentCount = await dbSelect(
+    env,
+    "featured_items",
+    `section=eq.${encodeURIComponent(section)}&select=item_id`
+  );
+  const alreadyFeatured = currentCount.some((r) => r.item_id === itemId);
+  if (!alreadyFeatured && currentCount.length >= 8) {
+    return jsonResponse(
+      { error: "This section already has the maximum of 8 featured items. Remove one before adding another." },
+      400
+    );
+  }
+
   // New items go to the end of their section, not all piling up at
   // sort_order 0 — existing items keep their place, this one shows last.
   const existing = await fetch(
