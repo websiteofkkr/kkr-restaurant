@@ -10,6 +10,14 @@
     return 4;
   };
 
+  // Keyed by section name ("platters" / "favourites") so admin-driven
+  // updates (see featured-items.js) can push new cards into the correct
+  // running carousel instead of writing to the DOM behind its back —
+  // the carousel captures its own snapshot of "real items" on init, so a
+  // later innerHTML overwrite elsewhere would get silently reverted the
+  // next time anything (e.g. a window resize) triggers a recalc.
+  window.KKRDishCarousels = window.KKRDishCarousels || {};
+
   const initDishCarousel = (name) => {
     const root = document.querySelector(`[data-carousel="${name}"]`);
     if (!root) return;
@@ -18,7 +26,7 @@
     const dotsWrap = root.parentElement.querySelector("[data-carousel-dots]");
     if (!viewport || !track) return;
 
-    window.KKRCarousel.create({
+    const instance = window.KKRCarousel.create({
       root,
       viewport,
       track,
@@ -28,6 +36,7 @@
       getItemsPerPage,
       autoAdvanceMs: AUTO_ADVANCE_MS,
     });
+    window.KKRDishCarousels[name] = instance;
   };
 
   window.addEventListener("DOMContentLoaded", () => {

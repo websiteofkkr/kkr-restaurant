@@ -112,6 +112,20 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
     return jsonResponse({ error: "You've already entered this month's contest with this email." }, 409);
   }
 
+  // Also block by social platform + username, not just email — otherwise
+  // the same Instagram/TikTok account could enter repeatedly just by
+  // using a different email address each time, which is the easier of
+  // the two to reuse and the one actually worth restricting for a
+  // one-entry-per-person contest.
+  const existingBySocial = await dbSelect(
+    env,
+    "contest_entries",
+    `social_platform=eq.${encodeURIComponent(socialPlatform)}&social_username=ilike.${encodeURIComponent(socialUsername.replace(/^@/, ""))}&contest_month=eq.${contestMonth}&select=id&limit=1`
+  );
+  if (existingBySocial.length > 0) {
+    return jsonResponse({ error: "This social media account has already entered this month's contest." }, 409);
+  }
+
   const ext = photo.type.split("/")[1];
   const storagePath = `contest/${contestMonth}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
   const photoBuffer = await photo.arrayBuffer();

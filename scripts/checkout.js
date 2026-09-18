@@ -252,6 +252,14 @@
     if (epPanel) epPanel.hidden = method !== "easypaisa";
   };
 
+  // Easypaisa transaction numbers are digits only — strip anything else
+  // as the person types, rather than only complaining about it later at
+  // submit time.
+  $("[data-cf-payment-ref]")?.addEventListener("input", (e) => {
+    const digitsOnly = e.target.value.replace(/\D/g, "");
+    if (digitsOnly !== e.target.value) e.target.value = digitsOnly;
+  });
+
   const renderOrderTypePanel = () => {
     const orderType = document.querySelector('input[name="kkr-order-type"]:checked')?.value || "delivery";
     const addressField = $("[data-address-field]");
@@ -339,6 +347,10 @@
         "[data-order-error]",
         "Please enter your Easypaisa transaction number and confirm you've sent the payment."
       );
+      return;
+    }
+    if (paymentMethod === "easypaisa" && !/^\d+$/.test(paymentReference)) {
+      setError("[data-order-error]", "The Easypaisa transaction number should contain digits only, no letters or symbols.");
       return;
     }
 

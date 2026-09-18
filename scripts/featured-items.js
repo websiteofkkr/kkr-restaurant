@@ -58,15 +58,33 @@
       ["signature", "favourites"].forEach((section) => {
         const list = featured.filter((f) => f.section === section);
         if (list.length === 0) return; // no admin-featured items — leave the hardcoded fallback cards as-is
-        const grid = document.querySelector(SECTION_SELECTORS[section]);
-        if (!grid) return;
-        const html = list
+        const cardsHtml = list
           .map((f) => {
             const item = itemsById.get(f.item_id);
             return item ? buildCard(item, f.blurb) : "";
           })
-          .join("");
-        if (html) grid.innerHTML = html;
+          .filter(Boolean);
+        if (cardsHtml.length === 0) return;
+
+        // The carousel (see dish-carousels.js) captured its own snapshot
+        // of the hardcoded fallback cards when it started up. Writing to
+        // grid.innerHTML directly here would only be visible until the
+        // next time anything recalculates the carousel (e.g. a window
+        // resize), at which point it reverts to that stale snapshot —
+        // exactly the "I added an item but it doesn't show" bug. Route
+        // the update through the carousel's own setItems instead, so its
+        // internal state actually knows about the new cards.
+        const carouselName = section === "signature" ? "platters" : section;
+        const carousel = window.KKRDishCarousels?.[carouselName];
+        if (carousel?.setItems) {
+          carousel.setItems(cardsHtml);
+        } else {
+          // Carousel hasn't initialized for some reason — fall back to a
+          // plain DOM write so the items still show, just without the
+          // carousel's pagination behaving correctly until reload.
+          const grid = document.querySelector(SECTION_SELECTORS[section]);
+          if (grid) grid.innerHTML = cardsHtml.join("");
+        }
       });
     } catch {
       // If this fails for any reason, the hardcoded fallback cards already

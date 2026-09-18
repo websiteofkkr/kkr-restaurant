@@ -76,6 +76,12 @@ async function handleOrder({ request, env }) {
       400
     );
   }
+  if (paymentMethod === "easypaisa" && !/^\d+$/.test(String(paymentReference).trim())) {
+    return jsonResponse(
+      { error: "The Easypaisa transaction number should contain digits only." },
+      400
+    );
+  }
   if (!customer || !String(customer.name || "").trim() || !String(customer.phone || "").trim()) {
     return jsonResponse({ error: "Customer name and phone are required." }, 400);
   }
