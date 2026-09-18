@@ -7,7 +7,7 @@ import { newRequestId, logSecurityEvent } from "../_shared/log.js";
  *  delivery threshold) from the settings table — this is what makes them
  *  changeable by an admin without a code deployment. Falls back to sane
  *  defaults only if a row is somehow missing. */
-async function getSettings(env) {
+export async function getSettings(env) {
   const rows = await dbSelect(env, "settings", "select=key,value");
   const raw = Object.fromEntries(rows.map((r) => [r.key, r.value]));
   const bool = (key, fallback = true) => (raw[key] != null ? raw[key] === true || raw[key] === "true" : fallback);
@@ -185,6 +185,35 @@ async function handleOrder({ request, env }) {
     return jsonResponse({ error: "Your session has expired. Please log in again." }, 401);
   }
   const customerId = user.id;
+
+  // ------------------------------- edit instead of duplicate (unconfirmed)
+  // While a customer's most recent order is still unconfirmed, a second
+  // order within the same day is routed into adding items to that one
+  // instead — avoids duplicate/near-duplicate orders piling up before
+  // staff have even looked at the first one. Once staff confirm it, the
+  // order itself locks (see order-edit.js), but the customer is free to
+  // place a brand new order right away — no additional waiting period.
+  const recentOrders = await dbSelect(
+    env,
+    "orders",
+    `customer_id=eq.${customerId}&select=id,order_number,order_status,created_at&order=created_at.desc&limit=1`
+  );
+  if (recentOrders.length > 0) {
+    const recent = recentOrders[0];
+    const ageMs = Date.now() - new Date(recent.created_at).getTime();
+    const dayMs = 24 * 60 * 60 * 1000;
+    if (ageMs < dayMs && recent.order_status === "received") {
+      return jsonResponse(
+        {
+          error: `You already have an order (#${recent.order_number}) that hasn't been confirmed yet. Add items to that order instead of placing a new one.`,
+          code: "EXISTING_EDITABLE_ORDER",
+          existingOrderId: recent.id,
+          existingOrderNumber: recent.order_number,
+        },
+        409
+      );
+    }
+  }
 
   // ------------------------------------------- authoritative menu lookup
   const menuRes = await fetch(new URL("/menu.json", request.url));
