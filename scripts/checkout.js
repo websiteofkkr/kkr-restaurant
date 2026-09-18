@@ -404,7 +404,11 @@
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not place order.");
+      if (!res.ok) {
+        const err = new Error(data.error || "Could not place order.");
+        err.code = data.code;
+        throw err;
+      }
 
       setText("[data-sent-order-number]", data.orderNumber);
       setText("[data-sent-total]", `Rs. ${fmt(data.total)}`);
@@ -413,7 +417,14 @@
       $("[data-checkout-empty]").hidden = true;
       $("[data-checkout-sent]").hidden = false;
     } catch (err) {
-      setError("[data-order-error]", err.message || "Could not place order. Please try again.");
+      if (err.code === "EXISTING_EDITABLE_ORDER") {
+        setError(
+          "[data-order-error]",
+          `${err.message} Please contact us on WhatsApp for further details: https://wa.me/923355850009`
+        );
+      } else {
+        setError("[data-order-error]", err.message || "Could not place order. Please try again.");
+      }
       // Turnstile tokens are single-use — a failed attempt needs a fresh
       // one before the customer can successfully retry.
       if (turnstileWidgetId !== null) window.turnstile?.reset(turnstileWidgetId);
