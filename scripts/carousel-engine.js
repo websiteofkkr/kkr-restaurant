@@ -118,17 +118,34 @@ window.KKRCarousel = (() => {
       if (currentPage >= totalPages) currentPage = totalPages - 1;
       clearTimeout(wrapTimer);
 
-      const remainder = realCount % itemsPerPage;
-      const page0Clone = realItemsHTML.slice(0, itemsPerPage).join("");
-
       // First pass: render without spacers, purely to measure the real
       // rendered card width (depends on the current viewport, font size,
       // etc. — not something to hardcode).
+      const page0Clone = realItemsHTML.slice(0, itemsPerPage).join("");
       track.innerHTML = realItemsHTML.join("") + page0Clone;
       const firstReal = track.querySelector(itemSelector);
       const gap = parseFloat(getComputedStyle(track).gap) || 0;
       const cardWidth = firstReal ? firstReal.getBoundingClientRect().width : 0;
 
+      if (totalPages <= 1) {
+        // Everything fits on a single page — the common "fewer than a
+        // full page of items" case. Rather than padding out to a full
+        // itemsPerPage-wide frame with calculated spacers (more moving
+        // parts, more chances for a pixel-math mistake), just size the
+        // viewport to exactly the real items themselves and drop the
+        // clone entirely — there's nothing to page through, so there's
+        // nothing to loop. The outer .kkr-carousel's own
+        // justify-content:center then centers this narrower viewport
+        // directly, with no spacer arithmetic involved at all.
+        track.innerHTML = realItemsHTML.join("");
+        const exactWidth = cardWidth * realCount + gap * Math.max(0, realCount - 1);
+        if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
+        buildDots();
+        applyTransform();
+        return;
+      }
+
+      const remainder = realCount % itemsPerPage;
       if (remainder !== 0 && cardWidth > 0) {
         // Center the leftover cards on the final page using exactly one
         // spacer on each side, each sized to precisely half the missing
