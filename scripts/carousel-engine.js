@@ -219,10 +219,25 @@ window.KKRCarousel = (() => {
         //   2*spacerWidth = padCount*cardWidth + (padCount - 2)*gap
         const padCount = itemsPerPage - remainder;
         const halfPad = Math.max(0, (padCount * effectiveCardWidth + (padCount - 2) * effectiveGap) / 2);
-        const spacer = (w) => `<div class="${spacerClass}" aria-hidden="true" style="flex:0 0 ${w}px !important;"></div>`;
+        // No inline style attribute here — a strict style-src CSP (no
+        // 'unsafe-inline') silently blocks style="..." the moment it's
+        // parsed from an HTML string, which is exactly what every
+        // previous fix in this investigation missed: the spacer was
+        // never actually a timing problem, it simply never received its
+        // calculated width at all, and fell back to its base .favcard/
+        // .moment CSS size — the same size as a real card. That's why
+        // the visible gap was consistently about one whole card wide.
+        // Marking it with a data attribute here and setting the width
+        // via the CSSOM (.style.flexBasis =) after insertion, rather
+        // than through HTML parsing, isn't restricted by style-src.
+        const spacer = () => `<div class="${spacerClass}" aria-hidden="true" data-spacer-pending="true"></div>`;
         const items = realItemsHTML.slice();
         const lastGroup = items.splice(items.length - remainder, remainder);
-        track.innerHTML = items.join("") + spacer(halfPad) + lastGroup.join("") + spacer(halfPad) + page0Clone;
+        track.innerHTML = items.join("") + spacer() + lastGroup.join("") + spacer() + page0Clone;
+        track.querySelectorAll("[data-spacer-pending]").forEach((el) => {
+          el.style.setProperty("flex", `0 0 ${halfPad}px`, "important");
+          el.removeAttribute("data-spacer-pending");
+        });
       }
 
       const exactWidth = effectiveCardWidth * itemsPerPage + effectiveGap * (itemsPerPage - 1);
