@@ -34,13 +34,23 @@ window.KKRCarousel = (() => {
     let autoTimer = null;
     let resumeTimer = null;
     let wrapTimer = null;
+    // The last known-good measurement, validated in recalc() — see the
+    // sanity check there. applyTransform() runs on every single page
+    // turn (every auto-advance cycle, every dot click), and re-measuring
+    // fresh each time was a second, unguarded path into the exact same
+    // corrupted-layout race that recalc() now protects against: a bad
+    // reading here doesn't just mis-size a spacer, it slides the whole
+    // track to the wrong position outright, which is exactly what
+    // "the gap comes back after the page has been cycling for a while"
+    // looks like. Trusting the validated measurement here instead of
+    // re-reading the DOM removes that second path entirely.
+    let lastGoodCardWidth = 0;
+    let lastGoodGap = 0;
 
     const applyTransform = (animate = true) => {
       const items = Array.from(track.children);
       if (items.length === 0) return;
-      const firstBox = items[0].getBoundingClientRect();
-      const gap = parseFloat(getComputedStyle(track).gap) || 0;
-      const step = (firstBox.width + gap) * itemsPerPage;
+      const step = (lastGoodCardWidth + lastGoodGap) * itemsPerPage;
       track.style.transition = animate ? "" : "none";
       track.style.transform = `translateX(-${currentPage * step}px)`;
       if (!animate) void track.offsetWidth;
@@ -148,6 +158,14 @@ window.KKRCarousel = (() => {
         requestAnimationFrame(() => recalc(true));
         return;
       }
+      // Even after the one retry, don't let a still-bad reading overwrite
+      // a previously-trusted value, or feed the spacer/viewport math
+      // below — fall back to the last good measurement for everything
+      // in this pass too, rather than just protecting future calls.
+      const effectiveCardWidth = cardWidth >= 60 || lastGoodCardWidth === 0 ? cardWidth : lastGoodCardWidth;
+      const effectiveGap = cardWidth >= 60 || lastGoodCardWidth === 0 ? gap : lastGoodGap;
+      lastGoodCardWidth = effectiveCardWidth;
+      lastGoodGap = effectiveGap;
 
       if (totalPages <= 1) {
         // Everything fits on a single page — the common "fewer than a
@@ -160,7 +178,7 @@ window.KKRCarousel = (() => {
         // justify-content:center then centers this narrower viewport
         // directly, with no spacer arithmetic involved at all.
         track.innerHTML = realItemsHTML.join("");
-        const exactWidth = cardWidth * realCount + gap * Math.max(0, realCount - 1);
+        const exactWidth = effectiveCardWidth * realCount + effectiveGap * Math.max(0, realCount - 1);
         if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
         buildDots();
         applyTransform();
@@ -169,7 +187,7 @@ window.KKRCarousel = (() => {
       }
 
       const remainder = realCount % itemsPerPage;
-      if (remainder !== 0 && cardWidth > 0) {
+      if (remainder !== 0 && effectiveCardWidth > 0) {
         // Center the leftover cards on the final page using exactly one
         // spacer on each side, each sized to precisely half the missing
         // width — rather than whole-card-width spacers split by
@@ -186,14 +204,14 @@ window.KKRCarousel = (() => {
         // (padCount = itemsPerPage - remainder missing cards' worth):
         //   2*spacerWidth = padCount*cardWidth + (padCount - 2)*gap
         const padCount = itemsPerPage - remainder;
-        const halfPad = Math.max(0, (padCount * cardWidth + (padCount - 2) * gap) / 2);
+        const halfPad = Math.max(0, (padCount * effectiveCardWidth + (padCount - 2) * effectiveGap) / 2);
         const spacer = (w) => `<div class="${spacerClass}" aria-hidden="true" style="flex:0 0 ${w}px !important;"></div>`;
         const items = realItemsHTML.slice();
         const lastGroup = items.splice(items.length - remainder, remainder);
         track.innerHTML = items.join("") + spacer(halfPad) + lastGroup.join("") + spacer(halfPad) + page0Clone;
       }
 
-      const exactWidth = cardWidth * itemsPerPage + gap * (itemsPerPage - 1);
+      const exactWidth = effectiveCardWidth * itemsPerPage + effectiveGap * (itemsPerPage - 1);
       if (exactWidth > 0) viewport.style.maxWidth = `${exactWidth}px`;
 
       buildDots();
