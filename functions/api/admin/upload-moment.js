@@ -49,54 +49,64 @@ export const onRequestPost = withErrorHandling(async ({ request, env }) => {
   const videoExt = video.type.split("/")[1] === "quicktime" ? "mov" : video.type.split("/")[1];
   const videoPath = `moments/${stamp}-${uid}.${videoExt}`;
 
-  const videoUpload = await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads/${videoPath}`, {
-    method: "POST",
-    headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-      "Content-Type": video.type,
-    },
-    body: await video.arrayBuffer(),
-  });
-  if (!videoUpload.ok) {
-    console.error("Moment video upload failed:", videoUpload.status, await videoUpload.text().catch(() => ""));
-    return jsonResponse({ error: "Could not upload video." }, 500);
-  }
-
-  let posterUrl = null;
-  if (poster && typeof poster !== "string") {
-    const posterExt = poster.type.split("/")[1];
-    const posterPath = `moments/${stamp}-${uid}-poster.${posterExt}`;
-    const posterUpload = await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads/${posterPath}`, {
+  try {
+    const videoUpload = await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads/${videoPath}`, {
       method: "POST",
       headers: {
         apikey: env.SUPABASE_SERVICE_ROLE_KEY,
         Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-        "Content-Type": poster.type,
+        "Content-Type": video.type,
       },
-      body: await poster.arrayBuffer(),
+      body: video,
     });
-    if (posterUpload.ok) {
-      posterUrl = `${env.SUPABASE_URL}/storage/v1/object/public/public-uploads/${posterPath}`;
+    if (!videoUpload.ok) {
+      const detail = await videoUpload.text().catch(() => "");
+      console.error("Moment video upload failed:", videoUpload.status, detail);
+      return jsonResponse({ error: `Could not upload video (storage said: ${detail || videoUpload.status}).` }, 500);
     }
-    // A failed poster upload isn't fatal — the video plays fine without
-    // one, just falls back to the browser's own first-frame preview.
+
+    let posterUrl = null;
+    if (poster && typeof poster !== "string") {
+      const posterExt = poster.type.split("/")[1];
+      const posterPath = `moments/${stamp}-${uid}-poster.${posterExt}`;
+      const posterUpload = await fetch(`${env.SUPABASE_URL}/storage/v1/object/public-uploads/${posterPath}`, {
+        method: "POST",
+        headers: {
+          apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+          "Content-Type": poster.type,
+        },
+        body: poster,
+      });
+      if (posterUpload.ok) {
+        posterUrl = `${env.SUPABASE_URL}/storage/v1/object/public/public-uploads/${posterPath}`;
+      }
+      // A failed poster upload isn't fatal — the video plays fine without
+      // one, just falls back to the browser's own first-frame preview.
+    }
+
+    const videoUrl = `${env.SUPABASE_URL}/storage/v1/object/public/public-uploads/${videoPath}`;
+
+    const row = await dbInsert(env, "moments", [
+      {
+        title,
+        subtitle: subtitle || null,
+        video_url: videoUrl,
+        poster_url: posterUrl,
+        storage_path: videoPath,
+        duration_label: durationLabel || null,
+        sort_order: Date.now(),
+        file_size_bytes: video.size,
+      },
+    ]);
+
+    return jsonResponse({ moment: row[0] });
+  } catch (err) {
+    // This is an authenticated, admin-only endpoint — surfacing the real
+    // error here (rather than letting it fall through to the generic
+    // "Something went wrong" catch-all) is safe, and is the difference
+    // between actually knowing what failed and guessing at it again.
+    console.error("Moment upload threw:", err);
+    return jsonResponse({ error: `Upload failed: ${err?.message || String(err)}` }, 500);
   }
-
-  const videoUrl = `${env.SUPABASE_URL}/storage/v1/object/public/public-uploads/${videoPath}`;
-
-  const row = await dbInsert(env, "moments", [
-    {
-      title,
-      subtitle: subtitle || null,
-      video_url: videoUrl,
-      poster_url: posterUrl,
-      storage_path: videoPath,
-      duration_label: durationLabel || null,
-      sort_order: Date.now(),
-      file_size_bytes: video.size,
-    },
-  ]);
-
-  return jsonResponse({ moment: row[0] });
 });
