@@ -147,23 +147,37 @@ window.KKRCarousel = (() => {
       const cardWidth = firstReal ? firstReal.getBoundingClientRect().width : 0;
 
       // No real card on this site is ever anywhere close to this narrow —
-      // a measurement below it means layout hadn't actually settled yet
-      // (a concurrent reflow from something else touching the page at the
-      // same moment, a style recalculation still in flight, etc.). Rather
-      // than track down every possible source of that race, retry once on
-      // the next animation frame, by which point layout has reliably
-      // caught up — and only once, so a page that's genuinely this narrow
-      // for some unrelated reason doesn't loop forever.
-      if (cardWidth > 0 && cardWidth < 60 && !isRetry) {
-        requestAnimationFrame(() => recalc(true));
+      // a measurement this low (including exactly 0, e.g. the element
+      // briefly not being found at all) means layout hadn't actually
+      // settled yet (a concurrent reflow from something else touching
+      // the page at the same moment, a style recalculation still in
+      // flight, web fonts still swapping in, etc.). A single animation
+      // frame has repeatedly not been enough time for that to resolve in
+      // practice, so retry several times with a short real delay between
+      // attempts (not just the next paint), giving genuinely more time
+      // for whatever's competing for layout to finish — bounded, so a
+      // page that's ever genuinely this narrow for an unrelated reason
+      // doesn't retry forever.
+      const retryCount = typeof isRetry === "number" ? isRetry : 0;
+      if (cardWidth < 60 && retryCount < 6) {
+        setTimeout(() => recalc(retryCount + 1), 120);
         return;
       }
-      // Even after the one retry, don't let a still-bad reading overwrite
-      // a previously-trusted value, or feed the spacer/viewport math
-      // below — fall back to the last good measurement for everything
-      // in this pass too, rather than just protecting future calls.
-      const effectiveCardWidth = cardWidth >= 60 || lastGoodCardWidth === 0 ? cardWidth : lastGoodCardWidth;
-      const effectiveGap = cardWidth >= 60 || lastGoodCardWidth === 0 ? gap : lastGoodGap;
+      // Even after every retry, don't let a still-bad (or still-zero)
+      // reading overwrite a previously-trusted value, or feed the
+      // spacer/viewport math below — fall back to the last good
+      // measurement for everything in this pass too, rather than only
+      // protecting future calls. If there has never been a good
+      // measurement at all yet, there's nothing to fall back to and
+      // genuinely nothing renderable this pass — bail out entirely
+      // rather than build a zero-width spacer/viewport, and try once
+      // more shortly after in case the page is just still settling.
+      if (cardWidth < 60 && lastGoodCardWidth === 0) {
+        setTimeout(() => recalc(0), 500);
+        return;
+      }
+      const effectiveCardWidth = cardWidth >= 60 ? cardWidth : lastGoodCardWidth;
+      const effectiveGap = cardWidth >= 60 ? gap : lastGoodGap;
       lastGoodCardWidth = effectiveCardWidth;
       lastGoodGap = effectiveGap;
 
