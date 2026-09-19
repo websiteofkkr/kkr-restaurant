@@ -111,7 +111,7 @@ window.KKRCarousel = (() => {
       resumeTimer = setTimeout(startAuto, autoAdvanceMs);
     };
 
-    const recalc = () => {
+    const recalc = (isRetry) => {
       const realCount = realItemsHTML.length;
       if (realCount === 0) return;
       itemsPerPage = Math.max(1, getItemsPerPage());
@@ -135,6 +135,19 @@ window.KKRCarousel = (() => {
       const firstReal = track.querySelector(itemSelector);
       const gap = parseFloat(getComputedStyle(track).gap) || 0;
       const cardWidth = firstReal ? firstReal.getBoundingClientRect().width : 0;
+
+      // No real card on this site is ever anywhere close to this narrow —
+      // a measurement below it means layout hadn't actually settled yet
+      // (a concurrent reflow from something else touching the page at the
+      // same moment, a style recalculation still in flight, etc.). Rather
+      // than track down every possible source of that race, retry once on
+      // the next animation frame, by which point layout has reliably
+      // caught up — and only once, so a page that's genuinely this narrow
+      // for some unrelated reason doesn't loop forever.
+      if (cardWidth > 0 && cardWidth < 60 && !isRetry) {
+        requestAnimationFrame(() => recalc(true));
+        return;
+      }
 
       if (totalPages <= 1) {
         // Everything fits on a single page — the common "fewer than a
