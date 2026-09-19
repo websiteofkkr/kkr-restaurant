@@ -121,7 +121,15 @@ window.KKRCarousel = (() => {
 
       // First pass: render without spacers, purely to measure the real
       // rendered card width (depends on the current viewport, font size,
-      // etc. — not something to hardcode).
+      // etc. — not something to hardcode). Critically, this must happen
+      // with no max-width constraint on the viewport first: the cards
+      // use min-width:0 so they *can* shrink to fit a container, and a
+      // leftover max-width from an earlier recalc (however it got set)
+      // would squeeze them below their real CSS size right before
+      // measuring — producing a too-small cardWidth that then gets baked
+      // into a new, equally-wrong max-width, which the next recalc
+      // measures against again. Clearing it first breaks that loop.
+      viewport.style.maxWidth = "none";
       const page0Clone = realItemsHTML.slice(0, itemsPerPage).join("");
       track.innerHTML = realItemsHTML.join("") + page0Clone;
       const firstReal = track.querySelector(itemSelector);
